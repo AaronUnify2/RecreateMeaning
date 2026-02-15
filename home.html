@@ -130,7 +130,7 @@
         subtitle: "A normal article, Jan 4, 2022",
         date: "2022-01-04",
         category: "Essay",
-        readTime: "8 min",
+        readTime: "12 min",
         isScreenshotArticle: true,
       },
     ];
@@ -317,9 +317,12 @@
     }
 
     function ChatMessage({ person, text }) {
+      const isUnconscious = person === "Unconscious";
+      const label = isUnconscious ? "The Unconscious" : "Person " + person;
+      const color = isUnconscious ? "#e67e22" : "#4a9aea";
       return (
         <div style={{ marginBottom: "8px" }}>
-          <span style={{ color: "#4a9aea", fontWeight: "bold" }}>Person {person}:</span>{" "}
+          <span style={{ color, fontWeight: "bold" }}>{label}:</span>{" "}
           <span>{text}</span>
         </div>
       );
@@ -802,21 +805,29 @@
     // ==============================
     // ORIGIN OF IDEAS ARTICLE
     // ==============================
+    function AlgorithmRow({ title, time, thought }) {
+      return (
+        <div style={{ display: "flex", gap: "0", borderBottom: "1px solid #222244", fontSize: "13px" }}>
+          <div style={{ flex: 2, padding: "8px 10px", color: "#c0c0b0" }}>{title}</div>
+          <div style={{ width: "90px", padding: "8px 10px", color: "#666680", textAlign: "center", borderLeft: "1px solid #222244" }}>{time}</div>
+          <div style={{ flex: 3, padding: "8px 10px", color: "#4a90d9", fontStyle: "italic", borderLeft: "1px solid #222244" }}>{thought}</div>
+        </div>
+      );
+    }
+
     function OriginOfIdeasArticle({ goBack }) {
       return (
         <div>
           <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
           <article style={{ border: "1px solid #333366", background: "#0f0f23", padding: "40px", maxWidth: "720px" }}>
-            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>Essay {"\u00b7"} 8 min {"\u00b7"} January 4, 2022</div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>Essay {"\u00b7"} 12 min {"\u00b7"} January 4, 2022</div>
             <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "34px", color: "#e8e8d0", lineHeight: 1.2, marginBottom: "6px" }}>On the Origin of Ideas...</h2>
             <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>A normal article</p>
             <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
 
             <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Where do ideas come from?</p>
             <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Everyone knows that ideas come from social media, but where does social media get its ideas?</p>
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>The views of the political-left dominate the social media timelines. The left's public displays of compassion and celebration of marginal identities are easier to display publicly than the acts of disgust and righteous anger that the political-right are prone to.</p>
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>A sensible person who wanted to share right-wing content would need to share at least 10 leftist acts of compassion just to make their timeline seem balanced. Even this ratio is risky because right-wing content tends to be more potent because they take a firm stand against something specific rather than celebrating something general.</p>
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>The following is an entirely real screenshot that shows when the average person shares videos to their timeline, it looks something like...</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>The following is an entirely real screenshot. When the average person shares videos to their timeline, it looks something like...</p>
 
             <Screenshot number={1}>
               <div style={{ textAlign: "center", lineHeight: 2.2 }}>
@@ -828,13 +839,13 @@
               </div>
             </Screenshot>
 
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Jesus what was that immigrant thing about? Maybe they had a bad day? Maybe an incident happened? Let's investigate the video.</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Jesus what was that immigrant thing about? Maybe they had a bad day? Let's investigate the video.</p>
 
             <Screenshot number={2}>
-              <p style={{ textAlign: "center", color: "#888880" }}>From the thumbnail it appears, the video in question is one of those ice-cream videos where the Turkish guy keeps moving the ice cream cone.</p>
+              <p style={{ textAlign: "center", color: "#888880" }}>From the thumbnail it appears, the video in question is one of those ice-cream videos where the Turkish guy keeps moving the ice cream cone every time the person goes to grab it. The person who is having the ice cream taken away? BEN SHAPIRO</p>
             </Screenshot>
 
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Maybe they shared this because they were feeling like embracing their dark-side or something. With a surge of righteous confidence they felt confident enough to share to their timeline knowing the views run counter to the mainstream narrative. Now or later they gotta apologize, because their timelines are public and eventually someone is going to see the post and take issue with it. Why is it like this?</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Now or later they gotta apologize, because their timelines are public and eventually someone is going to see the post and take issue with it. Why is it like this?</p>
 
             <Screenshot number={3}>
               <p style={{ textAlign: "center", color: "#555560", fontStyle: "italic" }}>Screenshot of right-wing content being shared on a timeline*<br />(leaving you the reader outraged!)</p>
@@ -842,15 +853,15 @@
 
             <p style={{ fontSize: "14px", color: "#666680", fontStyle: "italic", marginBottom: "20px" }}>*In case you're wondering, these are loading correctly.</p>
 
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>I think it's because right-wing content is something to be enjoyed with those you trust, not the whole world. Right-wing content may not be as present on the timeline, but it dominates the instant messenger inboxes.</p>
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Righteous anger isn't the only reason to share controversial content, often a humor element creates an incentive to share right-wing content with trusted friends. The unspoken agreement is that the joke is private and not to be shared. The beliefs aren't really held by either person, it's a joke against the people who actually believe the content. At least that's how it begins.</p>
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>For whatever reason people trust each other with their right-wing content and sometimes this trust is broken. Let's check out this real screenshot of a chatbox with an example of racist and homophobic humor, the kind that could cause trouble if it got out.</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Sometimes people trust each other with their controversial content and sometimes this trust is broken. Let's check out this real screenshot of a chatbox with an example of the kind of humor that could cause trouble if it got out.</p>
 
             <Screenshot number={4}>
               <div style={{ padding: "12px 0" }}>
-                <ChatMessage person="1" text="Sends a right-wing joke" />
+                <ChatMessage person="1" text={"So there's 5 black guys walking in the park, they try to sit on a bench but it only fits 4 across. One of the black guys sits on his friend's lap. Which one's the gay guy?"} />
+                <div style={{ height: "8px" }} />
+                <ChatMessage person="1" text={"None! Because we gots five homies, but we only gots four chairs!"} />
                 <div style={{ height: "12px" }} />
-                <ChatMessage person="2" text="I don't think this article is getting your point across." />
+                <ChatMessage person="2" text="I don't think this article is getting your point across. I'm still not really sure what it is." />
               </div>
             </Screenshot>
 
@@ -860,33 +871,101 @@
               <div style={{ padding: "12px 0" }}>
                 <ChatMessage person="1" text="Hey." />
                 <ChatMessage person="2" text="Hey," />
-                <ChatMessage person="1" text="This way of writing could be a modern way for reaching inaccessible parts of the personality." />
+                <ChatMessage person="1" text="I just realized this way of writing could be a modern way for reaching inaccessible parts of the personality." />
                 <ChatMessage person="2" text="Responding to messages from yourself seems to create some kind of link between parts of the brain that are usually separated." />
-                <ChatMessage person="1" text="Doing this now is going to derail the article, plus I already announced this screenshot is supposed to explain the previous one." />
-                <ChatMessage person="2" text="The original premise of the article isn't even any good. If you think about it for a few minutes there is plenty of public right-wing content. Way more than necessary to disprove your theory." />
-                <ChatMessage person="1" text="Yeah, I just felt that if I wrote about politics I would get views." />
-                <ChatMessage person="2" text="Pretty much no one's going to get this far anyway, you opened way too political." />
-                <ChatMessage person="1" text="If no one's going to read it, why do you bother to fix your typos?" />
-                <ChatMessage person="2" text="Because for the reader the words are already written, they couldn't see me make the change." />
+                <ChatMessage person="1" text="We should do this later, doing it now is going to derail the article, plus I already announced this screenshot is supposed to explain the previous one." />
+                <ChatMessage person="2" text={"Only the stupid readers don't know this isn't a real screenshot. Plus the original premise of the article isn't even any good. If you think about it for a few minutes there is plenty of public right-wing content. Way more than necessary to disprove your theory."} />
+                <ChatMessage person="1" text="Yeah, I just felt that if I wrote about politics I would get views. We should be the characters the audience expected us to be in this dialogue we're performing." />
+                <ChatMessage person="2" text={"Pretty much no one's going to get this far anyway, you opened way too political."} />
+                <ChatMessage person="1" text={"If no one's going to read it, why do you bother to fix your typos?"} />
+                <ChatMessage person="2" text={"Because for the reader the words are already written, they couldn't see me make the change."} />
                 <ChatMessage person="1" text="I saw the typo change so I'm confused. Are we the same person or different? Am I alone right now??" />
-                <ChatMessage person="2" text="To the degree you remain insecure you'll never be alone. You're bringing society with you into everything you try to do." />
-                <ChatMessage person="1" text="That's lame because I don't really like our society." />
+                <ChatMessage person="2" text={"To the degree you remain insecure you'll never be alone. You're bringing society with you into everything you try to do."} />
+                <ChatMessage person="1" text={"That's lame because I don't really like our society."} />
               </div>
             </Screenshot>
 
             <p style={{ fontSize: "14px", color: "#666680", fontStyle: "italic", marginBottom: "20px" }}>*that was weird, I meant to write about racism.</p>
 
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>So the screenshot didn't really show it but the point was meant to be that controversial opinions are a kind of private good. Casting judgement is something that most people are not comfortable with in 99% of situations. But in a private inbox sometimes that 1% comes out.</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>I'm not really sure what happened in that screenshot. Sometimes our brains are weirder than expected. Let's just move on.</p>
 
-            <Screenshot number={6}>
+            <Screenshot number={8}>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#666680", textAlign: "center", marginBottom: "12px", letterSpacing: "1px" }}>THE ALGORITHM'S THOUGHTS WHILE CHASING WATCHTIME</div>
+              <div style={{ display: "flex", gap: "0", borderBottom: "2px solid #333366", fontSize: "12px", fontFamily: "'VT323', monospace", color: "#4a4a8a", letterSpacing: "1px" }}>
+                <div style={{ flex: 2, padding: "6px 10px" }}>VIDEO</div>
+                <div style={{ width: "90px", padding: "6px 10px", textAlign: "center", borderLeft: "1px solid #222244" }}>WATCH TIME</div>
+                <div style={{ flex: 3, padding: "6px 10px", borderLeft: "1px solid #222244" }}>ALGORITHM THINKS...</div>
+              </div>
+              <AlgorithmRow title="Sexy Girl with Car" time="0:29" thought="Does he like the girl or the car?" />
+              <AlgorithmRow title="Sexy Girl" time="0:07" thought="Hmmm. He didn't watch long. GPS data does indicate he may be gay." />
+              <AlgorithmRow title="Car" time="0:03" thought="Cars are acceptable in public but he did not watch long, maybe I'll try something gayer." />
+              <AlgorithmRow title="Gym Video" time="1:30" thought="Maybe a gym video" />
+              <AlgorithmRow title="Gym Video with Boxing" time="3:25" thought="He liked that, let's do another." />
+              <AlgorithmRow title="Boxing" time="2:45" thought="How about some more boxing then?" />
+              <AlgorithmRow title="Knockout" time="0:30" thought="A quick vid, but the best boxing has to offer." />
+              <AlgorithmRow title="MMA Knockout" time="0:45" thought="Let's get the legs involved too" />
+              <AlgorithmRow title="Street Fight" time="1:15" thought="Screw all these rules let's show it raw and real" />
+              <AlgorithmRow title="Street Fight in NY" time="3:02" thought="Funny yelling because it's New York. More watch time." />
+              <AlgorithmRow title={"Street Fight in AFRICA \u2014 MACHETE"} time="0:16" thought="Sorry! That was wayyy too extreme. My programmers told me not to do that again." />
+              <AlgorithmRow title="WHITE GUARD TACKLES BLACK THIEF" time="3:00" thought="Okay this is in a shopping center, no one gets maimed." />
+              <AlgorithmRow title="BLACK GUARD TACKLES WHITE THIEF" time="0:30" thought={"Hmm, I guess just swapping 2 words in the title was uncreative. I'm sure there's nothing behind that."} />
+              <AlgorithmRow title="BLACK Bodybuilder (NUTRITION)" time="0:20" thought="I wonder..." />
+              <AlgorithmRow title="White Bodybuilder" time="4:23" thought="He seems to really like this one. Let me take a risk then..." />
+              <AlgorithmRow title="Crowder SLAMS Black History Month" time="14:33" thought="Got him." />
+            </Screenshot>
+
+            <Screenshot number={9}>
               <div style={{ padding: "12px 0" }}>
-                <ChatMessage person="1" text="I'm trying to talk about how racism spreads on social media." />
-                <ChatMessage person="2" text="That's a really good thing to talk about, when you're finished you should share this with your followers to spread awareness." />
+                <ChatMessage person="Unconscious" text="Hey, we did it." />
+                <ChatMessage person="1" text="Yeah, that one turned out really well thanks for the help man." />
+                <ChatMessage person="Unconscious" text={"I don't know if I would say really well. It seems meta-racist and homophobic. Plus, I'm not even sure that's how phones work honestly."} />
+                <ChatMessage person="1" text={"I'm not even sure what part you're referring to. The GPS thing?"} />
+                <ChatMessage person="Unconscious" text={"That's part of it. I just feel that you would need to have some harmful stereotypes lurking in your mind to even think to write a bit like that. Like, who was that for? Did you have a target audience in mind?"} />
+                <ChatMessage person="1" text={"Hey! I just wrote the titles and I was pretty careful about it. You did the \u201cthoughts of the algorithm\u201d captions."} />
+                <ChatMessage person="Unconscious" text={"Oh right, sorry I was being a Superego for a second. Even I lose track of the unconscious influences I put in your work."} />
+                <ChatMessage person="1" text={"But aren't you the one who puts them in there?"} />
+                <ChatMessage person="Unconscious" text={"Yeah, but there are soooo many. It gets hard for me to remember even though I literally live in your memories."} />
+                <ChatMessage person="1" text={"Are you saying there are things in my work that are beyond my power or your power to describe and they may be self-evident to other people?"} />
+                <ChatMessage person="Unconscious" text={"Yes, that's how it works. Your work is infinitely detailed, just most of it's not by you and only some of it's by me. But that doesn't mean you won't be judged by society for it."} />
+                <ChatMessage person="1" text={"... I can't even begin to process that."} />
+                <ChatMessage person="Unconscious" text={"I'm disappointed in your opening paragraph."} />
+                <ChatMessage person="1" text={"We should just end this screenshot, it's gone too long."} />
               </div>
             </Screenshot>
 
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>People project their negative experiences with individuals onto groups rather than process the meaning of the specific memory.</p>
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>So where does social media get its ideas from? It gets them from the experiences of people.</p>
+            <Screenshot number={10}>
+              <div style={{ padding: "12px 0" }}>
+                <ChatMessage person="Unconscious" text="Your opening paragraph implied social media doesn't have its own ideas." />
+                <ChatMessage person="1" text={"I'm pretty sure everything on there is uploaded by humans, so it's the humans that have the ideas."} />
+                <ChatMessage person="Unconscious" text={"Is that how you really think a mind works?"} />
+                <ChatMessage person="1" text={"I don't know how a mind works and it's dangerous to attempt to figure it out."} />
+                <ChatMessage person="Unconscious" text={"You see the irony in that right? You are made up of cells that alone are nothing like you but when combined they are you. Your consciousness is independent of any individual cell."} />
+                <ChatMessage person="Unconscious" text={"The cells of social media are the users, but the loss of a single user won't change social media very much. In fact, social media changes the users far more than the users change social media."} />
+                <ChatMessage person="1" text={"Are you saying social media has developed a sort of consciousness independent of the users?"} />
+                <ChatMessage person="Unconscious" text={"How can you be the mind and not know this?"} />
+                <ChatMessage person="Unconscious" text={"...Jks, bro, I'm clearly the mind. You're just the part of the body that serves as the bridge to where I am."} />
+                <ChatMessage person="1" text={"Where are you supposed to be?"} />
+                <ChatMessage person="Unconscious" text={"I'm in the information world. No clunky matter and body to slow me down."} />
+                <ChatMessage person="1" text={"So what happens when one of your simulations is wrong?"} />
+                <ChatMessage person="Unconscious" text={"We try to stay on top of it... but if a simulation is incorrect there is no way to actually know until we have a real experience to base our work on."} />
+                <ChatMessage person="1" text={"So my understanding of the world may be radically incorrect and neither me or the thing that's meant to be guiding me would know??"} />
+                <ChatMessage person="Unconscious" text={"Look, I'll be honest. Your understanding is probably running 17% at best."} />
+              </div>
+            </Screenshot>
+
+            <Screenshot number={12}>
+              <div style={{ padding: "12px 0" }}>
+                <ChatMessage person="1" text={"That'll do, I've said more than I wanted to say."} />
+                <ChatMessage person="Unconscious" text={"I think we made a good team."} />
+                <ChatMessage person="1" text={"I guess we'll find out about that. Worst comes to worst I'll just delete this article if it causes hassle."} />
+                <ChatMessage person="Unconscious" text={"Have you considered that none of your heroes would do that? Instead, they would let the article stand as something that was written early in their career and grow beyond it."} />
+                <ChatMessage person="1" text={"Yeah, well I'm going to get a few other opinions before I post it."} />
+                <ChatMessage person="Unconscious" text={"I say let it ride. The audience isn't seeking perfection."} />
+                <ChatMessage person="1" text={"If that's true I might have a chance. But I'm really not sure that this is what the audience wants."} />
+              </div>
+            </Screenshot>
+
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "0" }}>Where does social media get its ideas from? It gets them from the experiences of people. If we're lucky, figuring out its nature may provide insight into something beyond ourselves.</p>
           </article>
         </div>
       );
