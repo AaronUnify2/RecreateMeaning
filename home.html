@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Pixel Dispatch</title>
+  <title>The Post Idealist</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=VT323&family=Special+Elite&display=swap" rel="stylesheet">
@@ -23,6 +23,18 @@
     ::-webkit-scrollbar-thumb { background: #333366; border-radius: 0; }
     ::-webkit-scrollbar-thumb:hover { background: #4a4a8a; }
     button { font-family: inherit; }
+    input, select, textarea {
+      font-family: 'Courier Prime', monospace;
+      background: #12122a;
+      color: #d4d4c1;
+      border: 1px solid #333366;
+      padding: 8px 12px;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #4a9aea;
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -31,134 +43,123 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState, useEffect, useCallback } = React;
+    const { useState, useEffect, useCallback, useRef } = React;
 
-    const SITE_NAME = "THE PIXEL DISPATCH";
-    const SITE_TAGLINE = "Apps \u00b7 Articles \u00b7 Fiction \u00b7 Ideas";
-
-    // --- MOCK DATA ---
-    const PORTFOLIO_APPS = [
-      {
-        id: "weather-orb",
-        title: "Weather Orb",
-        tagline: "Ambient weather at a glance",
-        description: "A minimal weather visualization that turns forecasts into living, breathing color orbs. No numbers, no clutter \u2014 just vibes.",
-        instructions: [
-          "Open the app and allow location access (or search manually).",
-          "The orb color reflects temperature: cool blues \u2192 warm oranges \u2192 hot reds.",
-          "Tap the orb to cycle through: current conditions \u2192 hourly \u2192 weekly.",
-          "Swipe left/right to browse saved locations.",
-          "Long-press to pin a location to your home screen widget.",
-        ],
-        tech: ["React", "OpenWeather API", "Canvas"],
-        status: "Live",
-        url: "#",
-        color: "#4a90d9",
-      },
-      {
-        id: "task-cascade",
-        title: "Task Cascade",
-        tagline: "Waterfalling your way to done",
-        description: "A task manager that visualizes your to-do list as a waterfall \u2014 tasks flow from 'incoming' at the top to 'done' at the bottom. Drag to reprioritize, watch them cascade.",
-        instructions: [
-          "Create a new cascade (project) from the top menu.",
-          "Add tasks using the '+' button or press 'N' for quick-add.",
-          "Drag tasks between pools: Incoming \u2192 In Progress \u2192 Review \u2192 Done.",
-          "Click any task to expand details, add notes, or set a due date.",
-          "Use the 'Dam' feature to block tasks until dependencies are cleared.",
-          "Export your cascade as a shareable PNG or CSV.",
-        ],
-        tech: ["Vue.js", "Supabase", "D3.js"],
-        status: "Beta",
-        url: "#",
-        color: "#e67e22",
-      },
-      {
-        id: "font-sommelier",
-        title: "Font Sommelier",
-        tagline: "Pairing fonts like fine wines",
-        description: "Upload a screenshot of any design and Font Sommelier will identify the fonts used and suggest complementary pairings \u2014 complete with tasting notes.",
-        instructions: [
-          "Upload a screenshot, photo, or paste a URL on the main screen.",
-          "The sommelier will analyze and identify visible fonts.",
-          "Browse suggested pairings ranked by 'harmony score'.",
-          "Click 'Taste' to preview any pairing with your own sample text.",
-          "Save favorites to your 'Cellar' for later reference.",
-          "Export pairing cards as images for your design system docs.",
-        ],
-        tech: ["Python", "TensorFlow", "Google Fonts API"],
-        status: "Live",
-        url: "#",
-        color: "#8e44ad",
-      },
-    ];
-
-    const ARTICLES = [
-      {
-        id: "attention-economy",
-        title: "The Attention Economy Is a Slot Machine",
-        subtitle: "And we're all out of quarters",
-        date: "2025-02-10",
-        category: "Tech & Society",
-        readTime: "8 min",
-        content: "There's a moment \u2014 you know the one \u2014 where you pick up your phone to check the time and surface 45 minutes later, thumb-deep in a thread about whether hot dogs are sandwiches.\n\nThis isn't an accident. It's architecture.\n\nThe attention economy doesn't just compete for your focus; it engineers the disappearance of the very moment where you might choose to look away. The scroll is infinite because the end of a feed is a decision point, and decision points are expensive.\n\nConsider the slot machine. It doesn't need you to win. It needs you to not-stop. The near-miss is more powerful than the jackpot because the jackpot ends the game. Social media learned this lesson and built it into everything: the almost-relevant recommendation, the notification that might be important, the red dot that could mean anything.\n\nWe talk about \u201cspending\u201d time online as if it were a conscious transaction. But spending implies a budget, a ledger, a moment of exchange. What actually happens is closer to evaporation. The time doesn't go somewhere \u2014 it just ceases to be yours.\n\nThe question isn't whether this is bad. Of course it is. The question is: what would it look like to build technology that gives time back instead of taking it? What would an app look like if its success metric was \u201cthe user closed this quickly and went to do something they care about\u201d?\n\nI don't have the answer. But I think the question is worth more than another 45 minutes of scrolling.",
-        interactive: true,
-        interactiveNote: "Try closing this article right now. Set a timer. See how long before you open something else.",
-      },
-      {
-        id: "color-of-sound",
-        title: "What Color Is Middle C?",
-        subtitle: "A synesthete's guide to the visible spectrum of music",
-        date: "2025-01-22",
-        category: "Science & Perception",
-        readTime: "12 min",
-        content: "For about 4% of the population, the question \u201cwhat color is that note?\u201d isn't poetic \u2014 it's literal. Synesthesia, the neurological phenomenon where one sense triggers another, turns music into a light show that only you can see.\n\nI've been mapping my own chromatic responses to musical notes for three years now. Middle C has always been a warm amber \u2014 not quite gold, not quite orange, but the exact color of late afternoon sunlight through a jar of honey.\n\nF# is violet. Always has been. G is green, but specifically the green of new grass, not forest green. B-flat is the hardest to describe: it's like looking at deep water where you can't tell if it's blue or black.\n\nThe fascinating thing isn't that these associations exist \u2014 it's that they're remarkably consistent. Test me today, test me in six months, the colors barely shift. My brain has a lookup table, and it's been compiled.\n\nResearchers at the University of Sussex found that synesthetes don't just \u201csee\u201d colors when they hear notes \u2014 the visual cortex actually activates. It's not imagination or metaphor. The wires are literally crossed, and the result is a richer, stranger experience of something as universal as music.\n\nBut here's what keeps me up at night: what if everyone's brain does this, just below the threshold of consciousness? What if the reason certain chord progressions feel \u201cbright\u201d or \u201cdark\u201d isn't purely learned \u2014 but is a shadow of synesthetic processing that most people can't quite access?\n\nMusic might be more colorful than any of us realize.",
-        interactive: true,
-        interactiveNote: "Play a note on any instrument near you. Before thinking \u2014 what color flashed in your mind? Write it down.",
-      },
-      {
-        id: "urban-fungi",
-        title: "The City Beneath the City",
-        subtitle: "How fungal networks are quietly running urban ecosystems",
-        date: "2025-01-05",
-        category: "Nature & Cities",
-        readTime: "10 min",
-        content: "Beneath every sidewalk crack where a dandelion pushes through, there's an empire. Not of roots \u2014 of fungi.\n\nMycorrhizal networks \u2014 the so-called \u201cwood wide web\u201d \u2014 aren't just a forest thing. Urban ecologists are increasingly finding that cities have their own fungal infrastructure, and it's doing more work than anyone expected.\n\nPark trees in Manhattan share nutrients through underground fungal highways. Street trees in London are connected to each other across entire blocks. That scraggly tree outside your apartment? It's probably networking harder than you are.\n\nThe implications are wild. When a city plants a new tree, its survival rate nearly doubles if it can tap into an existing fungal network. The fungi don't just deliver nutrients \u2014 they transmit chemical warning signals about pests, share water during drought, and even seem to preferentially support younger, weaker trees.\n\nUrban planners are starting to pay attention. A few forward-thinking cities are now mapping their underground fungal networks before breaking ground on new construction. The idea is radical but simple: if you wouldn't build a highway through a hospital, maybe don't build a parking garage through the network keeping your urban forest alive.\n\nThe city beneath the city doesn't vote, doesn't pay taxes, and doesn't show up on any zoning map. But it might be the most important infrastructure we have.",
-        interactive: false,
-      },
-    ];
-
-    const NOVEL = {
-      title: "SIGNAL LOSS",
-      author: "You",
-      genre: "Speculative Fiction",
-      synopsis: "In a world where memories can be broadcast and received like radio signals, a woman discovers she's been picking up transmissions from someone who hasn't been born yet.",
-      chapters: [
-        {
-          number: 1,
-          title: "Static",
-          content: "The first time it happened, Maya thought it was a migraine.\n\nShe was standing in the cereal aisle of the Kroger on Fifth, reaching for a box of something with too much sugar and not enough fiber, when a memory hit her that wasn't hers.\n\nNot a thought. Not a daydream. A memory \u2014 complete with the weight of lived experience, the texture of having-been-there. She was standing on a beach she'd never visited, watching a sunset she'd never seen, feeling a grief she'd never earned. The sand was black. The sky was the color of a bruise healing.\n\nIt lasted four seconds.\n\nThen she was back in the cereal aisle, hand still extended, a box of Honey Nut Cheerios somehow in her grip, and a woman behind her was asking if she was alright.\n\n\u201cFine,\u201d Maya said, which was a lie, but it was the kind of lie that keeps grocery stores functioning.\n\nShe paid for the cereal. She drove home. She sat on her couch and stared at the wall for twenty minutes.\n\nThen she opened her laptop and typed: \u201cCan you receive someone else's memories?\u201d\n\nGoogle, helpful as always, suggested she might be experiencing dissociative episodes, past-life regression, or the early symptoms of a brain tumor. WebMD agreed on the tumor. Reddit suggested she was a main character.\n\nNone of them mentioned the possibility that she was picking up a signal.\n\nThat part, she'd figure out on her own.",
-        },
-        {
-          number: 2,
-          title: "Frequency",
-          content: "The second transmission came three days later, in the shower.\n\nThis time it was longer \u2014 maybe ten seconds \u2014 and clearer. She was in a room she didn't recognize, all white walls and soft lighting, and she was looking at her hands. Except they weren't her hands. They were smaller, younger, with nails bitten to the quick and a scar across the left index finger she'd never received.\n\nSomeone was talking to her \u2014 to whoever these hands belonged to \u2014 in a language she almost understood. Not quite English. Not quite anything else. Like English that had kept evolving for another fifty years.\n\nThe voice said something that translated roughly to: \u201cYou need to stop reaching back. It's not safe.\u201d\n\nThen the water was too hot and she was back in her shower in her apartment in her city in her year, gasping.\n\nMaya was thirty-two years old. She was a sound engineer at a mid-size podcast studio. She was not, by any reasonable measure, the kind of person to whom extraordinary things happened. She paid her taxes quarterly. She owned a reasonable number of houseplants. She had a 401(k).\n\nPeople with 401(k)s do not receive psychic transmissions from the future.\n\nAnd yet.\n\nShe started keeping a notebook. Date, time, duration, content. She was an engineer \u2014 if this was a signal, it had a pattern, and patterns could be decoded.\n\nEntry one: Beach. Black sand. Grief. 4 seconds.\nEntry two: White room. Young hands. Warning. 10 seconds.\n\nTwo data points is not a pattern. But Maya was patient, and the signal, it turned out, was persistent.",
-        },
-        {
-          number: 3,
-          title: "Noise Floor",
-          content: "By the end of the month, she had fourteen entries.\n\nThe transmissions were getting longer and more vivid. Entry seven was a full thirty seconds of walking through a market that sold things she couldn't name \u2014 objects that looked like fruit but behaved like machines, tools that seemed grown rather than manufactured. Entry eleven was a conversation, both sides audible, about something called \u201ctemporal bleed\u201d spoken in that same almost-English.\n\nEntry thirteen was the one that scared her.\n\nIn it, she saw herself. Or rather, she saw a photograph of herself \u2014 her current self, thirty-two, standing in what was unmistakably her apartment \u2014 displayed on a device she didn't recognize. Someone was pointing at the photo and saying, in perfect present-day English: \u201cThis is her. This is the anchor point.\u201d\n\nMaya had worked in audio long enough to know the difference between signal and noise. Noise is random. It doesn't repeat, doesn't cohere, doesn't build a narrative. Signal does.\n\nThis was signal.\n\nShe needed help \u2014 the kind of help that doesn't exist in the yellow pages. She needed someone who would take \u201cI'm receiving memories from the future\u201d seriously without immediately recommending medication.\n\nShe found Dr. Lena Vasquez on page forty-seven of a forum dedicated to \u201canomalous cognitive experiences.\u201d Vasquez was a neuroscientist at Columbia who had published exactly one paper on what she called \u201cnon-local memory phenomena\u201d before the academic community had politely suggested she pursue other interests.\n\nMaya sent her an email with the subject line: \u201cI think I'm picking up someone else's signal.\u201d\n\nVasquez replied in eleven minutes: \u201cWhen can you come in?\u201d",
-        },
-      ],
-    };
+    const SITE_NAME = "THE POST IDEALIST";
+    const SITE_TAGLINE = "Tools \u00b7 Articles \u00b7 Fiction";
+    const AUTHOR = "The Secondary";
 
     const VISITOR_COUNT = Math.floor(Math.random() * 1000001).toLocaleString('en-US').padStart(7, '0');
 
-    // --- COMPONENTS ---
+    // --- TOOLS DATA ---
+    const TOOLS = [
+      {
+        id: "unify",
+        title: "Unify Version 2",
+        tagline: "The Architecture of You",
+        description: "A structured self-analysis tool that helps you offload cognitive load, quantify your struggles, and build a trajectory toward mastery. No accounts, no servers, no tracking \u2014 just you and your potential.",
+        tech: ["HTML", "JavaScript", "CSS"],
+        status: "Live",
+        url: "https://aaronunify2.github.io/UnifyVersion1/Unify300.html",
+        color: "#4a90d9",
+        hasLandingPage: true,
+        date: "2025-12-01",
+      },
+      {
+        id: "tommypop",
+        title: "TommyPop",
+        tagline: "A non-addictive game for toddlers",
+        description: "Use this game to distract a child without exposing them to addictive games or inappropriate content. TommyPop is designed to be interesting for a minute or two before becoming boring.",
+        tech: ["HTML", "JavaScript", "CSS"],
+        status: "Live",
+        url: "https://aaronunify2.github.io/UnifyVersion1/Kids/TommyPop.html",
+        color: "#e67e22",
+        hasLandingPage: false,
+        date: "2025-11-01",
+        parentGuide: {
+          intro: "TommyPop is a minimalist bubble-popping game designed specifically for toddlers and young children. Unlike mainstream mobile games, TommyPop is built to be intentionally repetitive and low-stimulation.",
+          features: [
+            "No High-Dopamine Rewards: No flashing lights, \u201clevel up\u201d sounds, or loot boxes.",
+            "No Hidden Agendas: Zero advertisements, zero in-app purchases, and no age-inappropriate content.",
+            "A Natural Exit: The game is fun enough to engage a child\u2019s curiosity but predictable enough that they will eventually choose to put it down.",
+          ],
+          strategy: [
+            {
+              title: "The \u201cLow-Friction\u201d Swap",
+              text: "While the child is using the addictive device, load TommyPop on a separate phone. Offer it as a swap. Because it is interactive and colorful, children usually accept the trade without resistance.",
+            },
+            {
+              title: "The Attention Shift",
+              text: "As the child plays TommyPop, the repetitive nature of the game begins to lower their neurological intensity. Their attention will naturally begin to \u201cbroaden.\u201d Watch for signs of boredom or looking around the room.",
+            },
+            {
+              title: "The Montessori Catch",
+              text: "Before the child becomes frustrated, \u201ccatch\u201d their broadening attention with a prepared physical activity. Have blocks, LEGO, dolls, or a board game ready to go.",
+            },
+            {
+              title: "Hide the Tech",
+              text: "Once the child engages with the physical toy, quietly remove and hide all phone devices from the immediate environment to prevent a relapse into a contracted state.",
+            },
+            {
+              title: "Anchor with Routine",
+              text: "Time the end of the physical activity with a meal. This provides a natural, biological transition that moves the child toward a Spacious state (sitting in silence / the fact of being alive).",
+            },
+          ],
+          why: "By moving from Narrow (Competitive/Addictive games) to Open (Reading/Cooking/Board games), you are training your child\u2019s brain to find satisfaction in slower-paced, developmental activities rather than \u201cslot machine dopamine.\u201d",
+        },
+      },
+      {
+        id: "tommyspace",
+        title: "TommySpace",
+        tagline: "Explore the solar system to learn the names of the planets",
+        description: "An interactive 3D solar system built for curious kids (and adults). Fly through space and learn the names and positions of the planets.",
+        tech: ["HTML", "Three.js", "CSS"],
+        status: "Live",
+        url: "#",
+        color: "#8e44ad",
+        hasLandingPage: false,
+        date: "2025-10-01",
+      },
+    ];
+
+    // --- ARTICLES DATA ---
+    const ARTICLES = [
+      {
+        id: "origin-of-ideas",
+        title: "On the Origin of Ideas...",
+        subtitle: "A normal article, Jan 4, 2022",
+        date: "2022-01-04",
+        category: "Essay",
+        readTime: "8 min",
+        isScreenshotArticle: true,
+      },
+    ];
+
+    // --- NOVEL DATA ---
+    const NOVEL = {
+      title: "BIGFOOT'S SHOE",
+      author: AUTHOR,
+      genre: "Psychological Fiction",
+      synopsis: "A coming of age tale for the modern world.",
+      comingSoon: true,
+      message: "The author is currently reworking the beginning after finally figuring out the ending. Chapters will appear here as they\u2019re ready.",
+    };
+
+    // --- FEED ITEMS (all content combined, sorted by date) ---
+    const FEED_ITEMS = [
+      { type: "tool", id: "unify", title: "Unify Version 2", subtitle: "The Architecture of You", date: "2025-12-01", color: "#4a90d9" },
+      { type: "tool", id: "tommypop", title: "TommyPop", subtitle: "A non-addictive game for toddlers", date: "2025-11-01", color: "#e67e22" },
+      { type: "tool", id: "tommyspace", title: "TommySpace", subtitle: "Explore the solar system", date: "2025-10-01", color: "#8e44ad" },
+      { type: "article", id: "origin-of-ideas", title: "On the Origin of Ideas...", subtitle: "A normal article", date: "2022-01-04", color: "#4a9aea" },
+      { type: "novel", id: "novel", title: "Bigfoot\u2019s Shoe", subtitle: "Coming soon \u2014 Psychological Fiction", date: "2026-02-15", color: "#e67e22" },
+    ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    // ==============================
+    // COMPONENTS
+    // ==============================
 
     function Header({ currentPage, setPage }) {
       const [time, setTime] = useState(new Date());
-
       useEffect(() => {
         const t = setInterval(() => setTime(new Date()), 1000);
         return () => clearInterval(t);
@@ -166,7 +167,7 @@
 
       const navItems = [
         { id: "home", label: "Home" },
-        { id: "portfolio", label: "Apps" },
+        { id: "tools", label: "Tools" },
         { id: "articles", label: "Articles" },
         { id: "novel", label: "Novel" },
         { id: "about", label: "About" },
@@ -176,92 +177,52 @@
         <header style={{
           background: "linear-gradient(180deg, #0f0f23 0%, #1a1a2e 100%)",
           borderBottom: "2px solid #333366",
-          padding: "0",
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
+          position: "sticky", top: 0, zIndex: 100,
         }}>
           <div style={{
-            background: "#0a0a1a",
-            padding: "4px 20px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            fontSize: "12px",
-            fontFamily: "'VT323', monospace",
-            color: "#666680",
-            borderBottom: "1px solid #222244",
-            letterSpacing: "1px",
+            background: "#0a0a1a", padding: "4px 20px",
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+            fontSize: "12px", fontFamily: "'VT323', monospace", color: "#666680",
+            borderBottom: "1px solid #222244", letterSpacing: "1px",
           }}>
-            <span>EST. 2025 — ISSUE #042</span>
-            <span>{time.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} — {time.toLocaleTimeString()}</span>
+            <span>EST. 2026 \u2014 ISSUE #001</span>
+            <span>{time.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} \u2014 {time.toLocaleTimeString()}</span>
           </div>
-          
+
           <div style={{ padding: "20px 20px 0", textAlign: "center" }}>
             <div onClick={() => setPage("home")} style={{ cursor: "pointer", display: "inline-block" }}>
               <h1 style={{
                 fontFamily: "'Special Elite', 'Courier Prime', monospace",
-                fontSize: "clamp(28px, 5vw, 52px)",
-                color: "#e8e8d0",
-                letterSpacing: "6px",
-                textTransform: "uppercase",
-                lineHeight: 1.1,
-                textShadow: "2px 2px 0 #333366",
+                fontSize: "clamp(28px, 5vw, 52px)", color: "#e8e8d0",
+                letterSpacing: "6px", textTransform: "uppercase",
+                lineHeight: 1.1, textShadow: "2px 2px 0 #333366",
               }}>{SITE_NAME}</h1>
               <div style={{
-                fontFamily: "'VT323', monospace",
-                fontSize: "14px",
-                color: "#888880",
-                letterSpacing: "8px",
-                textTransform: "uppercase",
-                marginTop: "4px",
+                fontFamily: "'VT323', monospace", fontSize: "14px", color: "#888880",
+                letterSpacing: "8px", textTransform: "uppercase", marginTop: "4px",
               }}>{SITE_TAGLINE}</div>
             </div>
-            
-            <div style={{
-              margin: "16px auto 0",
-              maxWidth: "600px",
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-            }}>
+            <div style={{ margin: "16px auto 0", maxWidth: "600px", display: "flex", alignItems: "center", gap: "12px" }}>
               <div style={{ flex: 1, height: "1px", background: "#333366" }} />
               <div style={{ color: "#4a4a8a", fontFamily: "'VT323', monospace", fontSize: "18px" }}>{"\u25C6 \u25C7 \u25C6"}</div>
               <div style={{ flex: 1, height: "1px", background: "#333366" }} />
             </div>
           </div>
 
-          <nav style={{ display: "flex", justifyContent: "center", gap: "0", padding: "12px 20px 0", flexWrap: "wrap" }}>
+          <nav style={{ display: "flex", justifyContent: "center", padding: "12px 20px 0", flexWrap: "wrap" }}>
             {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setPage(item.id)}
+              <button key={item.id} onClick={() => setPage(item.id)}
                 style={{
                   background: currentPage === item.id ? "#333366" : "transparent",
                   color: currentPage === item.id ? "#e8e8d0" : "#888880",
                   border: "1px solid #333366",
                   borderBottom: currentPage === item.id ? "1px solid #333366" : "1px solid transparent",
-                  padding: "8px 24px",
-                  fontFamily: "'Courier Prime', monospace",
-                  fontSize: "13px",
-                  letterSpacing: "2px",
-                  textTransform: "uppercase",
-                  cursor: "pointer",
-                  transition: "all 0.15s ease",
-                  marginBottom: "-1px",
+                  padding: "8px 24px", fontFamily: "'Courier Prime', monospace",
+                  fontSize: "13px", letterSpacing: "2px", textTransform: "uppercase",
+                  cursor: "pointer", transition: "all 0.15s ease", marginBottom: "-1px",
                 }}
-                onMouseEnter={(e) => {
-                  if (currentPage !== item.id) {
-                    e.target.style.color = "#e8e8d0";
-                    e.target.style.background = "#222244";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (currentPage !== item.id) {
-                    e.target.style.color = "#888880";
-                    e.target.style.background = "transparent";
-                  }
-                }}
+                onMouseEnter={(e) => { if (currentPage !== item.id) { e.target.style.color = "#e8e8d0"; e.target.style.background = "#222244"; } }}
+                onMouseLeave={(e) => { if (currentPage !== item.id) { e.target.style.color = "#888880"; e.target.style.background = "transparent"; } }}
               >{item.label}</button>
             ))}
           </nav>
@@ -275,33 +236,30 @@
           <div style={{ border: "1px solid #333366", padding: "16px", textAlign: "center", background: "#0f0f23" }}>
             <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px" }}>Visitors</div>
             <div style={{ fontFamily: "'VT323', monospace", fontSize: "32px", color: "#4a9aea", background: "#000010", padding: "8px", border: "1px inset #222244", letterSpacing: "4px" }}>{VISITOR_COUNT}</div>
-            <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: "#555560", marginTop: "6px" }}>since jan 2025</div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: "#555560", marginTop: "6px" }}>since feb 2026</div>
           </div>
 
           <div style={{ border: "1px solid #333366", padding: "16px", background: "#0f0f23" }}>
             <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "14px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px", paddingBottom: "8px", borderBottom: "1px dashed #333366" }}>Latest Updates</h3>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
               {[
-                { date: "Feb 10", text: "New article: Attention Economy" },
-                { date: "Feb 03", text: "Font Sommelier v2.1 released" },
-                { date: "Jan 22", text: "Synesthesia article published" },
-                { date: "Jan 15", text: "Novel Ch.3 is up!" },
+                { date: "Feb 15", text: "Grand opening!" },
+                { date: "Feb 15", text: "Unify V2 landing page live" },
+                { date: "Feb 15", text: "TommyPop parent guide added" },
               ].map((item, i) => (
                 <li key={i} style={{ fontSize: "13px", lineHeight: 1.4 }}>
                   <span style={{ fontFamily: "'VT323', monospace", color: "#4a4a8a", fontSize: "12px" }}>[{item.date}]</span>
-                  <br />
-                  <span style={{ color: "#b0b0a0" }}>{item.text}</span>
+                  <br /><span style={{ color: "#b0b0a0" }}>{item.text}</span>
                 </li>
               ))}
             </ul>
           </div>
 
           <div style={{ border: "1px solid #333366", padding: "16px", background: "#0f0f23", textAlign: "center" }}>
-            <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "14px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px", paddingBottom: "8px", borderBottom: "1px dashed #333366" }}>Cool Links</h3>
+            <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "14px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px", paddingBottom: "8px", borderBottom: "1px dashed #333366" }}>Links</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              {["[RSS Feed]", "[Email List]", "[Source Code]", "[Guestbook]"].map((link, i) => (
-                <a key={i} href="#" style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a9aea", display: "block" }}>{link}</a>
-              ))}
+              <a href="https://x.com/UGoalsetter" target="_blank" rel="noopener" style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a9aea", display: "block" }}>[Twitter/X]</a>
+              <a href="https://aaronunify2.github.io/UnifyVersion1/Unify300.html" target="_blank" rel="noopener" style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a9aea", display: "block" }}>[Unify App]</a>
             </div>
             <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
               <div style={{ background: "#222244", border: "1px solid #4a4a8a", padding: "4px 12px", fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9aea" }}>{"MADE WITH \u2665 & COFFEE"}</div>
@@ -323,204 +281,513 @@
       );
     }
 
-    // --- PAGES ---
-
-    function HomePage({ setPage, setSelectedApp, setSelectedArticle, setSelectedChapter }) {
+    function Screenshot({ number, children, empty }) {
       return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+        <div style={{
+          margin: "28px 0", border: "2px solid #333366", background: "#0a0a18",
+          overflow: "hidden",
+        }}>
           <div style={{
-            border: "2px solid #e67e22",
-            padding: "32px",
-            background: "linear-gradient(135deg, #1a1a2e 0%, #222244 100%)",
-            position: "relative",
-            overflow: "hidden",
+            background: "#222244", padding: "6px 14px",
+            fontFamily: "'VT323', monospace", fontSize: "13px", color: "#666680",
+            borderBottom: "1px solid #333366", display: "flex", justifyContent: "space-between",
           }}>
-            <div style={{
-              position: "absolute", top: "10px", right: "12px",
-              fontFamily: "'VT323', monospace", fontSize: "12px", color: "#e67e22",
-              letterSpacing: "2px", textTransform: "uppercase",
-              background: "#1a1a2e", padding: "2px 8px", border: "1px solid #e67e22",
-            }}>{"\u2605 Featured"}</div>
-            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#666680", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px" }}>Latest Chapter</div>
-            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "32px", color: "#e8e8d0", marginBottom: "8px" }}>{"Signal Loss \u2014 Ch. 3: \u201cNoise Floor\u201d"}</h2>
-            <p style={{ fontFamily: "'Lora', serif", fontSize: "16px", color: "#a0a090", lineHeight: 1.6, maxWidth: "600px", marginBottom: "16px", fontStyle: "italic" }}>
-              {"\u201cMaya had worked in audio long enough to know the difference between signal and noise. Noise is random. Signal doesn't just repeat \u2014 it builds...\u201d"}
-            </p>
-            <button
-              onClick={() => { setSelectedChapter(2); setPage("novel"); }}
-              style={{
-                background: "#e67e22", color: "#1a1a2e", border: "none",
-                padding: "10px 24px", fontFamily: "'Courier Prime', monospace",
-                fontSize: "14px", fontWeight: "bold", letterSpacing: "1px",
-                cursor: "pointer", textTransform: "uppercase",
-              }}
-              onMouseEnter={e => e.target.style.background = "#f39c12"}
-              onMouseLeave={e => e.target.style.background = "#e67e22"}
-            >{"Read Chapter \u2192"}</button>
+            <span>Screenshot #{number}</span>
+            <span style={{ color: "#444460" }}>{"\u2715"}</span>
           </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
-            <div>
-              <SectionHeader title="Recent Articles" />
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                {ARTICLES.slice(0, 3).map((article) => (
-                  <div key={article.id}
-                    onClick={() => { setSelectedArticle(article.id); setPage("articles"); }}
-                    style={{ border: "1px solid #333366", padding: "16px", cursor: "pointer", background: "#0f0f23", transition: "border-color 0.2s" }}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = "#4a9aea"}
-                    onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
-                  >
-                    <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#4a4a8a", letterSpacing: "1px", marginBottom: "4px" }}>{article.category} {"\u00b7"} {article.readTime}</div>
-                    <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0", marginBottom: "4px" }}>{article.title}</h3>
-                    <p style={{ fontSize: "13px", color: "#888880", fontStyle: "italic" }}>{article.subtitle}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <SectionHeader title="App Spotlight" />
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                {PORTFOLIO_APPS.map((app) => (
-                  <div key={app.id}
-                    onClick={() => { setSelectedApp(app.id); setPage("portfolio"); }}
-                    style={{ border: "1px solid #333366", padding: "16px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start", transition: "border-color 0.2s" }}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = app.color}
-                    onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
-                  >
-                    <div style={{
-                      width: "48px", height: "48px", background: app.color + "22",
-                      border: "2px solid " + app.color, display: "flex", alignItems: "center",
-                      justifyContent: "center", fontFamily: "'VT323', monospace",
-                      fontSize: "24px", color: app.color, flexShrink: 0,
-                    }}>{app.title[0]}</div>
-                    <div>
-                      <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "17px", color: "#e8e8d0" }}>{app.title}</h3>
-                      <p style={{ fontSize: "13px", color: "#888880", marginTop: "2px" }}>{app.tagline}</p>
-                      <span style={{
-                        display: "inline-block", marginTop: "6px",
-                        fontFamily: "'VT323', monospace", fontSize: "12px",
-                        color: app.status === "Live" ? "#4a9a4a" : "#e67e22",
-                        background: app.status === "Live" ? "#1a3a1a" : "#3a2a1a",
-                        padding: "2px 8px",
-                        border: "1px solid " + (app.status === "Live" ? "#2a5a2a" : "#5a4a2a"),
-                      }}>{app.status}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
           <div style={{
-            border: "1px dashed #333366", padding: "12px 20px",
-            fontFamily: "'VT323', monospace", fontSize: "16px",
-            color: "#666680", textAlign: "center", letterSpacing: "1px",
+            padding: empty ? "60px 20px" : "20px",
+            textAlign: empty ? "center" : "left",
+            minHeight: empty ? "120px" : "auto",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            flexDirection: "column",
           }}>
-            {"\u2726 Now accepting guest articles! Send your pitches to "}<span style={{ color: "#4a9aea" }}>submissions@pixeldispatch.net</span>{" \u2726"}
+            {empty ? (
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#333355" }}>
+                [screenshot loading...]
+              </div>
+            ) : (
+              <div style={{ width: "100%", fontFamily: "'Courier Prime', monospace", fontSize: "14px", lineHeight: 1.8, color: "#b0b0a0" }}>
+                {children}
+              </div>
+            )}
           </div>
         </div>
       );
     }
 
-    function PortfolioPage({ selectedApp, setSelectedApp }) {
-      const app = selectedApp ? PORTFOLIO_APPS.find(a => a.id === selectedApp) : null;
+    function ChatMessage({ person, text }) {
+      return (
+        <div style={{ marginBottom: "8px" }}>
+          <span style={{ color: "#4a9aea", fontWeight: "bold" }}>Person {person}:</span>{" "}
+          <span>{text}</span>
+        </div>
+      );
+    }
 
-      if (app) {
+    // ==============================
+    // INTERACTIVE UNIFY MODULES
+    // ==============================
+
+    function CognitiveContainerModule() {
+      const [value, setValue] = useState("");
+      const [saved, setSaved] = useState(false);
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1 Interactive: The Cognitive Container"}</div>
+          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "12px", fontStyle: "italic" }}>What is one issue occupying your mind right now?</p>
+          <input
+            type="text" placeholder="e.g., Taxes are late"
+            value={value} onChange={e => { setValue(e.target.value); setSaved(false); }}
+            style={{ width: "100%", maxWidth: "400px", marginBottom: "8px", display: "block" }}
+          />
+          {value.length > 0 && !saved && (
+            <div style={{ marginTop: "12px" }}>
+              <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic", lineHeight: 1.6 }}>
+                Notice how the anxiety shrinks when it fits into a box? You are taking control.
+              </p>
+              <button onClick={() => setSaved(true)} style={{
+                marginTop: "10px", background: "#4a90d9", color: "#fff", border: "none",
+                padding: "8px 20px", fontFamily: "'Courier Prime', monospace", fontSize: "13px",
+                cursor: "pointer", letterSpacing: "1px",
+              }}>Capture It</button>
+            </div>
+          )}
+          {saved && (
+            <div style={{ marginTop: "12px", padding: "10px 14px", background: "#1a2a4a", border: "1px solid #4a90d9" }}>
+              <span style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#4a9a4a" }}>{"\u2713"} Captured: </span>
+              <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#c0c0b0" }}>{value}</span>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function PerspectiveSliderModule() {
+      const [rating, setRating] = useState(0);
+      const labels = ["", "Level 1: Background Noise", "Level 2: Minor Friction", "Level 3: Real Problem", "Level 4: Major Crisis", "Level 5: Everything Is On Fire"];
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1 Interactive: The Perspective Slider"}</div>
+          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "16px", fontStyle: "italic" }}>Rate the problem you entered above.</p>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
+            {[1,2,3,4,5].map(n => (
+              <span key={n} onClick={() => setRating(n)} style={{
+                fontSize: "32px", cursor: "pointer",
+                color: n <= rating ? "#e67e22" : "#333366",
+                transition: "color 0.15s",
+              }}>{"\u2605"}</span>
+            ))}
+          </div>
+          {rating > 0 && (
+            <div>
+              <p style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: "#e67e22", marginBottom: "8px" }}>{labels[rating]}</p>
+              <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic" }}>
+                You just sized up your enemy. A Level {rating} problem cannot hurt you if you see it for what it is.
+              </p>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function StackModule() {
+      const [items, setItems] = useState([]);
+      const [input, setInput] = useState("");
+      const addItem = () => {
+        if (input.trim()) {
+          setItems(prev => [input.trim(), ...prev]);
+          setInput("");
+        }
+      };
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1 Interactive: The Stack"}</div>
+          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "12px", fontStyle: "italic" }}>Capture a thought. Watch it stack.</p>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+            <input type="text" value={input} onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && addItem()}
+              placeholder="Type a thought..." style={{ flex: 1 }} />
+            <button onClick={addItem} style={{
+              background: "#4a90d9", color: "#fff", border: "none", padding: "8px 16px",
+              fontFamily: "'Courier Prime', monospace", fontSize: "13px", cursor: "pointer",
+            }}>Save</button>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            {items.map((item, i) => (
+              <div key={i} style={{
+                padding: "8px 14px", background: "#1a2a4a", border: "1px solid #333366",
+                fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#b0b0a0",
+                transform: `translateX(${i * 4}px)`, opacity: Math.max(0.4, 1 - i * 0.15),
+              }}>{item}</div>
+            ))}
+          </div>
+          {items.length > 0 && (
+            <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic", marginTop: "12px" }}>
+              Captured. Now you can relax, knowing this data is waiting for you when you're ready to solve it.
+            </p>
+          )}
+        </div>
+      );
+    }
+
+    function HaradaGridModule() {
+      const [center, setCenter] = useState("");
+      const [cells, setCells] = useState(Array(8).fill(""));
+      const labels = ["Health", "Finance", "Relationships", "Career", "Learning", "Creative", "Community", "Spiritual"];
+      const lit = center.length > 0;
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1 Interactive: The Grid"}</div>
+          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "16px", fontStyle: "italic" }}>Type your 5-year vision in the center. Watch the grid awaken.</p>
+          <div style={{
+            display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "6px",
+            maxWidth: "420px",
+          }}>
+            {[0,1,2,3,-1,4,5,6,7].map((idx, pos) => {
+              if (idx === -1) {
+                return (
+                  <div key="center" style={{
+                    border: "2px solid #e67e22", background: "#1a1520", padding: "8px",
+                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                    minHeight: "80px",
+                  }}>
+                    <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: "#e67e22", marginBottom: "4px" }}>5-YEAR VISION</div>
+                    <input type="text" value={center} onChange={e => setCenter(e.target.value)}
+                      placeholder="Your vision..."
+                      style={{ width: "100%", fontSize: "12px", padding: "4px 6px", textAlign: "center", background: "#0a0a18", border: "1px solid #e67e22" }} />
+                  </div>
+                );
+              }
+              return (
+                <div key={idx} style={{
+                  border: "1px solid " + (lit ? "#4a90d9" : "#282848"),
+                  background: lit ? "#12183a" : "#0f0f20",
+                  padding: "8px", minHeight: "80px",
+                  transition: "all 0.3s ease",
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                }}>
+                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: lit ? "#4a90d9" : "#333355", marginBottom: "4px" }}>{labels[idx]}</div>
+                  <input type="text" value={cells[idx]} onChange={e => {
+                    const n = [...cells]; n[idx] = e.target.value; setCells(n);
+                  }} placeholder="..." style={{ width: "100%", fontSize: "11px", padding: "3px 5px", textAlign: "center", background: "#0a0a18" }} />
+                </div>
+              );
+            })}
+          </div>
+          {lit && (
+            <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic", marginTop: "16px" }}>
+              A goal without a structure is a wish. A goal with a structure is a plan.
+            </p>
+          )}
+        </div>
+      );
+    }
+
+    function LocalLockModule() {
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px" }}>{"\u26A1 Interactive: The Local Lock"}</div>
+          <div style={{ display: "flex", gap: "24px", alignItems: "center", marginBottom: "20px", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: "#555560", boxShadow: "0 0 4px #33333680" }} />
+              <span style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#555560" }}>Server Connection: OFF</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: "#4a9a4a", boxShadow: "0 0 8px #4a9a4a80" }} />
+              <span style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a9a4a" }}>Local Storage: ON</span>
+            </div>
+          </div>
+          <p style={{ fontSize: "15px", color: "#b0b0a0", lineHeight: 1.7, marginBottom: "8px" }}>
+            No accounts. No emails. No cloud. Your data lives on your device, not our servers.
+          </p>
+          <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic" }}>
+            This is a private conversation between you and your potential.
+          </p>
+          <a href="https://aaronunify2.github.io/UnifyVersion1/Unify300.html" target="_blank" rel="noopener"
+            style={{
+              display: "inline-block", marginTop: "16px", background: "#4a90d9", color: "#fff",
+              padding: "12px 32px", fontFamily: "'Courier Prime', monospace", fontSize: "14px",
+              fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none",
+            }}>{"Enter Unify \u2192"}</a>
+        </div>
+      );
+    }
+
+    // ==============================
+    // PAGES
+    // ==============================
+
+    function HomePage({ setPage, setSelectedTool, setSelectedArticle }) {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          <SectionHeader title="Feed" subtitle="Everything, most recent first" />
+
+          {FEED_ITEMS.map((item) => (
+            <div key={item.type + item.id}
+              onClick={() => {
+                if (item.type === "tool") { setSelectedTool(item.id); setPage("tools"); }
+                else if (item.type === "article") { setSelectedArticle(item.id); setPage("articles"); }
+                else if (item.type === "novel") { setPage("novel"); }
+              }}
+              style={{
+                border: "1px solid #333366", padding: "20px", cursor: "pointer",
+                background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start",
+                transition: "border-color 0.2s",
+              }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = item.color}
+              onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
+            >
+              <div style={{
+                width: "48px", height: "48px", background: item.color + "22",
+                border: "2px solid " + item.color, display: "flex", alignItems: "center",
+                justifyContent: "center", fontFamily: "'VT323', monospace",
+                fontSize: "14px", color: item.color, flexShrink: 0, textTransform: "uppercase",
+              }}>
+                {item.type === "tool" ? "APP" : item.type === "article" ? "TXT" : "FIC"}
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                  <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "20px", color: "#e8e8d0" }}>{item.title}</h3>
+                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap", marginLeft: "12px" }}>
+                    {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                </div>
+                <p style={{ fontSize: "14px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>{item.subtitle}</p>
+                <span style={{
+                  display: "inline-block", marginTop: "8px",
+                  fontFamily: "'VT323', monospace", fontSize: "12px", letterSpacing: "1px",
+                  color: item.color, background: item.color + "15",
+                  padding: "2px 8px", border: "1px solid " + item.color + "40",
+                  textTransform: "uppercase",
+                }}>{item.type}</span>
+              </div>
+            </div>
+          ))}
+
+          {/* Grand opening banner */}
+          <div style={{
+            border: "2px solid #e67e22", padding: "16px 20px",
+            fontFamily: "'VT323', monospace", fontSize: "18px",
+            color: "#e67e22", textAlign: "center", letterSpacing: "2px",
+            background: "#1a1520",
+          }}>
+            {"\u2726 \u2726 \u2726 GRAND OPENING \u2014 Welcome to The Post Idealist \u2726 \u2726 \u2726"}
+          </div>
+        </div>
+      );
+    }
+
+    function ToolsPage({ selectedTool, setSelectedTool }) {
+      const tool = selectedTool ? TOOLS.find(t => t.id === selectedTool) : null;
+
+      // UNIFY LANDING PAGE
+      if (tool && tool.id === "unify") {
         return (
           <div>
-            <button onClick={() => setSelectedApp(null)}
-              style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}
-            >{"\u2190 Back to all apps"}</button>
+            <button onClick={() => setSelectedTool(null)} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to all tools"}</button>
+            <div style={{ border: "2px solid " + tool.color, background: "#0f0f23" }}>
+              <div style={{ padding: "32px" }}>
+                <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "36px", color: "#e8e8d0", marginBottom: "4px" }}>Unify</h2>
+                <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "18px", color: "#4a90d9", fontStyle: "italic", marginBottom: "24px" }}>The Architecture of You</p>
 
-            <div style={{ border: "2px solid " + app.color, padding: "32px", background: "#0f0f23" }}>
-              <div style={{ display: "flex", gap: "20px", alignItems: "flex-start", marginBottom: "24px" }}>
-                <div style={{
-                  width: "80px", height: "80px", background: app.color + "22",
-                  border: "3px solid " + app.color, display: "flex", alignItems: "center",
-                  justifyContent: "center", fontFamily: "'VT323', monospace",
-                  fontSize: "42px", color: app.color, flexShrink: 0,
-                }}>{app.title[0]}</div>
-                <div>
-                  <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "32px", color: "#e8e8d0" }}>{app.title}</h2>
-                  <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: app.color, fontStyle: "italic" }}>{app.tagline}</p>
-                  <div style={{ display: "flex", gap: "8px", marginTop: "8px", flexWrap: "wrap" }}>
-                    {app.tech.map(t => (
-                      <span key={t} style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#888880", background: "#1a1a2e", padding: "2px 10px", border: "1px solid #333366" }}>{t}</span>
-                    ))}
-                    <span style={{
-                      fontFamily: "'VT323', monospace", fontSize: "14px",
-                      color: app.status === "Live" ? "#4a9a4a" : "#e67e22",
-                      background: app.status === "Live" ? "#1a3a1a" : "#3a2a1a",
-                      padding: "2px 10px",
-                      border: "1px solid " + (app.status === "Live" ? "#2a5a2a" : "#5a4a2a"),
-                    }}>{app.status}</span>
-                  </div>
-                </div>
-              </div>
+                {/* Part 1 */}
+                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>Part 1: The High Cost of Dwelling</h3>
+                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
+                  Your brain is a poor office manager. When you encounter a problem\u2014a conflict at work, a leaky tap, a stalled project\u2014your mind tends to \u201cdwell.\u201d It loops the problem repeatedly in your working memory, trying to solve it with brute force worry. This creates a high cognitive load, leaving you exhausted before you\u2019ve even started working.
+                </p>
+                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
+                  Unify breaks this loop using a Structured Input Template. By forcing you to fill out specific fields (Name, Area, Description), the interface acts as a cognitive container. You stop \u201cdwelling\u201d on the abstract worry and start \u201cdefining\u201d the concrete parameters. You are offloading the processing power from your brain to the browser.
+                </p>
+                <CognitiveContainerModule />
 
-              <div style={{ borderTop: "1px solid #333366", paddingTop: "20px", marginBottom: "24px" }}>
-                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>About</h3>
-                <p style={{ fontSize: "16px", lineHeight: 1.8, color: "#c0c0b0" }}>{app.description}</p>
-              </div>
+                {/* Part 2 */}
+                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>Part 2: Quantifying the Struggle</h3>
+                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
+                  In the heat of the moment, every problem feels like a catastrophe. A missed email feels just as stressful as a missed mortgage payment because our emotional brain struggles to differentiate scale. This leads to a distorted perspective where \u201ceverything is wrong.\u201d
+                </p>
+                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
+                  Unify demands an Objective Difficulty Rating (1\u20135 Stars). This simple click forces your logical brain to intervene. You must pause and ask: \u201cIs this actually a disaster (5 stars), or just a nuisance (2 stars)?\u201d Categorizing the difficulty restores your perspective, turning \u201cgeneralized anxiety\u201d into \u201cmanageable tasks.\u201d
+                </p>
+                <PerspectiveSliderModule />
 
-              <div style={{
-                background: "#12122a", margin: "0 -32px -32px",
-                padding: "24px 32px 32px", borderTop: "2px dashed #333366",
-              }}>
-                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px" }}>{"\uD83D\uDCD6 How to Use"}</h3>
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  {app.instructions.map((step, i) => (
-                    <div key={i} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
-                      <div style={{ fontFamily: "'VT323', monospace", fontSize: "22px", color: app.color, width: "30px", textAlign: "center", flexShrink: 0, lineHeight: "24px" }}>{i + 1}.</div>
-                      <p style={{ fontSize: "15px", lineHeight: 1.6, color: "#b0b0a0" }}>{step}</p>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ marginTop: "24px", textAlign: "center" }}>
-                  <a href={app.url} style={{
-                    display: "inline-block", background: app.color, color: "#fff",
-                    padding: "12px 32px", fontFamily: "'Courier Prime', monospace",
-                    fontSize: "14px", fontWeight: "bold", letterSpacing: "2px",
-                    textTransform: "uppercase", textDecoration: "none",
-                  }}>{"Launch App \u2192"}</a>
-                </div>
+                {/* Part 3 */}
+                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>Part 3: The Memory Trap</h3>
+                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
+                  We often assume we will remember our lessons, but we don\u2019t. The insight you gain during a stressful Tuesday is often gone by a relaxing Saturday.
+                </p>
+                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
+                  Unify acts as an External Memory Core. It allows you to \u201ccatch\u201d experiences, problems, and frictions the moment they occur. By collecting these data points, you stop relying on your fallible memory and start building a database of your own life. This allows you to spot patterns and prepare for the next occurrence, rather than being blindsided by history repeating itself.
+                </p>
+                <StackModule />
+
+                {/* Part 4 */}
+                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>Part 4: The Harada Trajectory</h3>
+                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
+                  Solving problems returns you to zero. To go above zero\u2014to achieve mastery\u2014you need a trajectory.
+                </p>
+                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
+                  Unify utilizes the Harada Method, a Japanese framework for building self-reliance and achieving difficult goals. Success is not a lottery win; it is the result of sustained effort over time. Five years is enough to completely transform your experience of life, provided you maintain an upward trajectory.
+                </p>
+                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
+                  The Harada Grid breaks a massive 5-year vision into 8 sub-goals, and those sub-goals into daily habits. It turns the \u201cimpossible\u201d into the \u201cinevitable.\u201d
+                </p>
+                <HaradaGridModule />
+
+                {/* Part 5 */}
+                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>Part 5: Sovereign Data</h3>
+                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
+                  Finally, true self-analysis requires a sanctuary. You cannot be honest about your financial fears or your personal failings if you believe a server is logging your keystrokes.
+                </p>
+                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
+                  Unify is built on Browser Storage Architecture.
+                </p>
+                <LocalLockModule />
               </div>
             </div>
           </div>
         );
       }
 
+      // TOMMYPOP LANDING PAGE
+      if (tool && tool.id === "tommypop") {
+        const g = tool.parentGuide;
+        return (
+          <div>
+            <button onClick={() => setSelectedTool(null)} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to all tools"}</button>
+            <div style={{ border: "2px solid " + tool.color, padding: "32px", background: "#0f0f23" }}>
+              <div style={{ display: "flex", gap: "20px", alignItems: "flex-start", marginBottom: "24px" }}>
+                <div style={{
+                  width: "80px", height: "80px", background: tool.color + "22",
+                  border: "3px solid " + tool.color, display: "flex", alignItems: "center",
+                  justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "42px", color: tool.color, flexShrink: 0,
+                }}>T</div>
+                <div>
+                  <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "32px", color: "#e8e8d0" }}>{tool.title}</h2>
+                  <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: tool.color, fontStyle: "italic" }}>{tool.tagline}</p>
+                  <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+                    {tool.tech.map(t => (
+                      <span key={t} style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#888880", background: "#1a1a2e", padding: "2px 10px", border: "1px solid #333366" }}>{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <p style={{ fontSize: "16px", lineHeight: 1.8, color: "#c0c0b0", marginBottom: "20px" }}>{g.intro}</p>
+
+              <div style={{ marginBottom: "24px" }}>
+                {g.features.map((f, i) => (
+                  <p key={i} style={{ fontSize: "15px", lineHeight: 1.7, color: "#b0b0a0", marginBottom: "8px", paddingLeft: "16px", borderLeft: "2px solid " + tool.color }}>
+                    {f}
+                  </p>
+                ))}
+              </div>
+
+              <div style={{ borderTop: "2px dashed #333366", paddingTop: "24px", marginTop: "24px" }}>
+                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "8px" }}>Parent Guide: Breaking the Screen Loop</h3>
+                <p style={{ fontSize: "15px", lineHeight: 1.7, color: "#a0a090", marginBottom: "20px" }}>
+                  Most children struggle to transition away from high-intensity apps (like YouTube or \u201cGacha\u201d games) because their focus is Contracted. Stopping abruptly often causes a \u201cdopamine crash\u201d and subsequent tantrum. TommyPop acts as a bridge.
+                </p>
+
+                <h4 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0", marginBottom: "16px" }}>The Intervention Strategy</h4>
+
+                {g.strategy.map((step, i) => (
+                  <div key={i} style={{ display: "flex", gap: "16px", marginBottom: "16px", alignItems: "flex-start" }}>
+                    <div style={{ fontFamily: "'VT323', monospace", fontSize: "24px", color: tool.color, width: "30px", textAlign: "center", flexShrink: 0 }}>{i + 1}</div>
+                    <div>
+                      <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "15px", color: "#e8e8d0", fontWeight: "bold", marginBottom: "4px" }}>{step.title}</div>
+                      <p style={{ fontSize: "15px", lineHeight: 1.7, color: "#b0b0a0" }}>{step.text}</p>
+                    </div>
+                  </div>
+                ))}
+
+                <div style={{ marginTop: "24px", padding: "16px", background: "#1a2010", border: "1px solid #3a5a2a" }}>
+                  <h4 style={{ fontFamily: "'Special Elite', monospace", fontSize: "16px", color: "#4a9a4a", marginBottom: "8px" }}>Why This Works</h4>
+                  <p style={{ fontSize: "15px", lineHeight: 1.7, color: "#b0b0a0" }}>{g.why}</p>
+                </div>
+              </div>
+
+              <div style={{ marginTop: "28px", textAlign: "center" }}>
+                <a href={tool.url} target="_blank" rel="noopener" style={{
+                  display: "inline-block", background: tool.color, color: "#fff",
+                  padding: "12px 32px", fontFamily: "'Courier Prime', monospace", fontSize: "14px",
+                  fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none",
+                }}>{"Play TommyPop \u2192"}</a>
+                <p style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", marginTop: "8px" }}>No permissions. No servers. No data collected.</p>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // GENERIC TOOL PAGE (TommySpace etc)
+      if (tool) {
+        return (
+          <div>
+            <button onClick={() => setSelectedTool(null)} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to all tools"}</button>
+            <div style={{ border: "2px solid " + tool.color, padding: "32px", background: "#0f0f23" }}>
+              <div style={{ display: "flex", gap: "20px", alignItems: "flex-start", marginBottom: "24px" }}>
+                <div style={{
+                  width: "80px", height: "80px", background: tool.color + "22",
+                  border: "3px solid " + tool.color, display: "flex", alignItems: "center",
+                  justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "42px", color: tool.color, flexShrink: 0,
+                }}>{tool.title[0]}</div>
+                <div>
+                  <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "32px", color: "#e8e8d0" }}>{tool.title}</h2>
+                  <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: tool.color, fontStyle: "italic" }}>{tool.tagline}</p>
+                  <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+                    {tool.tech.map(t => (
+                      <span key={t} style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#888880", background: "#1a1a2e", padding: "2px 10px", border: "1px solid #333366" }}>{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p style={{ fontSize: "16px", lineHeight: 1.8, color: "#c0c0b0" }}>{tool.description}</p>
+              {tool.url !== "#" && (
+                <div style={{ marginTop: "24px", textAlign: "center" }}>
+                  <a href={tool.url} target="_blank" rel="noopener" style={{
+                    display: "inline-block", background: tool.color, color: "#fff",
+                    padding: "12px 32px", fontFamily: "'Courier Prime', monospace", fontSize: "14px",
+                    fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none",
+                  }}>{"Launch \u2192"}</a>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      // TOOLS LIST
       return (
         <div>
-          <SectionHeader title="Web Apps" subtitle="Things I've built \u2014 click any app for details and instructions" />
+          <SectionHeader title="Tools" subtitle="Things I\u2019ve built \u2014 click any for details" />
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {PORTFOLIO_APPS.map((app) => (
-              <div key={app.id}
-                onClick={() => setSelectedApp(app.id)}
+            {TOOLS.map((t) => (
+              <div key={t.id}
+                onClick={() => setSelectedTool(t.id)}
                 style={{
                   border: "1px solid #333366", padding: "24px", cursor: "pointer",
-                  background: "#0f0f23", display: "flex", gap: "20px",
-                  alignItems: "flex-start", transition: "all 0.2s",
+                  background: "#0f0f23", display: "flex", gap: "20px", alignItems: "flex-start",
+                  transition: "all 0.2s",
                 }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = app.color; e.currentTarget.style.transform = "translateX(4px)"; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = t.color; e.currentTarget.style.transform = "translateX(4px)"; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = "#333366"; e.currentTarget.style.transform = "translateX(0)"; }}
               >
                 <div style={{
-                  width: "64px", height: "64px", background: app.color + "22",
-                  border: "2px solid " + app.color, display: "flex", alignItems: "center",
+                  width: "64px", height: "64px", background: t.color + "22",
+                  border: "2px solid " + t.color, display: "flex", alignItems: "center",
                   justifyContent: "center", fontFamily: "'VT323', monospace",
-                  fontSize: "34px", color: app.color, flexShrink: 0,
-                }}>{app.title[0]}</div>
+                  fontSize: "34px", color: t.color, flexShrink: 0,
+                }}>{t.title[0]}</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "baseline", gap: "12px", marginBottom: "4px" }}>
-                    <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e8e8d0" }}>{app.title}</h3>
-                    <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#666680", fontStyle: "italic" }}>{"\u2014 " + app.tagline}</span>
+                    <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e8e8d0" }}>{t.title}</h3>
+                    <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#666680", fontStyle: "italic" }}>{"\u2014 " + t.tagline}</span>
                   </div>
-                  <p style={{ fontSize: "15px", lineHeight: 1.6, color: "#a0a090", marginBottom: "8px" }}>{app.description}</p>
+                  <p style={{ fontSize: "15px", lineHeight: 1.6, color: "#a0a090", marginBottom: "8px" }}>{t.description}</p>
                   <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                    {app.tech.map(t => (
-                      <span key={t} style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#666680", background: "#1a1a2e", padding: "1px 8px", border: "1px solid #282848" }}>{t}</span>
+                    {t.tech.map(tech => (
+                      <span key={tech} style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#666680", background: "#1a1a2e", padding: "1px 8px", border: "1px solid #282848" }}>{tech}</span>
                     ))}
                   </div>
                 </div>
@@ -532,69 +799,107 @@
       );
     }
 
-    function ArticlesPage({ selectedArticle, setSelectedArticle }) {
-      const article = selectedArticle ? ARTICLES.find(a => a.id === selectedArticle) : null;
+    // ==============================
+    // ORIGIN OF IDEAS ARTICLE
+    // ==============================
+    function OriginOfIdeasArticle({ goBack }) {
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
+          <article style={{ border: "1px solid #333366", background: "#0f0f23", padding: "40px", maxWidth: "720px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>Essay {"\u00b7"} 8 min {"\u00b7"} January 4, 2022</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "34px", color: "#e8e8d0", lineHeight: 1.2, marginBottom: "6px" }}>On the Origin of Ideas...</h2>
+            <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>A normal article</p>
+            <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
 
-      if (article) {
-        const idx = ARTICLES.findIndex(a => a.id === article.id);
-        const prev = idx > 0 ? ARTICLES[idx - 1] : null;
-        const next = idx < ARTICLES.length - 1 ? ARTICLES[idx + 1] : null;
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Where do ideas come from?</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Everyone knows that ideas come from social media, but where does social media get its ideas?</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>The views of the political-left dominate the social media timelines. The left's public displays of compassion and celebration of marginal identities are easier to display publicly than the acts of disgust and righteous anger that the political-right are prone to.</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>A sensible person who wanted to share right-wing content would need to share at least 10 leftist acts of compassion just to make their timeline seem balanced. Even this ratio is risky because right-wing content tends to be more potent because they take a firm stand against something specific rather than celebrating something general.</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>The following is an entirely real screenshot that shows when the average person shares videos to their timeline, it looks something like...</p>
 
-        return (
-          <div>
-            <button onClick={() => setSelectedArticle(null)}
-              style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}
-            >{"\u2190 Back to all articles"}</button>
-
-            <article style={{ border: "1px solid #333366", background: "#0f0f23", padding: "40px", maxWidth: "720px" }}>
-              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>
-                {article.category} {"\u00b7"} {article.readTime} {"\u00b7"} {new Date(article.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            <Screenshot number={1}>
+              <div style={{ textAlign: "center", lineHeight: 2.2 }}>
+                <div>Celebrating Indigenous Culture</div>
+                <div>Pride Parade 2021</div>
+                <div>Stop the spread of COVID-19</div>
+                <div style={{ color: "#e67e22", fontWeight: "bold" }}>{"LET'S GET REAL ABOUT IMMIGRANTS >:("}</div>
+                <div>How to save the rainforest</div>
               </div>
-              <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "34px", color: "#e8e8d0", lineHeight: 1.2, marginBottom: "6px" }}>{article.title}</h2>
-              <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>{article.subtitle}</p>
-              <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
+            </Screenshot>
 
-              {article.content.split("\n\n").map((para, i) => (
-                <p key={i} style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px", textIndent: i > 0 ? "2em" : "0" }}>{para}</p>
-              ))}
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Jesus what was that immigrant thing about? Maybe they had a bad day? Maybe an incident happened? Let's investigate the video.</p>
 
-              {article.interactive && (
-                <div style={{ marginTop: "32px", border: "2px dashed #e67e22", padding: "20px", background: "#1a1520" }}>
-                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px" }}>{"\u26A1 Interactive Element"}</div>
-                  <p style={{ fontFamily: "'Lora', serif", fontSize: "15px", color: "#c0b0a0", fontStyle: "italic", lineHeight: 1.6 }}>{article.interactiveNote}</p>
-                </div>
-              )}
-            </article>
+            <Screenshot number={2}>
+              <p style={{ textAlign: "center", color: "#888880" }}>From the thumbnail it appears, the video in question is one of those ice-cream videos where the Turkish guy keeps moving the ice cream cone.</p>
+            </Screenshot>
 
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "24px", gap: "16px" }}>
-              {prev ? (
-                <button onClick={() => setSelectedArticle(prev.id)}
-                  style={{ background: "#0f0f23", border: "1px solid #333366", padding: "12px 20px", cursor: "pointer", textAlign: "left", flex: 1 }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = "#4a9aea"}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
-                >
-                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680" }}>{"\u2190 Previous"}</div>
-                  <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "15px", color: "#e8e8d0", marginTop: "4px" }}>{prev.title}</div>
-                </button>
-              ) : <div style={{ flex: 1 }} />}
-              {next ? (
-                <button onClick={() => setSelectedArticle(next.id)}
-                  style={{ background: "#0f0f23", border: "1px solid #333366", padding: "12px 20px", cursor: "pointer", textAlign: "right", flex: 1 }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = "#4a9aea"}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
-                >
-                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680" }}>{"\u2192 Next"}</div>
-                  <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "15px", color: "#e8e8d0", marginTop: "4px" }}>{next.title}</div>
-                </button>
-              ) : <div style={{ flex: 1 }} />}
-            </div>
-          </div>
-        );
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Maybe they shared this because they were feeling like embracing their dark-side or something. With a surge of righteous confidence they felt confident enough to share to their timeline knowing the views run counter to the mainstream narrative. Now or later they gotta apologize, because their timelines are public and eventually someone is going to see the post and take issue with it. Why is it like this?</p>
+
+            <Screenshot number={3}>
+              <p style={{ textAlign: "center", color: "#555560", fontStyle: "italic" }}>Screenshot of right-wing content being shared on a timeline*<br />(leaving you the reader outraged!)</p>
+            </Screenshot>
+
+            <p style={{ fontSize: "14px", color: "#666680", fontStyle: "italic", marginBottom: "20px" }}>*In case you're wondering, these are loading correctly.</p>
+
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>I think it's because right-wing content is something to be enjoyed with those you trust, not the whole world. Right-wing content may not be as present on the timeline, but it dominates the instant messenger inboxes.</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Righteous anger isn't the only reason to share controversial content, often a humor element creates an incentive to share right-wing content with trusted friends. The unspoken agreement is that the joke is private and not to be shared. The beliefs aren't really held by either person, it's a joke against the people who actually believe the content. At least that's how it begins.</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>For whatever reason people trust each other with their right-wing content and sometimes this trust is broken. Let's check out this real screenshot of a chatbox with an example of racist and homophobic humor, the kind that could cause trouble if it got out.</p>
+
+            <Screenshot number={4}>
+              <div style={{ padding: "12px 0" }}>
+                <ChatMessage person="1" text="Sends a right-wing joke" />
+                <div style={{ height: "12px" }} />
+                <ChatMessage person="2" text="I don't think this article is getting your point across." />
+              </div>
+            </Screenshot>
+
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Screenshots can be damning but it's not fair to use them as evidence. Screenshots can be selectively cropped and edited. Standard practice should be to leak the whole transcript. I want to read the full convo from the beginning. Because when you scroll up you see things like...</p>
+
+            <Screenshot number={5}>
+              <div style={{ padding: "12px 0" }}>
+                <ChatMessage person="1" text="Hey." />
+                <ChatMessage person="2" text="Hey," />
+                <ChatMessage person="1" text="This way of writing could be a modern way for reaching inaccessible parts of the personality." />
+                <ChatMessage person="2" text="Responding to messages from yourself seems to create some kind of link between parts of the brain that are usually separated." />
+                <ChatMessage person="1" text="Doing this now is going to derail the article, plus I already announced this screenshot is supposed to explain the previous one." />
+                <ChatMessage person="2" text="The original premise of the article isn't even any good. If you think about it for a few minutes there is plenty of public right-wing content. Way more than necessary to disprove your theory." />
+                <ChatMessage person="1" text="Yeah, I just felt that if I wrote about politics I would get views." />
+                <ChatMessage person="2" text="Pretty much no one's going to get this far anyway, you opened way too political." />
+                <ChatMessage person="1" text="If no one's going to read it, why do you bother to fix your typos?" />
+                <ChatMessage person="2" text="Because for the reader the words are already written, they couldn't see me make the change." />
+                <ChatMessage person="1" text="I saw the typo change so I'm confused. Are we the same person or different? Am I alone right now??" />
+                <ChatMessage person="2" text="To the degree you remain insecure you'll never be alone. You're bringing society with you into everything you try to do." />
+                <ChatMessage person="1" text="That's lame because I don't really like our society." />
+              </div>
+            </Screenshot>
+
+            <p style={{ fontSize: "14px", color: "#666680", fontStyle: "italic", marginBottom: "20px" }}>*that was weird, I meant to write about racism.</p>
+
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>So the screenshot didn't really show it but the point was meant to be that controversial opinions are a kind of private good. Casting judgement is something that most people are not comfortable with in 99% of situations. But in a private inbox sometimes that 1% comes out.</p>
+
+            <Screenshot number={6}>
+              <div style={{ padding: "12px 0" }}>
+                <ChatMessage person="1" text="I'm trying to talk about how racism spreads on social media." />
+                <ChatMessage person="2" text="That's a really good thing to talk about, when you're finished you should share this with your followers to spread awareness." />
+              </div>
+            </Screenshot>
+
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>People project their negative experiences with individuals onto groups rather than process the meaning of the specific memory.</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>So where does social media get its ideas from? It gets them from the experiences of people.</p>
+          </article>
+        </div>
+      );
+    }
+
+    function ArticlesPage({ selectedArticle, setSelectedArticle }) {
+      if (selectedArticle === "origin-of-ideas") {
+        return <OriginOfIdeasArticle goBack={() => setSelectedArticle(null)} />;
       }
 
       return (
         <div>
-          <SectionHeader title="Articles" subtitle="Interactive essays, investigations, and ideas" />
+          <SectionHeader title="Articles" subtitle="Essays and ideas" />
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             {ARTICLES.map((article) => (
               <div key={article.id}
@@ -607,13 +912,12 @@
                   <div>
                     <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "6px" }}>
                       {article.category} {"\u00b7"} {article.readTime}
-                      {article.interactive && <span style={{ color: "#e67e22" }}>{" \u00b7 \u26A1 Interactive"}</span>}
                     </div>
                     <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e8e8d0", marginBottom: "4px" }}>{article.title}</h3>
                     <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#888880", fontStyle: "italic" }}>{article.subtitle}</p>
                   </div>
                   <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#555560", whiteSpace: "nowrap", marginLeft: "20px" }}>
-                    {new Date(article.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    {new Date(article.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </div>
                 </div>
               </div>
@@ -623,59 +927,7 @@
       );
     }
 
-    function NovelPage({ selectedChapter, setSelectedChapter }) {
-      const chapter = selectedChapter !== null ? NOVEL.chapters[selectedChapter] : null;
-
-      if (chapter) {
-        const prev = selectedChapter > 0 ? NOVEL.chapters[selectedChapter - 1] : null;
-        const next = selectedChapter < NOVEL.chapters.length - 1 ? NOVEL.chapters[selectedChapter + 1] : null;
-
-        return (
-          <div>
-            <button onClick={() => setSelectedChapter(null)}
-              style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}
-            >{"\u2190 Back to table of contents"}</button>
-
-            <article style={{ border: "1px solid #333366", background: "#0f0f23", padding: "40px", maxWidth: "680px" }}>
-              <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#4a4a8a", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "8px" }}>Chapter {chapter.number}</div>
-              <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "36px", color: "#e8e8d0", marginBottom: "24px" }}>{chapter.title}</h2>
-              <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
-
-              {chapter.content.split("\n\n").map((para, i) => (
-                <p key={i} style={{ fontSize: "16px", lineHeight: 2, color: "#c8c8b8", marginBottom: "22px", textIndent: i > 0 ? "2em" : "0", fontFamily: "'Lora', serif" }}>{para}</p>
-              ))}
-            </article>
-
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "24px", gap: "16px" }}>
-              {prev ? (
-                <button onClick={() => setSelectedChapter(selectedChapter - 1)}
-                  style={{ background: "#0f0f23", border: "1px solid #333366", padding: "12px 20px", cursor: "pointer", textAlign: "left", flex: 1 }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = "#e67e22"}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
-                >
-                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680" }}>{"\u2190 Previous Chapter"}</div>
-                  <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "15px", color: "#e8e8d0", marginTop: "4px" }}>Ch. {prev.number}: {prev.title}</div>
-                </button>
-              ) : <div style={{ flex: 1 }} />}
-              {next ? (
-                <button onClick={() => setSelectedChapter(selectedChapter + 1)}
-                  style={{ background: "#0f0f23", border: "1px solid #333366", padding: "12px 20px", cursor: "pointer", textAlign: "right", flex: 1 }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = "#e67e22"}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
-                >
-                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680" }}>{"\u2192 Next Chapter"}</div>
-                  <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "15px", color: "#e8e8d0", marginTop: "4px" }}>Ch. {next.number}: {next.title}</div>
-                </button>
-              ) : (
-                <div style={{ flex: 1, border: "1px dashed #333366", padding: "12px 20px", textAlign: "right" }}>
-                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#555560" }}>Next chapter coming soon...</div>
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      }
-
+    function NovelPage() {
       return (
         <div>
           <div style={{
@@ -691,36 +943,17 @@
             </div>
           </div>
 
-          <SectionHeader title="Chapters" subtitle="Updated weekly \u2014 click to read" />
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            {NOVEL.chapters.map((ch, i) => (
-              <div key={ch.number}
-                onClick={() => setSelectedChapter(i)}
-                style={{
-                  border: "1px solid #333366", padding: "20px 24px", cursor: "pointer",
-                  background: "#0f0f23", display: "flex", alignItems: "center",
-                  gap: "20px", transition: "all 0.2s",
-                }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "#e67e22"; e.currentTarget.style.paddingLeft = "28px"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "#333366"; e.currentTarget.style.paddingLeft = "24px"; }}
-              >
-                <div style={{ fontFamily: "'VT323', monospace", fontSize: "28px", color: "#333366", width: "50px", textAlign: "center", flexShrink: 0 }}>
-                  {String(ch.number).padStart(2, '0')}
-                </div>
-                <div>
-                  <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "20px", color: "#e8e8d0" }}>{ch.title}</h3>
-                  <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>
-                    {ch.content.substring(0, 100).trim()}...
-                  </p>
-                </div>
-              </div>
-            ))}
-            <div style={{ border: "1px dashed #282848", padding: "20px 24px", display: "flex", alignItems: "center", gap: "20px", opacity: 0.5 }}>
-              <div style={{ fontFamily: "'VT323', monospace", fontSize: "28px", color: "#282848", width: "50px", textAlign: "center" }}>04</div>
-              <div>
-                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "20px", color: "#555560" }}>???</h3>
-                <p style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#444450" }}>Coming soon...</p>
-              </div>
+          <div style={{
+            border: "1px dashed #333366", padding: "40px", textAlign: "center",
+          }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "24px", color: "#e67e22", letterSpacing: "3px", marginBottom: "16px" }}>COMING SOON</div>
+            <p style={{ fontSize: "16px", lineHeight: 1.8, color: "#888880", maxWidth: "500px", margin: "0 auto" }}>
+              {NOVEL.message}
+            </p>
+            <div style={{ marginTop: "24px" }}>
+              <a href="https://x.com/UGoalsetter" target="_blank" rel="noopener" style={{
+                fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#4a9aea",
+              }}>Follow on X for updates {"\u2192"}</a>
             </div>
           </div>
         </div>
@@ -730,27 +963,32 @@
     function AboutPage() {
       return (
         <div>
-          <SectionHeader title="About" subtitle="The story behind the dispatch" />
+          <SectionHeader title="About" subtitle="The story behind The Post Idealist" />
           <div style={{ border: "1px solid #333366", background: "#0f0f23", padding: "32px", maxWidth: "680px" }}>
             <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "20px" }}>
               <span style={{ fontFamily: "'Special Elite', monospace", fontSize: "42px", color: "#e67e22", float: "left", lineHeight: "36px", marginRight: "8px", marginTop: "4px" }}>T</span>
-              {"he Pixel Dispatch started as a place to put things \u2014 apps I'd built, ideas I couldn't shake, a novel I was writing in the margins of my day job. I wanted something that felt like the web I grew up on: a place with personality, where you could wander around and stumble onto something interesting."}
+              {"he Post Idealist is a home for tools, writing, and ideas. The tools are built to solve real problems without harvesting your data. The articles are experiments in form. The novel is being written in public because shipping beats perfecting."}
             </p>
             <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "20px" }}>
-              {"This isn't a portfolio in the LinkedIn sense. It's more like a magazine rack in a coffee shop \u2014 some of it's polished, some of it's half-finished, all of it's mine. The apps have instructions because I think good tools deserve good manuals. The articles are interactive because reading should be an activity, not a consumption event. The novel is published here chapter by chapter because I believe in shipping before it's perfect."}
+              {"Everything here runs on the same principle: your attention is yours. No tracking, no ads, no algorithmic manipulation. Just things worth spending a few minutes with."}
             </p>
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "20px" }}>
-              {"If you're looking for a clean portfolio site with a hero banner and a \u201clet's connect\u201d button, this isn't it. But if you want to spend a few minutes reading something weird, trying an app that might not exist tomorrow, or watching a story unfold in real time \u2014 pull up a chair."}
-            </p>
+
             <div style={{ borderTop: "1px dashed #333366", marginTop: "28px", paddingTop: "20px" }}>
               <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>Colophon</h3>
               <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#888880", lineHeight: 1.8 }}>
-                <p>Built with: React, stubbornness, and too much coffee</p>
-                <p>Fonts: Special Elite, Courier Prime, VT323, Lora</p>
-                <p>Hosted on: A computer somewhere</p>
-                <p>Last updated: February 2025</p>
-                <p>Best experienced: Late at night, with headphones on</p>
+                <p>Author: {AUTHOR}</p>
+                <p>Built with: HTML, JavaScript, stubbornness</p>
+                <p>Hosted on: GitHub Pages</p>
+                <p>Established: 2026</p>
+                <p>Data collected: None</p>
               </div>
+            </div>
+
+            <div style={{ borderTop: "1px dashed #333366", marginTop: "20px", paddingTop: "20px" }}>
+              <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>Find Me</h3>
+              <a href="https://x.com/UGoalsetter" target="_blank" rel="noopener" style={{
+                fontFamily: "'Courier Prime', monospace", fontSize: "15px", color: "#4a9aea",
+              }}>@UGoalsetter on X/Twitter</a>
             </div>
           </div>
         </div>
@@ -762,7 +1000,7 @@
         <footer style={{ borderTop: "2px solid #333366", padding: "24px 20px", textAlign: "center", background: "#0a0a1a", marginTop: "40px" }}>
           <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "16px", color: "#555560", marginBottom: "8px" }}>{SITE_NAME}</div>
           <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#3a3a5a", letterSpacing: "1px" }}>
-            {"\u00A9 2025 \u00b7 Made by hand \u00b7 No AI was used in the writing of the novel (the website is another story)"}
+            {"\u00A9 2026 \u00b7 " + AUTHOR + " \u00b7 No tracking \u00b7 No ads \u00b7 No data collected"}
           </div>
           <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#2a2a4a", marginTop: "8px" }}>
             {"You are visitor #" + VISITOR_COUNT + " \u00b7 Thanks for stopping by"}
@@ -771,35 +1009,35 @@
       );
     }
 
-    // --- MAIN APP ---
+    // ==============================
+    // MAIN APP
+    // ==============================
     function App() {
       const [currentPage, setCurrentPage] = useState("home");
-      const [selectedApp, setSelectedApp] = useState(null);
+      const [selectedTool, setSelectedTool] = useState(null);
       const [selectedArticle, setSelectedArticle] = useState(null);
-      const [selectedChapter, setSelectedChapter] = useState(null);
 
       const setPage = useCallback((page) => {
         setCurrentPage(page);
-        if (page !== "portfolio") setSelectedApp(null);
+        if (page !== "tools") setSelectedTool(null);
         if (page !== "articles") setSelectedArticle(null);
-        if (page !== "novel") setSelectedChapter(null);
         window.scrollTo({ top: 0, behavior: "smooth" });
       }, []);
 
       const renderPage = () => {
         switch (currentPage) {
           case "home":
-            return <HomePage setPage={setPage} setSelectedApp={setSelectedApp} setSelectedArticle={setSelectedArticle} setSelectedChapter={setSelectedChapter} />;
-          case "portfolio":
-            return <PortfolioPage selectedApp={selectedApp} setSelectedApp={setSelectedApp} />;
+            return <HomePage setPage={setPage} setSelectedTool={setSelectedTool} setSelectedArticle={setSelectedArticle} />;
+          case "tools":
+            return <ToolsPage selectedTool={selectedTool} setSelectedTool={setSelectedTool} />;
           case "articles":
             return <ArticlesPage selectedArticle={selectedArticle} setSelectedArticle={setSelectedArticle} />;
           case "novel":
-            return <NovelPage selectedChapter={selectedChapter} setSelectedChapter={setSelectedChapter} />;
+            return <NovelPage />;
           case "about":
             return <AboutPage />;
           default:
-            return <HomePage setPage={setPage} setSelectedApp={setSelectedApp} setSelectedArticle={setSelectedArticle} setSelectedChapter={setSelectedChapter} />;
+            return <HomePage setPage={setPage} setSelectedTool={setSelectedTool} setSelectedArticle={setSelectedArticle} />;
         }
       };
 
@@ -811,9 +1049,7 @@
         }}>
           <Header currentPage={currentPage} setPage={setPage} />
           <div style={{ display: "flex", gap: "24px", padding: "24px 20px", flex: 1 }}>
-            <main style={{ flex: 1, minWidth: 0 }}>
-              {renderPage()}
-            </main>
+            <main style={{ flex: 1, minWidth: 0 }}>{renderPage()}</main>
             <Sidebar />
           </div>
           <Footer />
