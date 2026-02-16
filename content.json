@@ -1,0 +1,26 @@
+{
+  "site": {
+    "name": "THE POST IDEALIST",
+    "tagline": "Tools \u00b7 Articles \u00b7 Fiction",
+    "author": "The Secondary",
+    "established": 2026,
+    "issue": "001",
+    "twitter": "https://x.com/UGoalsetter"
+  },
+  "tools": [
+    { "id": "unify", "title": "Unify Version 2", "tagline": "The Architecture of You", "date": "2025-12-01", "color": "#4a90d9", "file": "tools/unify.json" },
+    { "id": "tommypop", "title": "TommyPop", "tagline": "A non-addictive game for toddlers", "date": "2025-11-01", "color": "#e67e22", "file": "tools/tommypop.json" },
+    { "id": "tommyspace", "title": "TommySpace", "tagline": "Explore the solar system to learn the names of the planets", "date": "2025-10-01", "color": "#8e44ad", "file": "tools/tommyspace.json" }
+  ],
+  "articles": [
+    { "id": "origin-of-ideas", "title": "On the Origin of Ideas...", "subtitle": "A normal article", "date": "2022-01-04", "category": "Essay", "file": "articles/origin-of-ideas.json" }
+  ],
+  "novel": {
+    "title": "BIGFOOT'S SHOE",
+    "genre": "Psychological Fiction",
+    "synopsis": "A coming of age tale for the modern world.",
+    "comingSoon": true,
+    "message": "The author is currently reworking the beginning after finally figuring out the ending. Chapters will appear here as they\u2019re ready.",
+    "chapters": []
+  }
+}
