@@ -35,6 +35,23 @@
     input:focus, select:focus, textarea:focus {
       border-color: #4a9aea;
     }
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .site-layout { flex-direction: column !important; }
+      .site-sidebar { width: 100% !important; order: 2; }
+      .site-main { order: 1; }
+      .home-grid { grid-template-columns: 1fr !important; }
+      .nav-bar { gap: 0 !important; }
+      .nav-bar button { padding: 8px 14px !important; font-size: 12px !important; letter-spacing: 1px !important; }
+      .feed-item { flex-direction: column !important; gap: 10px !important; }
+      .feed-icon { width: 40px !important; height: 40px !important; font-size: 12px !important; }
+      .feed-meta { flex-direction: column !important; gap: 2px !important; }
+      .top-bar { flex-direction: column !important; gap: 2px !important; text-align: center !important; font-size: 11px !important; }
+    }
+    @media (max-width: 480px) {
+      .site-title { font-size: 28px !important; letter-spacing: 3px !important; }
+      .article-body { padding: 20px !important; }
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -179,19 +196,19 @@
           borderBottom: "2px solid #333366",
           position: "sticky", top: 0, zIndex: 100,
         }}>
-          <div style={{
+          <div className="top-bar" style={{
             background: "#0a0a1a", padding: "4px 20px",
             display: "flex", justifyContent: "space-between", alignItems: "center",
             fontSize: "12px", fontFamily: "'VT323', monospace", color: "#666680",
             borderBottom: "1px solid #222244", letterSpacing: "1px",
           }}>
-            <span>EST. 2026 \u2014 ISSUE #001</span>
-            <span>{time.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} \u2014 {time.toLocaleTimeString()}</span>
+            <span>{"EST. 2026 \u2014 ISSUE #001"}</span>
+            <span>{time.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} {"\u2014"} {time.toLocaleTimeString()}</span>
           </div>
 
           <div style={{ padding: "20px 20px 0", textAlign: "center" }}>
             <div onClick={() => setPage("home")} style={{ cursor: "pointer", display: "inline-block" }}>
-              <h1 style={{
+              <h1 className="site-title" style={{
                 fontFamily: "'Special Elite', 'Courier Prime', monospace",
                 fontSize: "clamp(28px, 5vw, 52px)", color: "#e8e8d0",
                 letterSpacing: "6px", textTransform: "uppercase",
@@ -209,7 +226,7 @@
             </div>
           </div>
 
-          <nav style={{ display: "flex", justifyContent: "center", padding: "12px 20px 0", flexWrap: "wrap" }}>
+          <nav className="nav-bar" style={{ display: "flex", justifyContent: "center", padding: "12px 20px 0", flexWrap: "wrap" }}>
             {navItems.map((item) => (
               <button key={item.id} onClick={() => setPage(item.id)}
                 style={{
@@ -232,7 +249,7 @@
 
     function Sidebar() {
       return (
-        <aside style={{ width: "240px", flexShrink: 0, display: "flex", flexDirection: "column", gap: "20px" }}>
+        <aside className="site-sidebar" style={{ width: "240px", flexShrink: 0, display: "flex", flexDirection: "column", gap: "20px" }}>
           <div style={{ border: "1px solid #333366", padding: "16px", textAlign: "center", background: "#0f0f23" }}>
             <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px" }}>Visitors</div>
             <div style={{ fontFamily: "'VT323', monospace", fontSize: "32px", color: "#4a9aea", background: "#000010", padding: "8px", border: "1px inset #222244", letterSpacing: "4px" }}>{VISITOR_COUNT}</div>
@@ -527,7 +544,7 @@
           <SectionHeader title="Feed" subtitle="Everything, most recent first" />
 
           {FEED_ITEMS.map((item) => (
-            <div key={item.type + item.id}
+            <div key={item.type + item.id} className="feed-item"
               onClick={() => {
                 if (item.type === "tool") { setSelectedTool(item.id); setPage("tools"); }
                 else if (item.type === "article") { setSelectedArticle(item.id); setPage("articles"); }
@@ -541,7 +558,7 @@
               onMouseEnter={e => e.currentTarget.style.borderColor = item.color}
               onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
             >
-              <div style={{
+              <div className="feed-icon" style={{
                 width: "48px", height: "48px", background: item.color + "22",
                 border: "2px solid " + item.color, display: "flex", alignItems: "center",
                 justifyContent: "center", fontFamily: "'VT323', monospace",
@@ -549,10 +566,10 @@
               }}>
                 {item.type === "tool" ? "APP" : item.type === "article" ? "TXT" : "FIC"}
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="feed-meta" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "4px" }}>
                   <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "20px", color: "#e8e8d0" }}>{item.title}</h3>
-                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap", marginLeft: "12px" }}>
+                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap" }}>
                     {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </span>
                 </div>
@@ -1127,8 +1144,8 @@
           background: "#1a1a2e", boxShadow: "0 0 60px rgba(0,0,0,0.5)",
         }}>
           <Header currentPage={currentPage} setPage={setPage} />
-          <div style={{ display: "flex", gap: "24px", padding: "24px 20px", flex: 1 }}>
-            <main style={{ flex: 1, minWidth: 0 }}>{renderPage()}</main>
+          <div className="site-layout" style={{ display: "flex", gap: "24px", padding: "24px 20px", flex: 1 }}>
+            <main className="site-main" style={{ flex: 1, minWidth: 0 }}>{renderPage()}</main>
             <Sidebar />
           </div>
           <Footer />
