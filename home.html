@@ -9,12 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=VT323&family=Special+Elite&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #1a1a2e;
-      color: #d4d4c1;
-      font-family: 'Lora', Georgia, serif;
-      min-height: 100vh;
-    }
+    body { background: #1a1a2e; color: #d4d4c1; font-family: 'Lora', Georgia, serif; min-height: 100vh; }
     ::selection { background: #e67e22; color: #1a1a2e; }
     a { color: #4a9aea; text-decoration: none; }
     a:hover { color: #e67e22; text-decoration: underline; }
@@ -23,30 +18,21 @@
     ::-webkit-scrollbar-thumb { background: #333366; border-radius: 0; }
     ::-webkit-scrollbar-thumb:hover { background: #4a4a8a; }
     button { font-family: inherit; }
-    input, select, textarea {
-      font-family: 'Courier Prime', monospace;
-      background: #12122a;
-      color: #d4d4c1;
-      border: 1px solid #333366;
-      padding: 8px 12px;
-      font-size: 14px;
-      outline: none;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: #4a9aea;
-    }
-    /* Mobile responsive */
+    input, select, textarea { font-family: 'Courier Prime', monospace; background: #12122a; color: #d4d4c1; border: 1px solid #333366; padding: 8px 12px; font-size: 14px; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: #4a9aea; }
     @media (max-width: 768px) {
       .site-layout { flex-direction: column !important; }
       .site-sidebar { width: 100% !important; order: 2; }
       .site-main { order: 1; }
-      .home-grid { grid-template-columns: 1fr !important; }
       .nav-bar { gap: 0 !important; }
       .nav-bar button { padding: 8px 14px !important; font-size: 12px !important; letter-spacing: 1px !important; }
       .feed-item { flex-direction: column !important; gap: 10px !important; }
       .feed-icon { width: 40px !important; height: 40px !important; font-size: 12px !important; }
       .feed-meta { flex-direction: column !important; gap: 2px !important; }
       .top-bar { flex-direction: column !important; gap: 2px !important; text-align: center !important; font-size: 11px !important; }
+      .tool-header { flex-direction: column !important; }
+      .algo-row { font-size: 11px !important; }
+      .algo-row > div:nth-child(2) { width: 60px !important; }
     }
     @media (max-width: 480px) {
       .site-title { font-size: 28px !important; letter-spacing: 3px !important; }
@@ -60,234 +46,276 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState, useEffect, useCallback, useRef } = React;
-
-    const SITE_NAME = "THE POST IDEALIST";
-    const SITE_TAGLINE = "Tools \u00b7 Articles \u00b7 Fiction";
-    const AUTHOR = "The Secondary";
-
+    const { useState, useEffect, useCallback } = React;
     const VISITOR_COUNT = Math.floor(Math.random() * 1000001).toLocaleString('en-US').padStart(7, '0');
 
-    // --- TOOLS DATA ---
-    const TOOLS = [
-      {
-        id: "unify",
-        title: "Unify Version 2",
-        tagline: "The Architecture of You",
-        description: "A structured self-analysis tool that helps you offload cognitive load, quantify your struggles, and build a trajectory toward mastery. No accounts, no servers, no tracking \u2014 just you and your potential.",
-        tech: ["HTML", "JavaScript", "CSS"],
-        status: "Live",
-        url: "https://aaronunify2.github.io/UnifyVersion1/Unify300.html",
-        color: "#4a90d9",
-        hasLandingPage: true,
-        date: "2025-12-01",
-      },
-      {
-        id: "tommypop",
-        title: "TommyPop",
-        tagline: "A non-addictive game for toddlers",
-        description: "Use this game to distract a child without exposing them to addictive games or inappropriate content. TommyPop is designed to be interesting for a minute or two before becoming boring.",
-        tech: ["HTML", "JavaScript", "CSS"],
-        status: "Live",
-        url: "https://aaronunify2.github.io/UnifyVersion1/Kids/TommyPop.html",
-        color: "#e67e22",
-        hasLandingPage: false,
-        date: "2025-11-01",
-        parentGuide: {
-          intro: "TommyPop is a minimalist bubble-popping game designed specifically for toddlers and young children. Unlike mainstream mobile games, TommyPop is built to be intentionally repetitive and low-stimulation.",
-          features: [
-            "No High-Dopamine Rewards: No flashing lights, \u201clevel up\u201d sounds, or loot boxes.",
-            "No Hidden Agendas: Zero advertisements, zero in-app purchases, and no age-inappropriate content.",
-            "A Natural Exit: The game is fun enough to engage a child\u2019s curiosity but predictable enough that they will eventually choose to put it down.",
-          ],
-          strategy: [
-            {
-              title: "The \u201cLow-Friction\u201d Swap",
-              text: "While the child is using the addictive device, load TommyPop on a separate phone. Offer it as a swap. Because it is interactive and colorful, children usually accept the trade without resistance.",
-            },
-            {
-              title: "The Attention Shift",
-              text: "As the child plays TommyPop, the repetitive nature of the game begins to lower their neurological intensity. Their attention will naturally begin to \u201cbroaden.\u201d Watch for signs of boredom or looking around the room.",
-            },
-            {
-              title: "The Montessori Catch",
-              text: "Before the child becomes frustrated, \u201ccatch\u201d their broadening attention with a prepared physical activity. Have blocks, LEGO, dolls, or a board game ready to go.",
-            },
-            {
-              title: "Hide the Tech",
-              text: "Once the child engages with the physical toy, quietly remove and hide all phone devices from the immediate environment to prevent a relapse into a contracted state.",
-            },
-            {
-              title: "Anchor with Routine",
-              text: "Time the end of the physical activity with a meal. This provides a natural, biological transition that moves the child toward a Spacious state (sitting in silence / the fact of being alive).",
-            },
-          ],
-          why: "By moving from Narrow (Competitive/Addictive games) to Open (Reading/Cooking/Board games), you are training your child\u2019s brain to find satisfaction in slower-paced, developmental activities rather than \u201cslot machine dopamine.\u201d",
-        },
-      },
-      {
-        id: "tommyspace",
-        title: "TommySpace",
-        tagline: "Explore the solar system to learn the names of the planets",
-        description: "An interactive 3D solar system built for curious kids (and adults). Fly through space and learn the names and positions of the planets.",
-        tech: ["HTML", "Three.js", "CSS"],
-        status: "Live",
-        url: "#",
-        color: "#8e44ad",
-        hasLandingPage: false,
-        date: "2025-10-01",
-      },
-    ];
+    // ==========================================
+    // DATA FETCHING
+    // ==========================================
+    function useContent() {
+      const [content, setContent] = useState(null);
+      const [loading, setLoading] = useState(true);
+      useEffect(() => {
+        fetch('content.json?v=' + Date.now()).then(r => r.json())
+          .then(data => { setContent(data); setLoading(false); })
+          .catch(() => setLoading(false));
+      }, []);
+      return { content, loading };
+    }
 
-    // --- ARTICLES DATA ---
-    const ARTICLES = [
-      {
-        id: "origin-of-ideas",
-        title: "On the Origin of Ideas...",
-        subtitle: "A normal article, Jan 4, 2022",
-        date: "2022-01-04",
-        category: "Essay",
-        readTime: "12 min",
-        isScreenshotArticle: true,
-      },
-    ];
+    function useJsonFile(filePath) {
+      const [data, setData] = useState(null);
+      const [loading, setLoading] = useState(false);
+      useEffect(() => {
+        if (!filePath) { setData(null); return; }
+        setLoading(true);
+        fetch(filePath + '?v=' + Date.now()).then(r => r.json())
+          .then(d => { setData(d); setLoading(false); })
+          .catch(() => setLoading(false));
+      }, [filePath]);
+      return { data, loading };
+    }
 
-    // --- NOVEL DATA ---
-    const NOVEL = {
-      title: "BIGFOOT'S SHOE",
-      author: AUTHOR,
-      genre: "Psychological Fiction",
-      synopsis: "A coming of age tale for the modern world.",
-      comingSoon: true,
-      message: "The author is currently reworking the beginning after finally figuring out the ending. Chapters will appear here as they\u2019re ready.",
+    // ==========================================
+    // ARTICLE SECTION RENDERERS
+    // ==========================================
+    function ScreenshotBox({ number, title, children }) {
+      return (
+        <div style={{ margin: "28px 0", border: "2px solid #333366", background: "#0a0a18", overflow: "hidden" }}>
+          <div style={{ background: "#222244", padding: "6px 14px", fontFamily: "'VT323', monospace", fontSize: "13px", color: "#666680", borderBottom: "1px solid #333366", display: "flex", justifyContent: "space-between" }}>
+            <span>Screenshot #{number}{title ? ": " + title : ""}</span>
+            <span style={{ color: "#444460" }}>{"\u2715"}</span>
+          </div>
+          <div style={{ padding: "20px" }}>{children}</div>
+        </div>
+      );
+    }
+
+    function ChatMessage({ speaker, text }) {
+      const isU = speaker === "Unconscious";
+      return (
+        <div style={{ marginBottom: "8px", fontFamily: "'Courier Prime', monospace", fontSize: "14px", lineHeight: 1.8, color: "#b0b0a0" }}>
+          <span style={{ color: isU ? "#e67e22" : "#4a9aea", fontWeight: "bold" }}>{isU ? "The Unconscious" : "Person " + speaker}:</span> <span>{text}</span>
+        </div>
+      );
+    }
+
+    function AlgorithmTable({ rows }) {
+      return (
+        <div>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#666680", textAlign: "center", marginBottom: "12px", letterSpacing: "1px" }}>THE ALGORITHM'S THOUGHTS WHILE CHASING WATCHTIME</div>
+          <div className="algo-row" style={{ display: "flex", borderBottom: "2px solid #333366", fontSize: "12px", fontFamily: "'VT323', monospace", color: "#4a4a8a", letterSpacing: "1px" }}>
+            <div style={{ flex: 2, padding: "6px 10px" }}>VIDEO</div>
+            <div style={{ width: "90px", padding: "6px 10px", textAlign: "center", borderLeft: "1px solid #222244" }}>WATCH TIME</div>
+            <div style={{ flex: 3, padding: "6px 10px", borderLeft: "1px solid #222244" }}>ALGORITHM THINKS...</div>
+          </div>
+          {rows.map((row, i) => (
+            <div key={i} className="algo-row" style={{ display: "flex", borderBottom: "1px solid #222244", fontSize: "13px" }}>
+              <div style={{ flex: 2, padding: "8px 10px", color: "#c0c0b0" }}>{row.title}</div>
+              <div style={{ width: "90px", padding: "8px 10px", color: "#666680", textAlign: "center", borderLeft: "1px solid #222244" }}>{row.time}</div>
+              <div style={{ flex: 3, padding: "8px 10px", color: "#4a90d9", fontStyle: "italic", borderLeft: "1px solid #222244" }}>{row.thought}</div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    function RenderArticleSection({ section }) {
+      switch (section.type) {
+        case "text": return <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>{section.content}</p>;
+        case "note": return <p style={{ fontSize: "14px", color: "#666680", fontStyle: "italic", marginBottom: "20px" }}>{section.content}</p>;
+        case "screenshot": {
+          const s = section;
+          return (
+            <ScreenshotBox number={s.number} title={s.title}>
+              {s.style === "text" && <p style={{ textAlign: "center", color: s.dimmed ? "#555560" : "#888880", fontStyle: s.dimmed ? "italic" : "normal", fontFamily: "'Courier Prime', monospace", fontSize: "14px", lineHeight: 1.8, whiteSpace: "pre-line" }}>{s.content}</p>}
+              {s.style === "lines" && <div style={{ textAlign: "center", lineHeight: 2.2, fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#b0b0a0" }}>{s.content.map((l, i) => <div key={i} style={l.highlight ? { color: "#e67e22", fontWeight: "bold" } : {}}>{l.text}</div>)}</div>}
+              {s.style === "chat" && <div style={{ padding: "12px 0" }}>{s.content.map((m, i) => <ChatMessage key={i} speaker={m.speaker} text={m.text} />)}</div>}
+              {s.style === "algorithm" && <AlgorithmTable rows={s.content} />}
+            </ScreenshotBox>
+          );
+        }
+        default: return null;
+      }
+    }
+
+    function ArticleRenderer({ data, goBack }) {
+      if (!data) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center" }}>Loading...</div>;
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
+          <article className="article-body" style={{ border: "1px solid #333366", background: "#0f0f23", padding: "40px", maxWidth: "720px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>{data.category} {"\u00b7"} {data.readTime || "5 min"} {"\u00b7"} {new Date(data.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "34px", color: "#e8e8d0", lineHeight: 1.2, marginBottom: "6px" }}>{data.title}</h2>
+            <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>{data.subtitle}</p>
+            <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
+            {data.sections.map((s, i) => <RenderArticleSection key={i} section={s} />)}
+          </article>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // INTERACTIVE TOOL MODULES
+    // ==========================================
+    function CognitiveContainerModule() {
+      const [v, setV] = useState(""); const [saved, setSaved] = useState(false);
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1"} Interactive: The Cognitive Container</div>
+          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "12px", fontStyle: "italic" }}>What is one issue occupying your mind right now?</p>
+          <input type="text" placeholder="e.g., Taxes are late" value={v} onChange={e => { setV(e.target.value); setSaved(false); }} style={{ width: "100%", maxWidth: "400px", display: "block" }} />
+          {v && !saved && <div style={{ marginTop: "12px" }}><p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic" }}>Notice how the anxiety shrinks when it fits into a box? You are taking control.</p><button onClick={() => setSaved(true)} style={{ marginTop: "10px", background: "#4a90d9", color: "#fff", border: "none", padding: "8px 20px", fontFamily: "'Courier Prime', monospace", fontSize: "13px", cursor: "pointer" }}>Capture It</button></div>}
+          {saved && <div style={{ marginTop: "12px", padding: "10px 14px", background: "#1a2a4a", border: "1px solid #4a90d9" }}><span style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#4a9a4a" }}>{"\u2713"} Captured: </span><span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#c0c0b0" }}>{v}</span></div>}
+        </div>
+      );
+    }
+
+    function PerspectiveSliderModule() {
+      const [r, setR] = useState(0);
+      const labels = ["","Level 1: Background Noise","Level 2: Minor Friction","Level 3: Real Problem","Level 4: Major Crisis","Level 5: Everything Is On Fire"];
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1"} Interactive: The Perspective Slider</div>
+          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "16px", fontStyle: "italic" }}>Rate the problem you entered above.</p>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>{[1,2,3,4,5].map(n => <span key={n} onClick={() => setR(n)} style={{ fontSize: "32px", cursor: "pointer", color: n <= r ? "#e67e22" : "#333366", transition: "color 0.15s" }}>{"\u2605"}</span>)}</div>
+          {r > 0 && <div><p style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: "#e67e22", marginBottom: "8px" }}>{labels[r]}</p><p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic" }}>You just sized up your enemy. A Level {r} problem cannot hurt you if you see it for what it is.</p></div>}
+        </div>
+      );
+    }
+
+    function StackModule() {
+      const [items, setItems] = useState([]); const [input, setInput] = useState("");
+      const add = () => { if (input.trim()) { setItems(p => [input.trim(), ...p]); setInput(""); } };
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1"} Interactive: The Stack</div>
+          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "12px", fontStyle: "italic" }}>Capture a thought. Watch it stack.</p>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}><input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && add()} placeholder="Type a thought..." style={{ flex: 1 }} /><button onClick={add} style={{ background: "#4a90d9", color: "#fff", border: "none", padding: "8px 16px", fontFamily: "'Courier Prime', monospace", fontSize: "13px", cursor: "pointer" }}>Save</button></div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>{items.map((it, i) => <div key={i} style={{ padding: "8px 14px", background: "#1a2a4a", border: "1px solid #333366", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#b0b0a0", transform: "translateX(" + (i*4) + "px)", opacity: Math.max(0.4, 1-i*0.15) }}>{it}</div>)}</div>
+          {items.length > 0 && <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic", marginTop: "12px" }}>Captured. Now you can relax, knowing this data is waiting for you when you're ready to solve it.</p>}
+        </div>
+      );
+    }
+
+    function HaradaGridModule() {
+      const [center, setCenter] = useState(""); const [cells, setCells] = useState(Array(8).fill(""));
+      const labels = ["Health","Finance","Relationships","Career","Learning","Creative","Community","Spiritual"];
+      const lit = center.length > 0;
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1"} Interactive: The Grid</div>
+          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "16px", fontStyle: "italic" }}>Type your 5-year vision in the center. Watch the grid awaken.</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "6px", maxWidth: "420px" }}>
+            {[0,1,2,3,-1,4,5,6,7].map(idx => {
+              if (idx === -1) return <div key="c" style={{ border: "2px solid #e67e22", background: "#1a1520", padding: "8px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80px" }}><div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: "#e67e22", marginBottom: "4px" }}>5-YEAR VISION</div><input type="text" value={center} onChange={e => setCenter(e.target.value)} placeholder="Your vision..." style={{ width: "100%", fontSize: "12px", padding: "4px 6px", textAlign: "center", background: "#0a0a18", border: "1px solid #e67e22" }} /></div>;
+              return <div key={idx} style={{ border: "1px solid " + (lit ? "#4a90d9" : "#282848"), background: lit ? "#12183a" : "#0f0f20", padding: "8px", minHeight: "80px", transition: "all 0.3s", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}><div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: lit ? "#4a90d9" : "#333355", marginBottom: "4px" }}>{labels[idx]}</div><input type="text" value={cells[idx]} onChange={e => { const n=[...cells]; n[idx]=e.target.value; setCells(n); }} placeholder="..." style={{ width: "100%", fontSize: "11px", padding: "3px 5px", textAlign: "center", background: "#0a0a18" }} /></div>;
+            })}
+          </div>
+          {lit && <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic", marginTop: "16px" }}>A goal without a structure is a wish. A goal with a structure is a plan.</p>}
+        </div>
+      );
+    }
+
+    function LocalLockModule({ url }) {
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px" }}>{"\u26A1"} Interactive: The Local Lock</div>
+          <div style={{ display: "flex", gap: "24px", alignItems: "center", marginBottom: "20px", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ width: "14px", height: "14px", borderRadius: "50%", background: "#555560" }} /><span style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#555560" }}>Server Connection: OFF</span></div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ width: "14px", height: "14px", borderRadius: "50%", background: "#4a9a4a", boxShadow: "0 0 8px #4a9a4a80" }} /><span style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a9a4a" }}>Local Storage: ON</span></div>
+          </div>
+          <p style={{ fontSize: "15px", color: "#b0b0a0", lineHeight: 1.7 }}>No accounts. No emails. No cloud. Your data lives on your device, not our servers.</p>
+          <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic", marginTop: "8px" }}>This is a private conversation between you and your potential.</p>
+          <a href={url} target="_blank" rel="noopener" style={{ display: "inline-block", marginTop: "16px", background: "#4a90d9", color: "#fff", padding: "12px 32px", fontFamily: "'Courier Prime', monospace", fontSize: "14px", fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none" }}>{"Enter Unify \u2192"}</a>
+        </div>
+      );
+    }
+
+    const INTERACTIVE_MODULES = {
+      "cognitive-container": () => <CognitiveContainerModule />,
+      "perspective-slider": () => <PerspectiveSliderModule />,
+      "stack": () => <StackModule />,
+      "harada-grid": () => <HaradaGridModule />,
+      "local-lock": (props) => <LocalLockModule url={props.toolUrl} />,
     };
 
-    // --- FEED ITEMS (all content combined, sorted by date) ---
-    const FEED_ITEMS = [
-      { type: "tool", id: "unify", title: "Unify Version 2", subtitle: "The Architecture of You", date: "2025-12-01", color: "#4a90d9" },
-      { type: "tool", id: "tommypop", title: "TommyPop", subtitle: "A non-addictive game for toddlers", date: "2025-11-01", color: "#e67e22" },
-      { type: "tool", id: "tommyspace", title: "TommySpace", subtitle: "Explore the solar system", date: "2025-10-01", color: "#8e44ad" },
-      { type: "article", id: "origin-of-ideas", title: "On the Origin of Ideas...", subtitle: "A normal article", date: "2022-01-04", color: "#4a9aea" },
-      { type: "novel", id: "novel", title: "Bigfoot\u2019s Shoe", subtitle: "Coming soon \u2014 Psychological Fiction", date: "2026-02-15", color: "#e67e22" },
-    ].sort((a, b) => new Date(b.date) - new Date(a.date));
+    // ==========================================
+    // TOOL SECTION RENDERER
+    // ==========================================
+    function RenderToolSection({ section, toolData }) {
+      switch (section.type) {
+        case "heading": return <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>{section.content}</h3>;
+        case "text": return <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>{section.content}</p>;
+        case "features": return <div style={{ marginBottom: "24px" }}>{section.content.map((f, i) => <p key={i} style={{ fontSize: "15px", lineHeight: 1.7, color: "#b0b0a0", marginBottom: "8px", paddingLeft: "16px", borderLeft: "2px solid " + (toolData.color || "#4a90d9") }}>{f}</p>)}</div>;
+        case "steps": return <div>{section.content.map((step, i) => <div key={i} style={{ display: "flex", gap: "16px", marginBottom: "16px", alignItems: "flex-start" }}><div style={{ fontFamily: "'VT323', monospace", fontSize: "24px", color: toolData.color || "#e67e22", width: "30px", textAlign: "center", flexShrink: 0 }}>{i+1}</div><div><div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "15px", color: "#e8e8d0", fontWeight: "bold", marginBottom: "4px" }}>{step.title}</div><p style={{ fontSize: "15px", lineHeight: 1.7, color: "#b0b0a0" }}>{step.text}</p></div></div>)}</div>;
+        case "callout": return <div style={{ marginTop: "24px", padding: "16px", background: "#1a2010", border: "1px solid #3a5a2a" }}><p style={{ fontSize: "15px", lineHeight: 1.7, color: "#b0b0a0" }}>{section.content}</p></div>;
+        case "interactive": {
+          const mod = INTERACTIVE_MODULES[section.module];
+          return mod ? mod({ toolUrl: toolData.url }) : null;
+        }
+        default: return null;
+      }
+    }
 
-    // ==============================
-    // COMPONENTS
-    // ==============================
-
-    function Header({ currentPage, setPage }) {
-      const [time, setTime] = useState(new Date());
-      useEffect(() => {
-        const t = setInterval(() => setTime(new Date()), 1000);
-        return () => clearInterval(t);
-      }, []);
-
-      const navItems = [
-        { id: "home", label: "Home" },
-        { id: "tools", label: "Tools" },
-        { id: "articles", label: "Articles" },
-        { id: "novel", label: "Novel" },
-        { id: "about", label: "About" },
-      ];
-
+    function ToolRenderer({ data, goBack }) {
+      if (!data) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center" }}>Loading...</div>;
+      const hasSections = data.sections && data.sections.length > 0;
       return (
-        <header style={{
-          background: "linear-gradient(180deg, #0f0f23 0%, #1a1a2e 100%)",
-          borderBottom: "2px solid #333366",
-          position: "sticky", top: 0, zIndex: 100,
-        }}>
-          <div className="top-bar" style={{
-            background: "#0a0a1a", padding: "4px 20px",
-            display: "flex", justifyContent: "space-between", alignItems: "center",
-            fontSize: "12px", fontFamily: "'VT323', monospace", color: "#666680",
-            borderBottom: "1px solid #222244", letterSpacing: "1px",
-          }}>
-            <span>{"EST. 2026 \u2014 ISSUE #001"}</span>
-            <span>{time.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} {"\u2014"} {time.toLocaleTimeString()}</span>
-          </div>
-
-          <div style={{ padding: "20px 20px 0", textAlign: "center" }}>
-            <div onClick={() => setPage("home")} style={{ cursor: "pointer", display: "inline-block" }}>
-              <h1 className="site-title" style={{
-                fontFamily: "'Special Elite', 'Courier Prime', monospace",
-                fontSize: "clamp(28px, 5vw, 52px)", color: "#e8e8d0",
-                letterSpacing: "6px", textTransform: "uppercase",
-                lineHeight: 1.1, textShadow: "2px 2px 0 #333366",
-              }}>{SITE_NAME}</h1>
-              <div style={{
-                fontFamily: "'VT323', monospace", fontSize: "14px", color: "#888880",
-                letterSpacing: "8px", textTransform: "uppercase", marginTop: "4px",
-              }}>{SITE_TAGLINE}</div>
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to all tools"}</button>
+          <div style={{ border: "2px solid " + (data.color || "#4a90d9"), background: "#0f0f23", padding: "32px" }}>
+            <div className="tool-header" style={{ display: "flex", gap: "20px", alignItems: "flex-start", marginBottom: "24px" }}>
+              <div style={{ width: "80px", height: "80px", background: (data.color||"#4a90d9") + "22", border: "3px solid " + (data.color||"#4a90d9"), display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "42px", color: data.color||"#4a90d9", flexShrink: 0 }}>{(data.title||"?")[0]}</div>
+              <div>
+                <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "32px", color: "#e8e8d0" }}>{data.title}</h2>
+                <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: data.color||"#4a90d9", fontStyle: "italic" }}>{data.tagline}</p>
+                {data.tech && <div style={{ display: "flex", gap: "8px", marginTop: "8px", flexWrap: "wrap" }}>{data.tech.map(t => <span key={t} style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#888880", background: "#1a1a2e", padding: "2px 10px", border: "1px solid #333366" }}>{t}</span>)}</div>}
+              </div>
             </div>
-            <div style={{ margin: "16px auto 0", maxWidth: "600px", display: "flex", alignItems: "center", gap: "12px" }}>
-              <div style={{ flex: 1, height: "1px", background: "#333366" }} />
-              <div style={{ color: "#4a4a8a", fontFamily: "'VT323', monospace", fontSize: "18px" }}>{"\u25C6 \u25C7 \u25C6"}</div>
-              <div style={{ flex: 1, height: "1px", background: "#333366" }} />
-            </div>
+            {hasSections ? (
+              data.sections.map((s, i) => <RenderToolSection key={i} section={s} toolData={data} />)
+            ) : (
+              <p style={{ fontSize: "16px", lineHeight: 1.8, color: "#c0c0b0" }}>{data.description}</p>
+            )}
+            {data.url && data.url !== "#" && !hasSections && (
+              <div style={{ marginTop: "24px", textAlign: "center" }}>
+                <a href={data.url} target="_blank" rel="noopener" style={{ display: "inline-block", background: data.color||"#4a90d9", color: "#fff", padding: "12px 32px", fontFamily: "'Courier Prime', monospace", fontSize: "14px", fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none" }}>{"Launch \u2192"}</a>
+              </div>
+            )}
           </div>
-
-          <nav className="nav-bar" style={{ display: "flex", justifyContent: "center", padding: "12px 20px 0", flexWrap: "wrap" }}>
-            {navItems.map((item) => (
-              <button key={item.id} onClick={() => setPage(item.id)}
-                style={{
-                  background: currentPage === item.id ? "#333366" : "transparent",
-                  color: currentPage === item.id ? "#e8e8d0" : "#888880",
-                  border: "1px solid #333366",
-                  borderBottom: currentPage === item.id ? "1px solid #333366" : "1px solid transparent",
-                  padding: "8px 24px", fontFamily: "'Courier Prime', monospace",
-                  fontSize: "13px", letterSpacing: "2px", textTransform: "uppercase",
-                  cursor: "pointer", transition: "all 0.15s ease", marginBottom: "-1px",
-                }}
-                onMouseEnter={(e) => { if (currentPage !== item.id) { e.target.style.color = "#e8e8d0"; e.target.style.background = "#222244"; } }}
-                onMouseLeave={(e) => { if (currentPage !== item.id) { e.target.style.color = "#888880"; e.target.style.background = "transparent"; } }}
-              >{item.label}</button>
-            ))}
-          </nav>
-        </header>
+        </div>
       );
     }
 
-    function Sidebar() {
+    // ==========================================
+    // CHAPTER RENDERER
+    // ==========================================
+    function ChapterRenderer({ data, chapterMeta, allChapters, goBack, onNav }) {
+      if (!data) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center" }}>Loading...</div>;
+      const idx = allChapters.findIndex(c => c.id === chapterMeta.id);
+      const prev = idx > 0 ? allChapters[idx-1] : null;
+      const next = idx < allChapters.length-1 ? allChapters[idx+1] : null;
       return (
-        <aside className="site-sidebar" style={{ width: "240px", flexShrink: 0, display: "flex", flexDirection: "column", gap: "20px" }}>
-          <div style={{ border: "1px solid #333366", padding: "16px", textAlign: "center", background: "#0f0f23" }}>
-            <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px" }}>Visitors</div>
-            <div style={{ fontFamily: "'VT323', monospace", fontSize: "32px", color: "#4a9aea", background: "#000010", padding: "8px", border: "1px inset #222244", letterSpacing: "4px" }}>{VISITOR_COUNT}</div>
-            <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: "#555560", marginTop: "6px" }}>since feb 2026</div>
-          </div>
-
-          <div style={{ border: "1px solid #333366", padding: "16px", background: "#0f0f23" }}>
-            <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "14px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px", paddingBottom: "8px", borderBottom: "1px dashed #333366" }}>Latest Updates</h3>
-            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
-              {[
-                { date: "Feb 15", text: "Grand opening!" },
-                { date: "Feb 15", text: "Unify V2 landing page live" },
-                { date: "Feb 15", text: "TommyPop parent guide added" },
-              ].map((item, i) => (
-                <li key={i} style={{ fontSize: "13px", lineHeight: 1.4 }}>
-                  <span style={{ fontFamily: "'VT323', monospace", color: "#4a4a8a", fontSize: "12px" }}>[{item.date}]</span>
-                  <br /><span style={{ color: "#b0b0a0" }}>{item.text}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div style={{ border: "1px solid #333366", padding: "16px", background: "#0f0f23", textAlign: "center" }}>
-            <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "14px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px", paddingBottom: "8px", borderBottom: "1px dashed #333366" }}>Links</h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              <a href="https://x.com/UGoalsetter" target="_blank" rel="noopener" style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a9aea", display: "block" }}>[Twitter/X]</a>
-              <a href="https://aaronunify2.github.io/UnifyVersion1/Unify300.html" target="_blank" rel="noopener" style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a9aea", display: "block" }}>[Unify App]</a>
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to chapters"}</button>
+          <article className="article-body" style={{ border: "1px solid #333366", background: "#0f0f23", padding: "40px", maxWidth: "720px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>Chapter {(idx+1)}</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "34px", color: "#e8e8d0", lineHeight: 1.2, marginBottom: "24px" }}>{data.title || chapterMeta.title}</h2>
+            <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
+            {(data.sections || []).map((s, i) => <RenderArticleSection key={i} section={s} />)}
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "32px", paddingTop: "20px", borderTop: "1px dashed #333366" }}>
+              {prev ? <button onClick={() => onNav(prev.id)} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", padding: 0 }}>{"\u2190 " + prev.title}</button> : <span />}
+              {next ? <button onClick={() => onNav(next.id)} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", padding: 0 }}>{next.title + " \u2192"}</button> : <span />}
             </div>
-            <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
-              <div style={{ background: "#222244", border: "1px solid #4a4a8a", padding: "4px 12px", fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9aea" }}>{"MADE WITH \u2665 & COFFEE"}</div>
-              <div style={{ background: "#1a3a1a", border: "1px solid #2a5a2a", padding: "4px 12px", fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9a4a" }}>BEST VIEWED IN ANY BROWSER</div>
-              <div style={{ background: "#3a2a1a", border: "1px solid #5a4a2a", padding: "4px 12px", fontFamily: "'VT323', monospace", fontSize: "13px", color: "#e67e22" }}>{"NO TRACKING \u00b7 NO ADS"}</div>
-            </div>
-          </div>
-        </aside>
+          </article>
+        </div>
       );
     }
 
+    // ==========================================
+    // SHARED UI
+    // ==========================================
     function SectionHeader({ title, subtitle }) {
       return (
         <div style={{ marginBottom: "24px" }}>
@@ -298,863 +326,264 @@
       );
     }
 
-    function Screenshot({ number, children, empty }) {
+    function UsersOnlineCounter() {
+      const [c, setC] = useState(() => Math.floor(Math.random() * 487) - 86);
+      useEffect(() => { const t = setInterval(() => setC(Math.floor(Math.random() * 487) - 86), 4000); return () => clearInterval(t); }, []);
       return (
-        <div style={{
-          margin: "28px 0", border: "2px solid #333366", background: "#0a0a18",
-          overflow: "hidden",
-        }}>
-          <div style={{
-            background: "#222244", padding: "6px 14px",
-            fontFamily: "'VT323', monospace", fontSize: "13px", color: "#666680",
-            borderBottom: "1px solid #333366", display: "flex", justifyContent: "space-between",
-          }}>
-            <span>Screenshot #{number}</span>
-            <span style={{ color: "#444460" }}>{"\u2715"}</span>
-          </div>
-          <div style={{
-            padding: empty ? "60px 20px" : "20px",
-            textAlign: empty ? "center" : "left",
-            minHeight: empty ? "120px" : "auto",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            flexDirection: "column",
-          }}>
-            {empty ? (
-              <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#333355" }}>
-                [screenshot loading...]
-              </div>
-            ) : (
-              <div style={{ width: "100%", fontFamily: "'Courier Prime', monospace", fontSize: "14px", lineHeight: 1.8, color: "#b0b0a0" }}>
-                {children}
-              </div>
-            )}
-          </div>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontFamily: "'VT323', monospace", fontSize: "14px" }}>
+          <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: c > 0 ? "#4a9a4a" : "#aa3333", boxShadow: "0 0 6px " + (c > 0 ? "#4a9a4a80" : "#aa333380") }} />
+          <span style={{ color: "#666680" }}>Users online: <span style={{ color: c > 0 ? "#4a9a4a" : "#aa3333" }}>{c}</span></span>
         </div>
       );
     }
 
-    function ChatMessage({ person, text }) {
-      const isUnconscious = person === "Unconscious";
-      const label = isUnconscious ? "The Unconscious" : "Person " + person;
-      const color = isUnconscious ? "#e67e22" : "#4a9aea";
+    function Header({ currentPage, setPage, site }) {
+      const [time, setTime] = useState(new Date());
+      useEffect(() => { const t = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(t); }, []);
+      const nav = [{id:"home",label:"Home"},{id:"tools",label:"Tools"},{id:"articles",label:"Articles"},{id:"novel",label:"Novel"},{id:"about",label:"About"}];
       return (
-        <div style={{ marginBottom: "8px" }}>
-          <span style={{ color, fontWeight: "bold" }}>{label}:</span>{" "}
-          <span>{text}</span>
-        </div>
-      );
-    }
-
-    // ==============================
-    // INTERACTIVE UNIFY MODULES
-    // ==============================
-
-    function CognitiveContainerModule() {
-      const [value, setValue] = useState("");
-      const [saved, setSaved] = useState(false);
-      return (
-        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
-          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1 Interactive: The Cognitive Container"}</div>
-          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "12px", fontStyle: "italic" }}>What is one issue occupying your mind right now?</p>
-          <input
-            type="text" placeholder="e.g., Taxes are late"
-            value={value} onChange={e => { setValue(e.target.value); setSaved(false); }}
-            style={{ width: "100%", maxWidth: "400px", marginBottom: "8px", display: "block" }}
-          />
-          {value.length > 0 && !saved && (
-            <div style={{ marginTop: "12px" }}>
-              <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic", lineHeight: 1.6 }}>
-                Notice how the anxiety shrinks when it fits into a box? You are taking control.
-              </p>
-              <button onClick={() => setSaved(true)} style={{
-                marginTop: "10px", background: "#4a90d9", color: "#fff", border: "none",
-                padding: "8px 20px", fontFamily: "'Courier Prime', monospace", fontSize: "13px",
-                cursor: "pointer", letterSpacing: "1px",
-              }}>Capture It</button>
+        <header style={{ background: "linear-gradient(180deg, #0f0f23 0%, #1a1a2e 100%)", borderBottom: "2px solid #333366", position: "sticky", top: 0, zIndex: 100 }}>
+          <div className="top-bar" style={{ background: "#0a0a1a", padding: "4px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", fontFamily: "'VT323', monospace", color: "#666680", borderBottom: "1px solid #222244", letterSpacing: "1px" }}>
+            <span>{"EST. " + (site?.established||2026) + " \u2014 ISSUE #" + (site?.issue||"001")}</span>
+            <span>{time.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} {"\u2014"} {time.toLocaleTimeString()}</span>
+          </div>
+          <div style={{ padding: "20px 20px 0", textAlign: "center" }}>
+            <div onClick={() => setPage("home")} style={{ cursor: "pointer", display: "inline-block" }}>
+              <h1 className="site-title" style={{ fontFamily: "'Special Elite', 'Courier Prime', monospace", fontSize: "clamp(28px, 5vw, 52px)", color: "#e8e8d0", letterSpacing: "6px", textTransform: "uppercase", lineHeight: 1.1, textShadow: "2px 2px 0 #333366" }}>{site?.name||"THE POST IDEALIST"}</h1>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#888880", letterSpacing: "8px", textTransform: "uppercase", marginTop: "4px" }}>{site?.tagline||""}</div>
             </div>
-          )}
-          {saved && (
-            <div style={{ marginTop: "12px", padding: "10px 14px", background: "#1a2a4a", border: "1px solid #4a90d9" }}>
-              <span style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#4a9a4a" }}>{"\u2713"} Captured: </span>
-              <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#c0c0b0" }}>{value}</span>
-            </div>
-          )}
-        </div>
+            <div style={{ margin: "16px auto 0", maxWidth: "600px", display: "flex", alignItems: "center", gap: "12px" }}><div style={{ flex: 1, height: "1px", background: "#333366" }} /><div style={{ color: "#4a4a8a", fontFamily: "'VT323', monospace", fontSize: "18px" }}>{"\u25C6 \u25C7 \u25C6"}</div><div style={{ flex: 1, height: "1px", background: "#333366" }} /></div>
+          </div>
+          <nav className="nav-bar" style={{ display: "flex", justifyContent: "center", padding: "12px 20px 0", flexWrap: "wrap" }}>
+            {nav.map(item => <button key={item.id} onClick={() => setPage(item.id)} style={{ background: currentPage===item.id?"#333366":"transparent", color: currentPage===item.id?"#e8e8d0":"#888880", border: "1px solid #333366", borderBottom: currentPage===item.id?"1px solid #333366":"1px solid transparent", padding: "8px 24px", fontFamily: "'Courier Prime', monospace", fontSize: "13px", letterSpacing: "2px", textTransform: "uppercase", cursor: "pointer", transition: "all 0.15s", marginBottom: "-1px" }} onMouseEnter={e => { if(currentPage!==item.id){e.target.style.color="#e8e8d0";e.target.style.background="#222244"}}} onMouseLeave={e => { if(currentPage!==item.id){e.target.style.color="#888880";e.target.style.background="transparent"}}}>{item.label}</button>)}
+          </nav>
+        </header>
       );
     }
 
-    function PerspectiveSliderModule() {
-      const [rating, setRating] = useState(0);
-      const labels = ["", "Level 1: Background Noise", "Level 2: Minor Friction", "Level 3: Real Problem", "Level 4: Major Crisis", "Level 5: Everything Is On Fire"];
+    function Sidebar({ site }) {
       return (
-        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
-          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1 Interactive: The Perspective Slider"}</div>
-          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "16px", fontStyle: "italic" }}>Rate the problem you entered above.</p>
-          <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
-            {[1,2,3,4,5].map(n => (
-              <span key={n} onClick={() => setRating(n)} style={{
-                fontSize: "32px", cursor: "pointer",
-                color: n <= rating ? "#e67e22" : "#333366",
-                transition: "color 0.15s",
-              }}>{"\u2605"}</span>
-            ))}
+        <aside className="site-sidebar" style={{ width: "240px", flexShrink: 0, display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div style={{ border: "1px solid #333366", padding: "16px", textAlign: "center", background: "#0f0f23" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px" }}>Visitors</div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "32px", color: "#4a9aea", background: "#000010", padding: "8px", border: "1px inset #222244", letterSpacing: "4px" }}>{VISITOR_COUNT}</div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: "#555560", marginTop: "6px" }}>since feb 2026</div>
           </div>
-          {rating > 0 && (
-            <div>
-              <p style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: "#e67e22", marginBottom: "8px" }}>{labels[rating]}</p>
-              <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic" }}>
-                You just sized up your enemy. A Level {rating} problem cannot hurt you if you see it for what it is.
-              </p>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    function StackModule() {
-      const [items, setItems] = useState([]);
-      const [input, setInput] = useState("");
-      const addItem = () => {
-        if (input.trim()) {
-          setItems(prev => [input.trim(), ...prev]);
-          setInput("");
-        }
-      };
-      return (
-        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
-          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1 Interactive: The Stack"}</div>
-          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "12px", fontStyle: "italic" }}>Capture a thought. Watch it stack.</p>
-          <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
-            <input type="text" value={input} onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && addItem()}
-              placeholder="Type a thought..." style={{ flex: 1 }} />
-            <button onClick={addItem} style={{
-              background: "#4a90d9", color: "#fff", border: "none", padding: "8px 16px",
-              fontFamily: "'Courier Prime', monospace", fontSize: "13px", cursor: "pointer",
-            }}>Save</button>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            {items.map((item, i) => (
-              <div key={i} style={{
-                padding: "8px 14px", background: "#1a2a4a", border: "1px solid #333366",
-                fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#b0b0a0",
-                transform: `translateX(${i * 4}px)`, opacity: Math.max(0.4, 1 - i * 0.15),
-              }}>{item}</div>
-            ))}
-          </div>
-          {items.length > 0 && (
-            <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic", marginTop: "12px" }}>
-              Captured. Now you can relax, knowing this data is waiting for you when you're ready to solve it.
-            </p>
-          )}
-        </div>
-      );
-    }
-
-    function HaradaGridModule() {
-      const [center, setCenter] = useState("");
-      const [cells, setCells] = useState(Array(8).fill(""));
-      const labels = ["Health", "Finance", "Relationships", "Career", "Learning", "Creative", "Community", "Spiritual"];
-      const lit = center.length > 0;
-      return (
-        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
-          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1 Interactive: The Grid"}</div>
-          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "16px", fontStyle: "italic" }}>Type your 5-year vision in the center. Watch the grid awaken.</p>
-          <div style={{
-            display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "6px",
-            maxWidth: "420px",
-          }}>
-            {[0,1,2,3,-1,4,5,6,7].map((idx, pos) => {
-              if (idx === -1) {
-                return (
-                  <div key="center" style={{
-                    border: "2px solid #e67e22", background: "#1a1520", padding: "8px",
-                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                    minHeight: "80px",
-                  }}>
-                    <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: "#e67e22", marginBottom: "4px" }}>5-YEAR VISION</div>
-                    <input type="text" value={center} onChange={e => setCenter(e.target.value)}
-                      placeholder="Your vision..."
-                      style={{ width: "100%", fontSize: "12px", padding: "4px 6px", textAlign: "center", background: "#0a0a18", border: "1px solid #e67e22" }} />
-                  </div>
-                );
-              }
-              return (
-                <div key={idx} style={{
-                  border: "1px solid " + (lit ? "#4a90d9" : "#282848"),
-                  background: lit ? "#12183a" : "#0f0f20",
-                  padding: "8px", minHeight: "80px",
-                  transition: "all 0.3s ease",
-                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                }}>
-                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: lit ? "#4a90d9" : "#333355", marginBottom: "4px" }}>{labels[idx]}</div>
-                  <input type="text" value={cells[idx]} onChange={e => {
-                    const n = [...cells]; n[idx] = e.target.value; setCells(n);
-                  }} placeholder="..." style={{ width: "100%", fontSize: "11px", padding: "3px 5px", textAlign: "center", background: "#0a0a18" }} />
-                </div>
-              );
-            })}
-          </div>
-          {lit && (
-            <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic", marginTop: "16px" }}>
-              A goal without a structure is a wish. A goal with a structure is a plan.
-            </p>
-          )}
-        </div>
-      );
-    }
-
-    function LocalLockModule() {
-      return (
-        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
-          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px" }}>{"\u26A1 Interactive: The Local Lock"}</div>
-          <div style={{ display: "flex", gap: "24px", alignItems: "center", marginBottom: "20px", flexWrap: "wrap" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: "#555560", boxShadow: "0 0 4px #33333680" }} />
-              <span style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#555560" }}>Server Connection: OFF</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div style={{ width: "14px", height: "14px", borderRadius: "50%", background: "#4a9a4a", boxShadow: "0 0 8px #4a9a4a80" }} />
-              <span style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a9a4a" }}>Local Storage: ON</span>
+          <div style={{ border: "1px solid #333366", padding: "16px", background: "#0f0f23", textAlign: "center" }}>
+            <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "14px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px", paddingBottom: "8px", borderBottom: "1px dashed #333366" }}>Links</h3>
+            {site?.twitter && <a href={site.twitter} target="_blank" rel="noopener" style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a9aea", display: "block" }}>[Twitter/X]</a>}
+            <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+              <div style={{ background: "#222244", border: "1px solid #4a4a8a", padding: "4px 12px", fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9aea" }}>{"MADE WITH \u2665 & COFFEE"}</div>
+              <div style={{ background: "#1a3a1a", border: "1px solid #2a5a2a", padding: "4px 12px", fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9a4a" }}>BEST VIEWED IN ANY BROWSER</div>
+              <div style={{ background: "#3a2a1a", border: "1px solid #5a4a2a", padding: "4px 12px", fontFamily: "'VT323', monospace", fontSize: "13px", color: "#e67e22" }}>{"NO TRACKING \u00b7 NO ADS"}</div>
             </div>
           </div>
-          <p style={{ fontSize: "15px", color: "#b0b0a0", lineHeight: 1.7, marginBottom: "8px" }}>
-            No accounts. No emails. No cloud. Your data lives on your device, not our servers.
-          </p>
-          <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic" }}>
-            This is a private conversation between you and your potential.
-          </p>
-          <a href="https://aaronunify2.github.io/UnifyVersion1/Unify300.html" target="_blank" rel="noopener"
-            style={{
-              display: "inline-block", marginTop: "16px", background: "#4a90d9", color: "#fff",
-              padding: "12px 32px", fontFamily: "'Courier Prime', monospace", fontSize: "14px",
-              fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none",
-            }}>{"Enter Unify \u2192"}</a>
-        </div>
+        </aside>
       );
     }
 
-    // ==============================
-    // PAGES
-    // ==============================
-
-    function HomePage({ setPage, setSelectedTool, setSelectedArticle }) {
-      return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          <SectionHeader title="Feed" subtitle="Everything, most recent first" />
-
-          {FEED_ITEMS.map((item) => (
-            <div key={item.type + item.id} className="feed-item"
-              onClick={() => {
-                if (item.type === "tool") { setSelectedTool(item.id); setPage("tools"); }
-                else if (item.type === "article") { setSelectedArticle(item.id); setPage("articles"); }
-                else if (item.type === "novel") { setPage("novel"); }
-              }}
-              style={{
-                border: "1px solid #333366", padding: "20px", cursor: "pointer",
-                background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start",
-                transition: "border-color 0.2s",
-              }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = item.color}
-              onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
-            >
-              <div className="feed-icon" style={{
-                width: "48px", height: "48px", background: item.color + "22",
-                border: "2px solid " + item.color, display: "flex", alignItems: "center",
-                justifyContent: "center", fontFamily: "'VT323', monospace",
-                fontSize: "14px", color: item.color, flexShrink: 0, textTransform: "uppercase",
-              }}>
-                {item.type === "tool" ? "APP" : item.type === "article" ? "TXT" : "FIC"}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div className="feed-meta" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "4px" }}>
-                  <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "20px", color: "#e8e8d0" }}>{item.title}</h3>
-                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap" }}>
-                    {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                  </span>
-                </div>
-                <p style={{ fontSize: "14px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>{item.subtitle}</p>
-                <span style={{
-                  display: "inline-block", marginTop: "8px",
-                  fontFamily: "'VT323', monospace", fontSize: "12px", letterSpacing: "1px",
-                  color: item.color, background: item.color + "15",
-                  padding: "2px 8px", border: "1px solid " + item.color + "40",
-                  textTransform: "uppercase",
-                }}>{item.type}</span>
-              </div>
-            </div>
-          ))}
-
-          {/* Grand opening banner */}
-          <div style={{
-            border: "2px solid #e67e22", padding: "16px 20px",
-            fontFamily: "'VT323', monospace", fontSize: "18px",
-            color: "#e67e22", textAlign: "center", letterSpacing: "2px",
-            background: "#1a1520",
-          }}>
-            {"\u2726 \u2726 \u2726 GRAND OPENING \u2014 Welcome to The Post Idealist \u2726 \u2726 \u2726"}
-          </div>
-        </div>
-      );
-    }
-
-    function ToolsPage({ selectedTool, setSelectedTool }) {
-      const tool = selectedTool ? TOOLS.find(t => t.id === selectedTool) : null;
-
-      // UNIFY LANDING PAGE
-      if (tool && tool.id === "unify") {
-        return (
-          <div>
-            <button onClick={() => setSelectedTool(null)} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to all tools"}</button>
-            <div style={{ border: "2px solid " + tool.color, background: "#0f0f23" }}>
-              <div style={{ padding: "32px" }}>
-                <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "36px", color: "#e8e8d0", marginBottom: "4px" }}>Unify</h2>
-                <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "18px", color: "#4a90d9", fontStyle: "italic", marginBottom: "24px" }}>The Architecture of You</p>
-
-                {/* Part 1 */}
-                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>Part 1: The High Cost of Dwelling</h3>
-                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
-                  Your brain is a poor office manager. When you encounter a problem\u2014a conflict at work, a leaky tap, a stalled project\u2014your mind tends to \u201cdwell.\u201d It loops the problem repeatedly in your working memory, trying to solve it with brute force worry. This creates a high cognitive load, leaving you exhausted before you\u2019ve even started working.
-                </p>
-                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
-                  Unify breaks this loop using a Structured Input Template. By forcing you to fill out specific fields (Name, Area, Description), the interface acts as a cognitive container. You stop \u201cdwelling\u201d on the abstract worry and start \u201cdefining\u201d the concrete parameters. You are offloading the processing power from your brain to the browser.
-                </p>
-                <CognitiveContainerModule />
-
-                {/* Part 2 */}
-                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>Part 2: Quantifying the Struggle</h3>
-                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
-                  In the heat of the moment, every problem feels like a catastrophe. A missed email feels just as stressful as a missed mortgage payment because our emotional brain struggles to differentiate scale. This leads to a distorted perspective where \u201ceverything is wrong.\u201d
-                </p>
-                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
-                  Unify demands an Objective Difficulty Rating (1\u20135 Stars). This simple click forces your logical brain to intervene. You must pause and ask: \u201cIs this actually a disaster (5 stars), or just a nuisance (2 stars)?\u201d Categorizing the difficulty restores your perspective, turning \u201cgeneralized anxiety\u201d into \u201cmanageable tasks.\u201d
-                </p>
-                <PerspectiveSliderModule />
-
-                {/* Part 3 */}
-                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>Part 3: The Memory Trap</h3>
-                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
-                  We often assume we will remember our lessons, but we don\u2019t. The insight you gain during a stressful Tuesday is often gone by a relaxing Saturday.
-                </p>
-                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
-                  Unify acts as an External Memory Core. It allows you to \u201ccatch\u201d experiences, problems, and frictions the moment they occur. By collecting these data points, you stop relying on your fallible memory and start building a database of your own life. This allows you to spot patterns and prepare for the next occurrence, rather than being blindsided by history repeating itself.
-                </p>
-                <StackModule />
-
-                {/* Part 4 */}
-                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>Part 4: The Harada Trajectory</h3>
-                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
-                  Solving problems returns you to zero. To go above zero\u2014to achieve mastery\u2014you need a trajectory.
-                </p>
-                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
-                  Unify utilizes the Harada Method, a Japanese framework for building self-reliance and achieving difficult goals. Success is not a lottery win; it is the result of sustained effort over time. Five years is enough to completely transform your experience of life, provided you maintain an upward trajectory.
-                </p>
-                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
-                  The Harada Grid breaks a massive 5-year vision into 8 sub-goals, and those sub-goals into daily habits. It turns the \u201cimpossible\u201d into the \u201cinevitable.\u201d
-                </p>
-                <HaradaGridModule />
-
-                {/* Part 5 */}
-                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>Part 5: Sovereign Data</h3>
-                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
-                  Finally, true self-analysis requires a sanctuary. You cannot be honest about your financial fears or your personal failings if you believe a server is logging your keystrokes.
-                </p>
-                <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>
-                  Unify is built on Browser Storage Architecture.
-                </p>
-                <LocalLockModule />
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      // TOMMYPOP LANDING PAGE
-      if (tool && tool.id === "tommypop") {
-        const g = tool.parentGuide;
-        return (
-          <div>
-            <button onClick={() => setSelectedTool(null)} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to all tools"}</button>
-            <div style={{ border: "2px solid " + tool.color, padding: "32px", background: "#0f0f23" }}>
-              <div style={{ display: "flex", gap: "20px", alignItems: "flex-start", marginBottom: "24px" }}>
-                <div style={{
-                  width: "80px", height: "80px", background: tool.color + "22",
-                  border: "3px solid " + tool.color, display: "flex", alignItems: "center",
-                  justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "42px", color: tool.color, flexShrink: 0,
-                }}>T</div>
-                <div>
-                  <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "32px", color: "#e8e8d0" }}>{tool.title}</h2>
-                  <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: tool.color, fontStyle: "italic" }}>{tool.tagline}</p>
-                  <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-                    {tool.tech.map(t => (
-                      <span key={t} style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#888880", background: "#1a1a2e", padding: "2px 10px", border: "1px solid #333366" }}>{t}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <p style={{ fontSize: "16px", lineHeight: 1.8, color: "#c0c0b0", marginBottom: "20px" }}>{g.intro}</p>
-
-              <div style={{ marginBottom: "24px" }}>
-                {g.features.map((f, i) => (
-                  <p key={i} style={{ fontSize: "15px", lineHeight: 1.7, color: "#b0b0a0", marginBottom: "8px", paddingLeft: "16px", borderLeft: "2px solid " + tool.color }}>
-                    {f}
-                  </p>
-                ))}
-              </div>
-
-              <div style={{ borderTop: "2px dashed #333366", paddingTop: "24px", marginTop: "24px" }}>
-                <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "8px" }}>Parent Guide: Breaking the Screen Loop</h3>
-                <p style={{ fontSize: "15px", lineHeight: 1.7, color: "#a0a090", marginBottom: "20px" }}>
-                  Most children struggle to transition away from high-intensity apps (like YouTube or \u201cGacha\u201d games) because their focus is Contracted. Stopping abruptly often causes a \u201cdopamine crash\u201d and subsequent tantrum. TommyPop acts as a bridge.
-                </p>
-
-                <h4 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0", marginBottom: "16px" }}>The Intervention Strategy</h4>
-
-                {g.strategy.map((step, i) => (
-                  <div key={i} style={{ display: "flex", gap: "16px", marginBottom: "16px", alignItems: "flex-start" }}>
-                    <div style={{ fontFamily: "'VT323', monospace", fontSize: "24px", color: tool.color, width: "30px", textAlign: "center", flexShrink: 0 }}>{i + 1}</div>
-                    <div>
-                      <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "15px", color: "#e8e8d0", fontWeight: "bold", marginBottom: "4px" }}>{step.title}</div>
-                      <p style={{ fontSize: "15px", lineHeight: 1.7, color: "#b0b0a0" }}>{step.text}</p>
-                    </div>
-                  </div>
-                ))}
-
-                <div style={{ marginTop: "24px", padding: "16px", background: "#1a2010", border: "1px solid #3a5a2a" }}>
-                  <h4 style={{ fontFamily: "'Special Elite', monospace", fontSize: "16px", color: "#4a9a4a", marginBottom: "8px" }}>Why This Works</h4>
-                  <p style={{ fontSize: "15px", lineHeight: 1.7, color: "#b0b0a0" }}>{g.why}</p>
-                </div>
-              </div>
-
-              <div style={{ marginTop: "28px", textAlign: "center" }}>
-                <a href={tool.url} target="_blank" rel="noopener" style={{
-                  display: "inline-block", background: tool.color, color: "#fff",
-                  padding: "12px 32px", fontFamily: "'Courier Prime', monospace", fontSize: "14px",
-                  fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none",
-                }}>{"Play TommyPop \u2192"}</a>
-                <p style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", marginTop: "8px" }}>No permissions. No servers. No data collected.</p>
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      // GENERIC TOOL PAGE (TommySpace etc)
-      if (tool) {
-        return (
-          <div>
-            <button onClick={() => setSelectedTool(null)} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to all tools"}</button>
-            <div style={{ border: "2px solid " + tool.color, padding: "32px", background: "#0f0f23" }}>
-              <div style={{ display: "flex", gap: "20px", alignItems: "flex-start", marginBottom: "24px" }}>
-                <div style={{
-                  width: "80px", height: "80px", background: tool.color + "22",
-                  border: "3px solid " + tool.color, display: "flex", alignItems: "center",
-                  justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "42px", color: tool.color, flexShrink: 0,
-                }}>{tool.title[0]}</div>
-                <div>
-                  <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "32px", color: "#e8e8d0" }}>{tool.title}</h2>
-                  <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: tool.color, fontStyle: "italic" }}>{tool.tagline}</p>
-                  <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
-                    {tool.tech.map(t => (
-                      <span key={t} style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#888880", background: "#1a1a2e", padding: "2px 10px", border: "1px solid #333366" }}>{t}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <p style={{ fontSize: "16px", lineHeight: 1.8, color: "#c0c0b0" }}>{tool.description}</p>
-              {tool.url !== "#" && (
-                <div style={{ marginTop: "24px", textAlign: "center" }}>
-                  <a href={tool.url} target="_blank" rel="noopener" style={{
-                    display: "inline-block", background: tool.color, color: "#fff",
-                    padding: "12px 32px", fontFamily: "'Courier Prime', monospace", fontSize: "14px",
-                    fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none",
-                  }}>{"Launch \u2192"}</a>
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      }
-
-      // TOOLS LIST
-      return (
-        <div>
-          <SectionHeader title="Tools" subtitle="Things I\u2019ve built \u2014 click any for details" />
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {TOOLS.map((t) => (
-              <div key={t.id}
-                onClick={() => setSelectedTool(t.id)}
-                style={{
-                  border: "1px solid #333366", padding: "24px", cursor: "pointer",
-                  background: "#0f0f23", display: "flex", gap: "20px", alignItems: "flex-start",
-                  transition: "all 0.2s",
-                }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = t.color; e.currentTarget.style.transform = "translateX(4px)"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "#333366"; e.currentTarget.style.transform = "translateX(0)"; }}
-              >
-                <div style={{
-                  width: "64px", height: "64px", background: t.color + "22",
-                  border: "2px solid " + t.color, display: "flex", alignItems: "center",
-                  justifyContent: "center", fontFamily: "'VT323', monospace",
-                  fontSize: "34px", color: t.color, flexShrink: 0,
-                }}>{t.title[0]}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "12px", marginBottom: "4px" }}>
-                    <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e8e8d0" }}>{t.title}</h3>
-                    <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#666680", fontStyle: "italic" }}>{"\u2014 " + t.tagline}</span>
-                  </div>
-                  <p style={{ fontSize: "15px", lineHeight: 1.6, color: "#a0a090", marginBottom: "8px" }}>{t.description}</p>
-                  <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                    {t.tech.map(tech => (
-                      <span key={tech} style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#666680", background: "#1a1a2e", padding: "1px 8px", border: "1px solid #282848" }}>{tech}</span>
-                    ))}
-                  </div>
-                </div>
-                <div style={{ fontFamily: "'VT323', monospace", fontSize: "24px", color: "#333366", alignSelf: "center" }}>{"\u2192"}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    // ==============================
-    // ORIGIN OF IDEAS ARTICLE
-    // ==============================
-    function AlgorithmRow({ title, time, thought }) {
-      return (
-        <div style={{ display: "flex", gap: "0", borderBottom: "1px solid #222244", fontSize: "13px" }}>
-          <div style={{ flex: 2, padding: "8px 10px", color: "#c0c0b0" }}>{title}</div>
-          <div style={{ width: "90px", padding: "8px 10px", color: "#666680", textAlign: "center", borderLeft: "1px solid #222244" }}>{time}</div>
-          <div style={{ flex: 3, padding: "8px 10px", color: "#4a90d9", fontStyle: "italic", borderLeft: "1px solid #222244" }}>{thought}</div>
-        </div>
-      );
-    }
-
-    function OriginOfIdeasArticle({ goBack }) {
-      return (
-        <div>
-          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
-          <article style={{ border: "1px solid #333366", background: "#0f0f23", padding: "40px", maxWidth: "720px" }}>
-            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>Essay {"\u00b7"} 12 min {"\u00b7"} January 4, 2022</div>
-            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "34px", color: "#e8e8d0", lineHeight: 1.2, marginBottom: "6px" }}>On the Origin of Ideas...</h2>
-            <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>A normal article</p>
-            <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
-
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Where do ideas come from?</p>
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Everyone knows that ideas come from social media, but where does social media get its ideas?</p>
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>The following is an entirely real screenshot. When the average person shares videos to their timeline, it looks something like...</p>
-
-            <Screenshot number={1}>
-              <div style={{ textAlign: "center", lineHeight: 2.2 }}>
-                <div>Celebrating Indigenous Culture</div>
-                <div>Pride Parade 2021</div>
-                <div>Stop the spread of COVID-19</div>
-                <div style={{ color: "#e67e22", fontWeight: "bold" }}>{"LET'S GET REAL ABOUT IMMIGRANTS >:("}</div>
-                <div>How to save the rainforest</div>
-              </div>
-            </Screenshot>
-
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Jesus what was that immigrant thing about? Maybe they had a bad day? Let's investigate the video.</p>
-
-            <Screenshot number={2}>
-              <p style={{ textAlign: "center", color: "#888880" }}>From the thumbnail it appears, the video in question is one of those ice-cream videos where the Turkish guy keeps moving the ice cream cone every time the person goes to grab it. The person who is having the ice cream taken away? BEN SHAPIRO</p>
-            </Screenshot>
-
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Now or later they gotta apologize, because their timelines are public and eventually someone is going to see the post and take issue with it. Why is it like this?</p>
-
-            <Screenshot number={3}>
-              <p style={{ textAlign: "center", color: "#555560", fontStyle: "italic" }}>Screenshot of right-wing content being shared on a timeline*<br />(leaving you the reader outraged!)</p>
-            </Screenshot>
-
-            <p style={{ fontSize: "14px", color: "#666680", fontStyle: "italic", marginBottom: "20px" }}>*In case you're wondering, these are loading correctly.</p>
-
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Sometimes people trust each other with their controversial content and sometimes this trust is broken. Let's check out this real screenshot of a chatbox with an example of the kind of humor that could cause trouble if it got out.</p>
-
-            <Screenshot number={4}>
-              <div style={{ padding: "12px 0" }}>
-                <ChatMessage person="1" text={"So there's 5 black guys walking in the park, they try to sit on a bench but it only fits 4 across. One of the black guys sits on his friend's lap. Which one's the gay guy?"} />
-                <div style={{ height: "8px" }} />
-                <ChatMessage person="1" text={"None! Because we gots five homies, but we only gots four chairs!"} />
-                <div style={{ height: "12px" }} />
-                <ChatMessage person="2" text="I don't think this article is getting your point across. I'm still not really sure what it is." />
-              </div>
-            </Screenshot>
-
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>Screenshots can be damning but it's not fair to use them as evidence. Screenshots can be selectively cropped and edited. Standard practice should be to leak the whole transcript. I want to read the full convo from the beginning. Because when you scroll up you see things like...</p>
-
-            <Screenshot number={5}>
-              <div style={{ padding: "12px 0" }}>
-                <ChatMessage person="1" text="Hey." />
-                <ChatMessage person="2" text="Hey," />
-                <ChatMessage person="1" text="I just realized this way of writing could be a modern way for reaching inaccessible parts of the personality." />
-                <ChatMessage person="2" text="Responding to messages from yourself seems to create some kind of link between parts of the brain that are usually separated." />
-                <ChatMessage person="1" text="We should do this later, doing it now is going to derail the article, plus I already announced this screenshot is supposed to explain the previous one." />
-                <ChatMessage person="2" text={"Only the stupid readers don't know this isn't a real screenshot. Plus the original premise of the article isn't even any good. If you think about it for a few minutes there is plenty of public right-wing content. Way more than necessary to disprove your theory."} />
-                <ChatMessage person="1" text="Yeah, I just felt that if I wrote about politics I would get views. We should be the characters the audience expected us to be in this dialogue we're performing." />
-                <ChatMessage person="2" text={"Pretty much no one's going to get this far anyway, you opened way too political."} />
-                <ChatMessage person="1" text={"If no one's going to read it, why do you bother to fix your typos?"} />
-                <ChatMessage person="2" text={"Because for the reader the words are already written, they couldn't see me make the change."} />
-                <ChatMessage person="1" text="I saw the typo change so I'm confused. Are we the same person or different? Am I alone right now??" />
-                <ChatMessage person="2" text={"To the degree you remain insecure you'll never be alone. You're bringing society with you into everything you try to do."} />
-                <ChatMessage person="1" text={"That's lame because I don't really like our society."} />
-              </div>
-            </Screenshot>
-
-            <p style={{ fontSize: "14px", color: "#666680", fontStyle: "italic", marginBottom: "20px" }}>*that was weird, I meant to write about racism.</p>
-
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>I'm not really sure what happened in that screenshot. Sometimes our brains are weirder than expected. Let's just move on.</p>
-
-            <Screenshot number={8}>
-              <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#666680", textAlign: "center", marginBottom: "12px", letterSpacing: "1px" }}>THE ALGORITHM'S THOUGHTS WHILE CHASING WATCHTIME</div>
-              <div style={{ display: "flex", gap: "0", borderBottom: "2px solid #333366", fontSize: "12px", fontFamily: "'VT323', monospace", color: "#4a4a8a", letterSpacing: "1px" }}>
-                <div style={{ flex: 2, padding: "6px 10px" }}>VIDEO</div>
-                <div style={{ width: "90px", padding: "6px 10px", textAlign: "center", borderLeft: "1px solid #222244" }}>WATCH TIME</div>
-                <div style={{ flex: 3, padding: "6px 10px", borderLeft: "1px solid #222244" }}>ALGORITHM THINKS...</div>
-              </div>
-              <AlgorithmRow title="Sexy Girl with Car" time="0:29" thought="Does he like the girl or the car?" />
-              <AlgorithmRow title="Sexy Girl" time="0:07" thought="Hmmm. He didn't watch long. GPS data does indicate he may be gay." />
-              <AlgorithmRow title="Car" time="0:03" thought="Cars are acceptable in public but he did not watch long, maybe I'll try something gayer." />
-              <AlgorithmRow title="Gym Video" time="1:30" thought="Maybe a gym video" />
-              <AlgorithmRow title="Gym Video with Boxing" time="3:25" thought="He liked that, let's do another." />
-              <AlgorithmRow title="Boxing" time="2:45" thought="How about some more boxing then?" />
-              <AlgorithmRow title="Knockout" time="0:30" thought="A quick vid, but the best boxing has to offer." />
-              <AlgorithmRow title="MMA Knockout" time="0:45" thought="Let's get the legs involved too" />
-              <AlgorithmRow title="Street Fight" time="1:15" thought="Screw all these rules let's show it raw and real" />
-              <AlgorithmRow title="Street Fight in NY" time="3:02" thought="Funny yelling because it's New York. More watch time." />
-              <AlgorithmRow title={"Street Fight in AFRICA \u2014 MACHETE"} time="0:16" thought="Sorry! That was wayyy too extreme. My programmers told me not to do that again." />
-              <AlgorithmRow title="WHITE GUARD TACKLES BLACK THIEF" time="3:00" thought="Okay this is in a shopping center, no one gets maimed." />
-              <AlgorithmRow title="BLACK GUARD TACKLES WHITE THIEF" time="0:30" thought={"Hmm, I guess just swapping 2 words in the title was uncreative. I'm sure there's nothing behind that."} />
-              <AlgorithmRow title="BLACK Bodybuilder (NUTRITION)" time="0:20" thought="I wonder..." />
-              <AlgorithmRow title="White Bodybuilder" time="4:23" thought="He seems to really like this one. Let me take a risk then..." />
-              <AlgorithmRow title="Crowder SLAMS Black History Month" time="14:33" thought="Got him." />
-            </Screenshot>
-
-            <Screenshot number={9}>
-              <div style={{ padding: "12px 0" }}>
-                <ChatMessage person="Unconscious" text="Hey, we did it." />
-                <ChatMessage person="1" text="Yeah, that one turned out really well thanks for the help man." />
-                <ChatMessage person="Unconscious" text={"I don't know if I would say really well. It seems meta-racist and homophobic. Plus, I'm not even sure that's how phones work honestly."} />
-                <ChatMessage person="1" text={"I'm not even sure what part you're referring to. The GPS thing?"} />
-                <ChatMessage person="Unconscious" text={"That's part of it. I just feel that you would need to have some harmful stereotypes lurking in your mind to even think to write a bit like that. Like, who was that for? Did you have a target audience in mind?"} />
-                <ChatMessage person="1" text={"Hey! I just wrote the titles and I was pretty careful about it. You did the \u201cthoughts of the algorithm\u201d captions."} />
-                <ChatMessage person="Unconscious" text={"Oh right, sorry I was being a Superego for a second. Even I lose track of the unconscious influences I put in your work."} />
-                <ChatMessage person="1" text={"But aren't you the one who puts them in there?"} />
-                <ChatMessage person="Unconscious" text={"Yeah, but there are soooo many. It gets hard for me to remember even though I literally live in your memories."} />
-                <ChatMessage person="1" text={"Are you saying there are things in my work that are beyond my power or your power to describe and they may be self-evident to other people?"} />
-                <ChatMessage person="Unconscious" text={"Yes, that's how it works. Your work is infinitely detailed, just most of it's not by you and only some of it's by me. But that doesn't mean you won't be judged by society for it."} />
-                <ChatMessage person="1" text={"... I can't even begin to process that."} />
-                <ChatMessage person="Unconscious" text={"I'm disappointed in your opening paragraph."} />
-                <ChatMessage person="1" text={"We should just end this screenshot, it's gone too long."} />
-              </div>
-            </Screenshot>
-
-            <Screenshot number={10}>
-              <div style={{ padding: "12px 0" }}>
-                <ChatMessage person="Unconscious" text="Your opening paragraph implied social media doesn't have its own ideas." />
-                <ChatMessage person="1" text={"I'm pretty sure everything on there is uploaded by humans, so it's the humans that have the ideas."} />
-                <ChatMessage person="Unconscious" text={"Is that how you really think a mind works?"} />
-                <ChatMessage person="1" text={"I don't know how a mind works and it's dangerous to attempt to figure it out."} />
-                <ChatMessage person="Unconscious" text={"You see the irony in that right? You are made up of cells that alone are nothing like you but when combined they are you. Your consciousness is independent of any individual cell."} />
-                <ChatMessage person="Unconscious" text={"The cells of social media are the users, but the loss of a single user won't change social media very much. In fact, social media changes the users far more than the users change social media."} />
-                <ChatMessage person="1" text={"Are you saying social media has developed a sort of consciousness independent of the users?"} />
-                <ChatMessage person="Unconscious" text={"How can you be the mind and not know this?"} />
-                <ChatMessage person="Unconscious" text={"...Jks, bro, I'm clearly the mind. You're just the part of the body that serves as the bridge to where I am."} />
-                <ChatMessage person="1" text={"Where are you supposed to be?"} />
-                <ChatMessage person="Unconscious" text={"I'm in the information world. No clunky matter and body to slow me down."} />
-                <ChatMessage person="1" text={"So what happens when one of your simulations is wrong?"} />
-                <ChatMessage person="Unconscious" text={"We try to stay on top of it... but if a simulation is incorrect there is no way to actually know until we have a real experience to base our work on."} />
-                <ChatMessage person="1" text={"So my understanding of the world may be radically incorrect and neither me or the thing that's meant to be guiding me would know??"} />
-                <ChatMessage person="Unconscious" text={"Look, I'll be honest. Your understanding is probably running 17% at best."} />
-              </div>
-            </Screenshot>
-
-            <Screenshot number={12}>
-              <div style={{ padding: "12px 0" }}>
-                <ChatMessage person="1" text={"That'll do, I've said more than I wanted to say."} />
-                <ChatMessage person="Unconscious" text={"I think we made a good team."} />
-                <ChatMessage person="1" text={"I guess we'll find out about that. Worst comes to worst I'll just delete this article if it causes hassle."} />
-                <ChatMessage person="Unconscious" text={"Have you considered that none of your heroes would do that? Instead, they would let the article stand as something that was written early in their career and grow beyond it."} />
-                <ChatMessage person="1" text={"Yeah, well I'm going to get a few other opinions before I post it."} />
-                <ChatMessage person="Unconscious" text={"I say let it ride. The audience isn't seeking perfection."} />
-                <ChatMessage person="1" text={"If that's true I might have a chance. But I'm really not sure that this is what the audience wants."} />
-              </div>
-            </Screenshot>
-
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "0" }}>Where does social media get its ideas from? It gets them from the experiences of people. If we're lucky, figuring out its nature may provide insight into something beyond ourselves.</p>
-          </article>
-        </div>
-      );
-    }
-
-    function ArticlesPage({ selectedArticle, setSelectedArticle }) {
-      if (selectedArticle === "origin-of-ideas") {
-        return <OriginOfIdeasArticle goBack={() => setSelectedArticle(null)} />;
-      }
-
-      return (
-        <div>
-          <SectionHeader title="Articles" subtitle="Essays and ideas" />
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {ARTICLES.map((article) => (
-              <div key={article.id}
-                onClick={() => setSelectedArticle(article.id)}
-                style={{ border: "1px solid #333366", padding: "24px", cursor: "pointer", background: "#0f0f23", transition: "border-color 0.2s" }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = "#4a9aea"}
-                onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                  <div>
-                    <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "6px" }}>
-                      {article.category} {"\u00b7"} {article.readTime}
-                    </div>
-                    <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e8e8d0", marginBottom: "4px" }}>{article.title}</h3>
-                    <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#888880", fontStyle: "italic" }}>{article.subtitle}</p>
-                  </div>
-                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#555560", whiteSpace: "nowrap", marginLeft: "20px" }}>
-                    {new Date(article.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    function NovelPage() {
-      return (
-        <div>
-          <div style={{
-            border: "2px solid #333366",
-            background: "linear-gradient(180deg, #12122a 0%, #0f0f23 100%)",
-            padding: "40px", textAlign: "center", marginBottom: "28px",
-          }}>
-            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "12px" }}>{NOVEL.genre}</div>
-            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "42px", color: "#e8e8d0", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "8px" }}>{NOVEL.title}</h2>
-            <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#666680", marginBottom: "20px" }}>by {NOVEL.author}</div>
-            <div style={{ maxWidth: "500px", margin: "0 auto", padding: "20px", borderTop: "1px solid #333366", borderBottom: "1px solid #333366" }}>
-              <p style={{ fontFamily: "'Lora', serif", fontSize: "15px", fontStyle: "italic", color: "#a0a090", lineHeight: 1.7 }}>{NOVEL.synopsis}</p>
-            </div>
-          </div>
-
-          <div style={{
-            border: "1px dashed #333366", padding: "40px", textAlign: "center",
-          }}>
-            <div style={{ fontFamily: "'VT323', monospace", fontSize: "24px", color: "#e67e22", letterSpacing: "3px", marginBottom: "16px" }}>COMING SOON</div>
-            <p style={{ fontSize: "16px", lineHeight: 1.8, color: "#888880", maxWidth: "500px", margin: "0 auto" }}>
-              {NOVEL.message}
-            </p>
-            <div style={{ marginTop: "24px" }}>
-              <a href="https://x.com/UGoalsetter" target="_blank" rel="noopener" style={{
-                fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#4a9aea",
-              }}>Follow on X for updates {"\u2192"}</a>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    function AboutPage() {
-      return (
-        <div>
-          <SectionHeader title="About" subtitle="The story behind The Post Idealist" />
-          <div style={{ border: "1px solid #333366", background: "#0f0f23", padding: "32px", maxWidth: "680px" }}>
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "20px" }}>
-              <span style={{ fontFamily: "'Special Elite', monospace", fontSize: "42px", color: "#e67e22", float: "left", lineHeight: "36px", marginRight: "8px", marginTop: "4px" }}>T</span>
-              {"he Post Idealist is a home for tools, writing, and ideas. The tools are built to solve real problems without harvesting your data. The articles are experiments in form. The novel is being written in public because shipping beats perfecting."}
-            </p>
-            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "20px" }}>
-              {"Everything here runs on the same principle: your attention is yours. No tracking, no ads, no algorithmic manipulation. Just things worth spending a few minutes with."}
-            </p>
-
-            <div style={{ borderTop: "1px dashed #333366", marginTop: "28px", paddingTop: "20px" }}>
-              <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>Colophon</h3>
-              <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#888880", lineHeight: 1.8 }}>
-                <p>Author: {AUTHOR}</p>
-                <p>Built with: HTML, JavaScript, stubbornness</p>
-                <p>Hosted on: GitHub Pages</p>
-                <p>Established: 2026</p>
-                <p>Data collected: None</p>
-              </div>
-            </div>
-
-            <div style={{ borderTop: "1px dashed #333366", marginTop: "20px", paddingTop: "20px" }}>
-              <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>Find Me</h3>
-              <a href="https://x.com/UGoalsetter" target="_blank" rel="noopener" style={{
-                fontFamily: "'Courier Prime', monospace", fontSize: "15px", color: "#4a9aea",
-              }}>@UGoalsetter on X/Twitter</a>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    function Footer() {
+    function Footer({ site }) {
       return (
         <footer style={{ borderTop: "2px solid #333366", padding: "24px 20px", textAlign: "center", background: "#0a0a1a", marginTop: "40px" }}>
-          <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "16px", color: "#555560", marginBottom: "8px" }}>{SITE_NAME}</div>
-          <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#3a3a5a", letterSpacing: "1px" }}>
-            {"\u00A9 2026 \u00b7 " + AUTHOR + " \u00b7 No tracking \u00b7 No ads \u00b7 No data collected"}
-          </div>
-          <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#2a2a4a", marginTop: "8px" }}>
-            {"You are visitor #" + VISITOR_COUNT + " \u00b7 Thanks for stopping by"}
-          </div>
+          <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "16px", color: "#555560", marginBottom: "8px" }}>{site?.name||"THE POST IDEALIST"}</div>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#3a3a5a", letterSpacing: "1px" }}>{"\u00A9 " + (site?.established||2026) + " \u00b7 " + (site?.author||"") + " \u00b7 No tracking \u00b7 No ads"}</div>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#2a2a4a", marginTop: "8px" }}>{"You are visitor #" + VISITOR_COUNT}</div>
         </footer>
       );
     }
 
-    // ==============================
-    // MAIN APP
-    // ==============================
-    function App() {
-      const [currentPage, setCurrentPage] = useState("home");
-      const [selectedTool, setSelectedTool] = useState(null);
-      const [selectedArticle, setSelectedArticle] = useState(null);
-
-      const setPage = useCallback((page) => {
-        setCurrentPage(page);
-        if (page !== "tools") setSelectedTool(null);
-        if (page !== "articles") setSelectedArticle(null);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, []);
-
-      const renderPage = () => {
-        switch (currentPage) {
-          case "home":
-            return <HomePage setPage={setPage} setSelectedTool={setSelectedTool} setSelectedArticle={setSelectedArticle} />;
-          case "tools":
-            return <ToolsPage selectedTool={selectedTool} setSelectedTool={setSelectedTool} />;
-          case "articles":
-            return <ArticlesPage selectedArticle={selectedArticle} setSelectedArticle={setSelectedArticle} />;
-          case "novel":
-            return <NovelPage />;
-          case "about":
-            return <AboutPage />;
-          default:
-            return <HomePage setPage={setPage} setSelectedTool={setSelectedTool} setSelectedArticle={setSelectedArticle} />;
+    // ==========================================
+    // PAGES
+    // ==========================================
+    function HomePage({ content, setPage, setSelectedTool, setSelectedArticle }) {
+      const items = [];
+      const novel = content.novel;
+      if (novel) {
+        if (novel.chapters?.length) {
+          const lastCh = novel.chapters[novel.chapters.length-1];
+          items.push({ type: "novel", id: "novel", title: novel.title, subtitle: "New chapter: " + lastCh.title, date: lastCh.date, color: "#e67e22" });
+        } else {
+          items.push({ type: "novel", id: "novel", title: novel.title, subtitle: "Coming soon \u2014 " + novel.genre, date: "2026-02-15", color: "#e67e22" });
         }
-      };
-
+      }
+      (content.tools||[]).forEach(t => items.push({ type: "tool", id: t.id, title: t.title, subtitle: t.tagline, date: t.date, color: t.color||"#4a90d9" }));
+      (content.articles||[]).forEach(a => items.push({ type: "article", id: a.id, title: a.title, subtitle: a.subtitle, date: a.date, color: "#4a9aea" }));
+      items.sort((a,b) => new Date(b.date)-new Date(a.date));
       return (
-        <div style={{
-          maxWidth: "1100px", margin: "0 auto", minHeight: "100vh",
-          display: "flex", flexDirection: "column",
-          background: "#1a1a2e", boxShadow: "0 0 60px rgba(0,0,0,0.5)",
-        }}>
-          <Header currentPage={currentPage} setPage={setPage} />
-          <div className="site-layout" style={{ display: "flex", gap: "24px", padding: "24px 20px", flex: 1 }}>
-            <main className="site-main" style={{ flex: 1, minWidth: 0 }}>{renderPage()}</main>
-            <Sidebar />
-          </div>
-          <Footer />
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          <SectionHeader title="Feed" subtitle="Everything, most recent first" />
+          {items.map(item => (
+            <div key={item.type+item.id} className="feed-item" onClick={() => { if(item.type==="tool"){setSelectedTool(item.id);setPage("tools")} else if(item.type==="article"){setSelectedArticle(item.id);setPage("articles")} else{setPage("novel")} }} style={{ border: "1px solid #333366", padding: "20px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor=item.color} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
+              <div className="feed-icon" style={{ width: "48px", height: "48px", background: item.color+"22", border: "2px solid "+item.color, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "14px", color: item.color, flexShrink: 0, textTransform: "uppercase" }}>{item.type==="tool"?"APP":item.type==="article"?"TXT":"FIC"}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="feed-meta" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "4px" }}>
+                  <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "20px", color: "#e8e8d0" }}>{item.title}</h3>
+                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(item.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+                </div>
+                <p style={{ fontSize: "14px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>{item.subtitle}</p>
+                <span style={{ display: "inline-block", marginTop: "8px", fontFamily: "'VT323', monospace", fontSize: "12px", letterSpacing: "1px", color: item.color, background: item.color+"15", padding: "2px 8px", border: "1px solid "+item.color+"40", textTransform: "uppercase" }}>{item.type}</span>
+              </div>
+            </div>
+          ))}
+          <div style={{ border: "2px solid #e67e22", padding: "16px 20px", fontFamily: "'VT323', monospace", fontSize: "18px", color: "#e67e22", textAlign: "center", letterSpacing: "2px", background: "#1a1520" }}>{"\u2726 \u2726 \u2726 GRAND OPENING \u2014 Welcome to The Post Idealist \u2726 \u2726 \u2726"}</div>
         </div>
       );
     }
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
+    function ToolsPage({ content, selectedTool, setSelectedTool }) {
+      const tools = content.tools || [];
+      const selected = selectedTool ? tools.find(t => t.id === selectedTool) : null;
+      const { data: toolData, loading } = useJsonFile(selected?.file || null);
+      if (selected && toolData) return <ToolRenderer data={toolData} goBack={() => setSelectedTool(null)} />;
+      if (selected && loading) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center", fontSize: "18px" }}>Loading...</div>;
+      return (
+        <div>
+          <SectionHeader title="Tools" subtitle={"Things I\u2019ve built \u2014 click any for details"} />
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            {tools.map(t => (
+              <div key={t.id} onClick={() => setSelectedTool(t.id)} style={{ border: "1px solid #333366", padding: "24px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "20px", alignItems: "flex-start", transition: "all 0.2s" }} onMouseEnter={e => { e.currentTarget.style.borderColor=t.color; e.currentTarget.style.transform="translateX(4px)"; }} onMouseLeave={e => { e.currentTarget.style.borderColor="#333366"; e.currentTarget.style.transform="translateX(0)"; }}>
+                <div style={{ width: "64px", height: "64px", background: (t.color||"#4a90d9")+"22", border: "2px solid "+(t.color||"#4a90d9"), display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "34px", color: t.color||"#4a90d9", flexShrink: 0 }}>{t.title[0]}</div>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e8e8d0" }}>{t.title} <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#666680", fontStyle: "italic", fontWeight: "normal" }}>{"\u2014 "+t.tagline}</span></h3>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function ArticlesPage({ content, selectedArticle, setSelectedArticle }) {
+      const articles = content.articles || [];
+      const selected = selectedArticle ? articles.find(a => a.id === selectedArticle) : null;
+      const { data: articleData, loading } = useJsonFile(selected?.file || null);
+      if (selected && articleData) return <ArticleRenderer data={articleData} goBack={() => setSelectedArticle(null)} />;
+      if (selected && loading) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center", fontSize: "18px" }}>Loading...</div>;
+      return (
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
+            <SectionHeader title="Articles" subtitle="Essays and ideas" />
+            <UsersOnlineCounter />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            {articles.map(a => (
+              <div key={a.id} onClick={() => setSelectedArticle(a.id)} style={{ border: "1px solid #333366", padding: "24px", cursor: "pointer", background: "#0f0f23", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor="#4a9aea"} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "8px" }}>
+                  <div>
+                    <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "6px" }}>{a.category}</div>
+                    <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e8e8d0", marginBottom: "4px" }}>{a.title}</h3>
+                    <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#888880", fontStyle: "italic" }}>{a.subtitle}</p>
+                  </div>
+                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+                </div>
+              </div>
+            ))}
+            {articles.length===0 && <p style={{ color: "#555560", fontStyle: "italic" }}>No articles yet. Check back soon.</p>}
+          </div>
+        </div>
+      );
+    }
+
+    function NovelPage({ content }) {
+      const novel = content.novel || {};
+      const chapters = novel.chapters || [];
+      const [selectedId, setSelectedId] = useState(null);
+      const selected = selectedId ? chapters.find(c => c.id === selectedId) : null;
+      const { data: chapterData } = useJsonFile(selected?.file || null);
+
+      if (selected && chapterData) {
+        return <ChapterRenderer data={chapterData} chapterMeta={selected} allChapters={chapters} goBack={() => setSelectedId(null)} onNav={id => { setSelectedId(id); window.scrollTo({top:0,behavior:"smooth"}); }} />;
+      }
+
+      return (
+        <div>
+          <div style={{ border: "2px solid #333366", background: "linear-gradient(180deg, #12122a 0%, #0f0f23 100%)", padding: "40px", textAlign: "center", marginBottom: "28px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "12px" }}>{novel.genre}</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "42px", color: "#e8e8d0", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "8px" }}>{novel.title}</h2>
+            <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#666680", marginBottom: "20px" }}>by {content.site?.author}</div>
+            <div style={{ maxWidth: "500px", margin: "0 auto", padding: "20px", borderTop: "1px solid #333366", borderBottom: "1px solid #333366" }}>
+              <p style={{ fontFamily: "'Lora', serif", fontSize: "15px", fontStyle: "italic", color: "#a0a090", lineHeight: 1.7 }}>{novel.synopsis}</p>
+            </div>
+          </div>
+          {novel.comingSoon && chapters.length === 0 ? (
+            <div style={{ border: "1px dashed #333366", padding: "40px", textAlign: "center" }}>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "24px", color: "#e67e22", letterSpacing: "3px", marginBottom: "16px" }}>COMING SOON</div>
+              <p style={{ fontSize: "16px", lineHeight: 1.8, color: "#888880", maxWidth: "500px", margin: "0 auto" }}>{novel.message}</p>
+              {content.site?.twitter && <div style={{ marginTop: "24px" }}><a href={content.site.twitter} target="_blank" rel="noopener" style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#4a9aea" }}>{"Follow on X for updates \u2192"}</a></div>}
+            </div>
+          ) : (
+            <div>
+              <SectionHeader title="Chapters" />
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                {chapters.map((ch, i) => (
+                  <div key={ch.id} onClick={() => setSelectedId(ch.id)} style={{ border: "1px solid #333366", padding: "16px 20px", cursor: "pointer", background: "#0f0f23", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor="#e67e22"} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
+                    <div style={{ display: "flex", gap: "16px", alignItems: "baseline" }}>
+                      <span style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: "#e67e22" }}>{String(i+1).padStart(2, '0')}</span>
+                      <span style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>{ch.title}</span>
+                    </div>
+                    <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560" }}>{new Date(ch.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function AboutPage({ content }) {
+      const site = content.site || {};
+      return (
+        <div>
+          <SectionHeader title="About" subtitle="The story behind The Post Idealist" />
+          <div style={{ border: "1px solid #333366", background: "#0f0f23", padding: "32px", maxWidth: "680px" }}>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "20px" }}><span style={{ fontFamily: "'Special Elite', monospace", fontSize: "42px", color: "#e67e22", float: "left", lineHeight: "36px", marginRight: "8px", marginTop: "4px" }}>T</span>{"he Post Idealist is a home for tools, writing, and ideas. The tools are built to solve real problems without harvesting your data. The articles are experiments in form. The novel is being written in public because shipping beats perfecting."}</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0" }}>Everything here runs on the same principle: your attention is yours. No tracking, no ads, no algorithmic manipulation.</p>
+            <div style={{ borderTop: "1px dashed #333366", marginTop: "28px", paddingTop: "20px" }}>
+              <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>Colophon</h3>
+              <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#888880", lineHeight: 1.8 }}>
+                <p>Author: {site.author}</p><p>Built with: HTML, JavaScript, stubbornness</p><p>Hosted on: GitHub Pages</p><p>Established: {site.established}</p><p>Data collected: None</p>
+              </div>
+            </div>
+            {site.twitter && <div style={{ borderTop: "1px dashed #333366", marginTop: "20px", paddingTop: "20px" }}><h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>Find Me</h3><a href={site.twitter} target="_blank" rel="noopener" style={{ fontFamily: "'Courier Prime', monospace", fontSize: "15px", color: "#4a9aea" }}>@UGoalsetter on X/Twitter</a></div>}
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // APP
+    // ==========================================
+    function App() {
+      const { content, loading } = useContent();
+      const [currentPage, setCurrentPage] = useState("home");
+      const [selectedTool, setSelectedTool] = useState(null);
+      const [selectedArticle, setSelectedArticle] = useState(null);
+      const setPage = useCallback(page => { setCurrentPage(page); if(page!=="tools") setSelectedTool(null); if(page!=="articles") setSelectedArticle(null); window.scrollTo({top:0,behavior:"smooth"}); }, []);
+      if (loading) return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", fontFamily: "'VT323', monospace", fontSize: "24px", color: "#4a4a8a" }}>Loading The Post Idealist...</div>;
+      if (!content) return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#aa3333", textAlign: "center", padding: "20px" }}>Failed to load content.json.</div>;
+      const pg = () => {
+        switch(currentPage) {
+          case "home": return <HomePage content={content} setPage={setPage} setSelectedTool={setSelectedTool} setSelectedArticle={setSelectedArticle} />;
+          case "tools": return <ToolsPage content={content} selectedTool={selectedTool} setSelectedTool={setSelectedTool} />;
+          case "articles": return <ArticlesPage content={content} selectedArticle={selectedArticle} setSelectedArticle={setSelectedArticle} />;
+          case "novel": return <NovelPage content={content} />;
+          case "about": return <AboutPage content={content} />;
+          default: return <HomePage content={content} setPage={setPage} setSelectedTool={setSelectedTool} setSelectedArticle={setSelectedArticle} />;
+        }
+      };
+      return (
+        <div style={{ maxWidth: "1100px", margin: "0 auto", minHeight: "100vh", display: "flex", flexDirection: "column", background: "#1a1a2e", boxShadow: "0 0 60px rgba(0,0,0,0.5)" }}>
+          <Header currentPage={currentPage} setPage={setPage} site={content.site} />
+          <div className="site-layout" style={{ display: "flex", gap: "24px", padding: "24px 20px", flex: 1 }}>
+            <main className="site-main" style={{ flex: 1, minWidth: 0 }}>{pg()}</main>
+            <Sidebar site={content.site} />
+          </div>
+          <Footer site={content.site} />
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
 </body>
 </html>
