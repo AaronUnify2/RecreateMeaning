@@ -1,0 +1,28 @@
+{
+  "id": "tommypop",
+  "title": "TommyPop",
+  "tagline": "A non-addictive game for toddlers",
+  "description": "Use this game to distract a child without exposing them to addictive games or inappropriate content. TommyPop is designed to be interesting for a minute or two before becoming boring.",
+  "tech": ["HTML", "JavaScript", "CSS"],
+  "status": "Live",
+  "url": "https://aaronunify2.github.io/UnifyVersion1/Kids/TommyPop.html",
+  "color": "#e67e22",
+  "date": "2025-11-01",
+  "sections": [
+    { "type": "text", "content": "A minimalist bubble-popping game designed specifically for toddlers. No high-dopamine rewards. No hidden agendas. A natural exit built in." },
+    { "type": "features", "content": [
+      "No High-Dopamine Rewards: No flashing lights, \u201clevel up\u201d sounds, or loot boxes.",
+      "No Hidden Agendas: Zero advertisements, zero in-app purchases, and no age-inappropriate content.",
+      "A Natural Exit: The game is fun enough to engage a child\u2019s curiosity but predictable enough that they will eventually choose to put it down."
+    ]},
+    { "type": "heading", "content": "Parent Guide: The Intervention Strategy" },
+    { "type": "steps", "content": [
+      { "title": "The \u201cLow-Friction\u201d Swap", "text": "While the child is using the addictive device, load TommyPop on a separate phone. Offer it as a swap." },
+      { "title": "The Attention Shift", "text": "The repetitive nature of the game lowers their neurological intensity. Watch for signs of boredom or looking around the room." },
+      { "title": "The Montessori Catch", "text": "Before the child becomes frustrated, \u201ccatch\u201d their broadening attention with a prepared physical activity." },
+      { "title": "Hide the Tech", "text": "Once the child engages with the physical toy, quietly remove and hide all phone devices." },
+      { "title": "Anchor with Routine", "text": "Time the end of the physical activity with a meal. This provides a natural biological transition." }
+    ]},
+    { "type": "callout", "content": "By moving from Narrow (Addictive games) to Open (Reading/Board games), you train your child\u2019s brain to find satisfaction in slower-paced, developmental activities." }
+  ]
+}
