@@ -1,0 +1,31 @@
+{
+  "id": "unify",
+  "title": "Unify Version 2",
+  "tagline": "The Architecture of You",
+  "description": "A structured self-analysis tool that helps you offload cognitive load, quantify your struggles, and build a trajectory toward mastery. No accounts, no servers, no tracking — just you and your potential.",
+  "tech": ["HTML", "JavaScript", "CSS"],
+  "status": "Live",
+  "url": "https://aaronunify2.github.io/UnifyVersion1/Unify300.html",
+  "color": "#4a90d9",
+  "date": "2025-12-01",
+  "sections": [
+    { "type": "heading", "content": "Part 1: The High Cost of Dwelling" },
+    { "type": "text", "content": "Your brain is a poor office manager. When you encounter a problem\u2014a conflict at work, a leaky tap, a stalled project\u2014your mind tends to \u201cdwell.\u201d It loops the problem repeatedly in your working memory, trying to solve it with brute force worry." },
+    { "type": "text", "content": "Unify breaks this loop using a Structured Input Template. By forcing you to fill out specific fields, the interface acts as a cognitive container. You stop \u201cdwelling\u201d on the abstract worry and start \u201cdefining\u201d the concrete parameters." },
+    { "type": "interactive", "module": "cognitive-container" },
+    { "type": "heading", "content": "Part 2: Quantifying the Struggle" },
+    { "type": "text", "content": "In the heat of the moment, every problem feels like a catastrophe. A missed email feels just as stressful as a missed mortgage payment because our emotional brain struggles to differentiate scale." },
+    { "type": "text", "content": "Unify demands an Objective Difficulty Rating (1\u20135 Stars). This forces your logical brain to intervene. \u201cIs this actually a disaster, or just a nuisance?\u201d" },
+    { "type": "interactive", "module": "perspective-slider" },
+    { "type": "heading", "content": "Part 3: The Memory Trap" },
+    { "type": "text", "content": "We often assume we will remember our lessons, but we don\u2019t. The insight you gain during a stressful Tuesday is often gone by a relaxing Saturday." },
+    { "type": "text", "content": "Unify acts as an External Memory Core. It allows you to \u201ccatch\u201d experiences the moment they occur, building a database of your own life." },
+    { "type": "interactive", "module": "stack" },
+    { "type": "heading", "content": "Part 4: The Harada Trajectory" },
+    { "type": "text", "content": "Solving problems returns you to zero. To go above zero\u2014to achieve mastery\u2014you need a trajectory. The Harada Grid breaks a massive 5-year vision into 8 sub-goals, and those sub-goals into daily habits. It turns the \u201cimpossible\u201d into the \u201cinevitable.\u201d" },
+    { "type": "interactive", "module": "harada-grid" },
+    { "type": "heading", "content": "Part 5: Sovereign Data" },
+    { "type": "text", "content": "True self-analysis requires a sanctuary. You cannot be honest about your financial fears or personal failings if you believe a server is logging your keystrokes. Unify is built on Browser Storage Architecture." },
+    { "type": "interactive", "module": "local-lock" }
+  ]
+}
