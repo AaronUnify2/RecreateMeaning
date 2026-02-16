@@ -5,7 +5,7 @@
   "description": "An interactive 3D solar system built for curious kids (and adults). Fly through space and learn the names and positions of the planets.",
   "tech": ["HTML", "Three.js", "CSS"],
   "status": "Live",
-  "url": "#",
+  "url": "https://aaronunify2.github.io/UnifyVersion1/TommySpace.html",
   "color": "#8e44ad",
   "date": "2025-10-01"
 }
