@@ -1,0 +1,22 @@
+{
+  "id": "mystic-forest",
+  "title": "Mystic Forest Walker",
+  "tagline": "A pixel-art RPG adventure in your browser",
+  "description": "Explore a procedurally generated mystic forest. Battle enemies, level up, cast spells, and discover what lurks in the deepest parts of the woods. Built with Three.js pixel art. No downloads, no installs \u2014 just walk into the forest.",
+  "tech": ["HTML", "Three.js", "CSS"],
+  "status": "Live",
+  "url": "https://aaronunify2.github.io/UnifyVersion1/Forest.html",
+  "color": "#2e7d32",
+  "date": "2026-02-01",
+  "sections": [
+    { "type": "text", "content": "A browser-based RPG set in a procedurally generated mystic forest. Walk, fight, cast magic, level up. No accounts, no downloads, no ads." },
+    { "type": "features", "content": [
+      "Procedural World: Every playthrough generates a different forest layout with unique encounters.",
+      "Pixel Art Style: Retro-styled sprites and environments rendered in Three.js.",
+      "Combat System: Fight enemies, earn XP, level up, and unlock new abilities.",
+      "Magic System: Cast spells to defeat tougher enemies deeper in the forest.",
+      "Mobile Friendly: D-pad and magic button controls work on touchscreens."
+    ]},
+    { "type": "callout", "content": "Works best on mobile. Turn your volume up." }
+  ]
+}
