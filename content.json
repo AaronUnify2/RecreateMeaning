@@ -10,6 +10,7 @@
   "tools": [
     { "id": "unify", "title": "Unify Version 2", "tagline": "The Architecture of You", "date": "2025-12-01", "color": "#4a90d9", "file": "tools/unify.json" },
     { "id": "tommypop", "title": "TommyPop", "tagline": "A non-addictive game for toddlers", "date": "2025-11-01", "color": "#e67e22", "file": "tools/tommypop.json" },
+    { "id": "novelPlanner", "title": "Novel Planner", "tagline": "Software for novel planning", "date": "2025-11-01", "color": "#e67e22", "file": "tools/novelPlanner.json" },
     { "id": "tommyspace", "title": "TommySpace", "tagline": "Explore the solar system to learn the names of the planets", "date": "2025-10-01", "color": "#8e44ad", "file": "tools/tommyspace.json" }
   ],
   "articles": [
@@ -21,6 +22,9 @@
     "synopsis": "A coming of age tale for the modern world.",
     "comingSoon": true,
     "message": "The author is currently reworking the beginning after finally figuring out the ending. Chapters will appear here as they\u2019re ready.",
+    "plugMessage": "Tired of waiting? Why not write your own novel in the meantime.",
+    "plugUrl": "https://aaronunify2.github.io/UnifyVersion1/NovelPlanner.html",
+    "plugLabel": "Novel Planner",
     "chapters": []
   }
 }
