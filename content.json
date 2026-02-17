@@ -11,7 +11,8 @@
     { "id": "unify", "title": "Unify Version 2", "tagline": "The Architecture of You", "date": "2025-12-01", "color": "#4a90d9", "file": "tools/unify.json" },
     { "id": "tommypop", "title": "TommyPop", "tagline": "A non-addictive game for toddlers", "date": "2025-11-01", "color": "#e67e22", "file": "tools/tommypop.json" },
     { "id": "novelPlanner", "title": "Novel Planner", "tagline": "Software for novel planning", "date": "2025-11-01", "color": "#e67e22", "file": "tools/novelPlanner.json" },
-    { "id": "tommyspace", "title": "TommySpace", "tagline": "Explore the solar system to learn the names of the planets", "date": "2025-10-01", "color": "#8e44ad", "file": "tools/tommyspace.json" }
+    { "id": "tommyspace", "title": "TommySpace", "tagline": "Explore the solar system to learn the names of the planets", "date": "2025-10-01", "color": "#8e44ad", "file": "tools/tommyspace.json" },
+    { "id": "mystic-forest", "title": "Mystic Forest Walker", "tagline": "A pixel-art RPG adventure in your browser", "date": "2026-02-01", "color": "#2e7d32", "file": "tools/mystic-forest.json" }
   ],
   "articles": [
     { "id": "origin-of-ideas", "title": "On the Origin of Ideas...", "subtitle": "A normal article", "date": "2022-01-04", "category": "Essay", "file": "articles/origin-of-ideas.json" }
