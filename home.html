@@ -532,7 +532,9 @@
           const lastCh = novel.chapters[novel.chapters.length-1];
           items.push({ type: "novel", id: "novel", title: novel.title, subtitle: "New chapter: " + lastCh.title, date: lastCh.date, color: "#e67e22" });
         } else {
-          items.push({ type: "novel", id: "novel", title: novel.title, subtitle: "Coming soon \u2014 " + novel.genre, date: "2026-02-15", color: "#e67e22" });
+          const synArr = novel.synopsis;
+          const homeSyn = Array.isArray(synArr) ? synArr[Math.floor(Math.random() * synArr.length)] : (synArr || novel.genre);
+          items.push({ type: "novel", id: "novel", title: novel.title, subtitle: homeSyn, date: "2026-02-15", color: "#e67e22" });
         }
       }
       (content.tools||[]).forEach(t => items.push({ type: "tool", id: t.id, title: t.title, subtitle: t.tagline, date: t.date, color: t.color||"#4a90d9" }));
