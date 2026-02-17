@@ -1,0 +1,28 @@
+{
+  "id": "novelPlanner",
+  "title": "Novel Planner",
+  "tagline": "Software for novel planning",
+  "description": "Plan your novel without giving up your data. Serverless, uses browser storage to keep your content between sessions. Save the JSON file to switch between devices. No account necessary.",
+  "tech": ["HTML", "JavaScript", "CSS"],
+  "status": "Live",
+  "url": "https://aaronunify2.github.io/UnifyVersion1/NovelPlanner.html",
+  "color": "#e67e22",
+  "date": "2025-11-01",
+  "sections": [
+    { "type": "text", "content": "A tool for planning a novel. Outline your chapters, track your characters, map your plot structure, and keep notes \u2014 all in the browser." },
+    { "type": "features", "content": [
+      "No Account Required: Open the page and start planning. No sign-up, no email, no password.",
+      "Browser Storage: Your work saves automatically between sessions on the same device.",
+      "JSON Export/Import: Download your entire novel plan as a JSON file. Load it on another device whenever you need to.",
+      "Zero Server Dependency: Nothing leaves your browser. If the internet goes down, your data is still there."
+    ]},
+    { "type": "heading", "content": "How It Works" },
+    { "type": "steps", "content": [
+      { "title": "Open the App", "text": "No setup. No onboarding wizard. You land on your workspace immediately." },
+      { "title": "Build Your Structure", "text": "Create chapters, add scenes, define characters. The planner gives you a framework without forcing a method." },
+      { "title": "Write Your Notes", "text": "Each element has space for freeform notes. Use it however your brain works \u2014 bullet points, stream of consciousness, whatever." },
+      { "title": "Export When Ready", "text": "Save your plan as a JSON file. Back it up, move it to another machine, or just keep it safe." }
+    ]},
+    { "type": "callout", "content": "Most novel planning software wants your email, your money, or both. This one wants neither. Your story belongs to you." }
+  ]
+}
