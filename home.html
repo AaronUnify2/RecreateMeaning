@@ -509,6 +509,7 @@
               <div style={{ fontFamily: "'VT323', monospace", fontSize: "24px", color: "#e67e22", letterSpacing: "3px", marginBottom: "16px" }}>COMING SOON</div>
               <p style={{ fontSize: "16px", lineHeight: 1.8, color: "#888880", maxWidth: "500px", margin: "0 auto" }}>{novel.message}</p>
               {content.site?.twitter && <div style={{ marginTop: "24px" }}><a href={content.site.twitter} target="_blank" rel="noopener" style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#4a9aea" }}>{"Follow on X for updates \u2192"}</a></div>}
+              {novel.plugMessage && <div style={{ marginTop: "24px", paddingTop: "20px", borderTop: "1px dashed #333366" }}><p style={{ fontSize: "15px", color: "#888880", lineHeight: 1.7 }}>{novel.plugMessage}</p>{novel.plugUrl && <a href={novel.plugUrl} target="_blank" rel="noopener" style={{ display: "inline-block", marginTop: "12px", background: "#e67e22", color: "#fff", padding: "8px 24px", fontFamily: "'Courier Prime', monospace", fontSize: "13px", fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none" }}>{(novel.plugLabel || "Try it") + " \u2192"}</a>}</div>}
             </div>
           ) : (
             <div>
