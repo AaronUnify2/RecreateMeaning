@@ -91,11 +91,31 @@
       );
     }
 
+    function redact(text) {
+      if (!text || typeof text !== 'string' || !text.includes('[R]')) return text;
+      const parts = [];
+      let remaining = text;
+      let key = 0;
+      while (remaining.includes('[R]')) {
+        const start = remaining.indexOf('[R]');
+        const end = remaining.indexOf('[/R]');
+        if (end === -1) break;
+        if (start > 0) parts.push(remaining.slice(0, start));
+        const redactedText = remaining.slice(start + 3, end);
+        parts.push(
+          React.createElement('span', { key: key++, style: { background: '#111', color: '#111', padding: '1px 2px', borderRadius: '2px', userSelect: 'none', cursor: 'default', border: '1px solid #222', letterSpacing: '0px' }, title: 'REDACTED' }, redactedText)
+        );
+        remaining = remaining.slice(end + 4);
+      }
+      if (remaining) parts.push(remaining);
+      return parts.length ? parts : text;
+    }
+
     function ChatMessage({ speaker, text }) {
       const isU = speaker === "Unconscious";
       return (
         <div style={{ marginBottom: "8px", fontFamily: "'Courier Prime', monospace", fontSize: "14px", lineHeight: 1.8, color: "#b0b0a0" }}>
-          <span style={{ color: isU ? "#e67e22" : "#4a9aea", fontWeight: "bold" }}>{isU ? "The Unconscious" : "Person " + speaker}:</span> <span>{text}</span>
+          <span style={{ color: isU ? "#e67e22" : "#4a9aea", fontWeight: "bold" }}>{isU ? "The Unconscious" : "Person " + speaker}:</span> <span>{redact(text)}</span>
         </div>
       );
     }
@@ -111,9 +131,9 @@
           </div>
           {rows.map((row, i) => (
             <div key={i} className="algo-row" style={{ display: "flex", borderBottom: "1px solid #222244", fontSize: "13px" }}>
-              <div style={{ flex: 2, padding: "8px 10px", color: "#c0c0b0" }}>{row.title}</div>
+              <div style={{ flex: 2, padding: "8px 10px", color: "#c0c0b0" }}>{redact(row.title)}</div>
               <div style={{ width: "90px", padding: "8px 10px", color: "#666680", textAlign: "center", borderLeft: "1px solid #222244" }}>{row.time}</div>
-              <div style={{ flex: 3, padding: "8px 10px", color: "#4a90d9", fontStyle: "italic", borderLeft: "1px solid #222244" }}>{row.thought}</div>
+              <div style={{ flex: 3, padding: "8px 10px", color: "#4a90d9", fontStyle: "italic", borderLeft: "1px solid #222244" }}>{redact(row.thought)}</div>
             </div>
           ))}
         </div>
@@ -122,14 +142,14 @@
 
     function RenderArticleSection({ section }) {
       switch (section.type) {
-        case "text": return <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>{section.content}</p>;
-        case "note": return <p style={{ fontSize: "14px", color: "#666680", fontStyle: "italic", marginBottom: "20px" }}>{section.content}</p>;
+        case "text": return <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>{redact(section.content)}</p>;
+        case "note": return <p style={{ fontSize: "14px", color: "#666680", fontStyle: "italic", marginBottom: "20px" }}>{redact(section.content)}</p>;
         case "screenshot": {
           const s = section;
           return (
             <ScreenshotBox number={s.number} title={s.title}>
-              {s.style === "text" && <p style={{ textAlign: "center", color: s.dimmed ? "#555560" : "#888880", fontStyle: s.dimmed ? "italic" : "normal", fontFamily: "'Courier Prime', monospace", fontSize: "14px", lineHeight: 1.8, whiteSpace: "pre-line" }}>{s.content}</p>}
-              {s.style === "lines" && <div style={{ textAlign: "center", lineHeight: 2.2, fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#b0b0a0" }}>{s.content.map((l, i) => <div key={i} style={l.highlight ? { color: "#e67e22", fontWeight: "bold" } : {}}>{l.text}</div>)}</div>}
+              {s.style === "text" && <p style={{ textAlign: "center", color: s.dimmed ? "#555560" : "#888880", fontStyle: s.dimmed ? "italic" : "normal", fontFamily: "'Courier Prime', monospace", fontSize: "14px", lineHeight: 1.8, whiteSpace: "pre-line" }}>{redact(s.content)}</p>}
+              {s.style === "lines" && <div style={{ textAlign: "center", lineHeight: 2.2, fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#b0b0a0" }}>{s.content.map((l, i) => <div key={i} style={l.highlight ? { color: "#e67e22", fontWeight: "bold" } : {}}>{redact(l.text)}</div>)}</div>}
               {s.style === "chat" && <div style={{ padding: "12px 0" }}>{s.content.map((m, i) => <ChatMessage key={i} speaker={m.speaker} text={m.text} />)}</div>}
               {s.style === "algorithm" && <AlgorithmTable rows={s.content} />}
             </ScreenshotBox>
