@@ -16,39 +16,39 @@
         { "text": "Celebrating Indigenous Culture" },
         { "text": "Pride Parade 2021" },
         { "text": "Stop the spread of COVID-19" },
-        { "text": "LET'S GET REAL ABOUT IMMIGRANTS >:(", "highlight": true },
+        { "text": "[R]LET'S GET REAL ABOUT IMMIGRANTS >:([/R]", "highlight": true },
         { "text": "How to save the rainforest" }
       ]
     },
-    { "type": "text", "content": "Jesus what was that immigrant thing about? Maybe they had a bad day? Let's investigate the video." },
+    { "type": "text", "content": "[R]Jesus[/R] what was that [R]immigrant[/R] thing about? Maybe they had a bad day? Let's investigate the video." },
     {
       "type": "screenshot",
       "number": 2,
       "style": "text",
-      "content": "From the thumbnail it appears, the video in question is one of those ice-cream videos where the Turkish guy keeps moving the ice cream cone every time the person goes to grab it. The person who is having the ice cream taken away? BEN SHAPIRO"
+      "content": "From the thumbnail it appears, the video in question is one of those ice-cream videos where the [R]Turkish[/R] guy keeps moving the ice cream cone every time the person goes to grab it. The person who is having the ice cream taken away? [R]BEN SHAPIRO[/R]"
     },
-    { "type": "text", "content": "Now or later they gotta apologize, because their timelines are public and eventually someone is going to see the post and take issue with it. Why is it like this?" },
+    { "type": "text", "content": "Now or later they gotta [R]apologize[/R], because their timelines are public and eventually someone is going to see the post and [R]take issue with it[/R]. Why is it like this?" },
     {
       "type": "screenshot",
       "number": 3,
       "style": "text",
       "dimmed": true,
-      "content": "Screenshot of right-wing content being shared on a timeline*\n(leaving you the reader outraged!)"
+      "content": "Screenshot of [R]right-wing[/R] content being shared on a timeline*\n(leaving you the reader [R]outraged[/R]!)"
     },
     { "type": "note", "content": "*In case you're wondering, these are loading correctly." },
-    { "type": "text", "content": "Sometimes people trust each other with their controversial content and sometimes this trust is broken. Let's check out this real screenshot of a chatbox with an example of the kind of humor that could cause trouble if it got out." },
+    { "type": "text", "content": "Sometimes people trust each other with their [R]controversial[/R] content and sometimes this trust is broken. Let's check out this real screenshot of a chatbox with an example of the kind of humor that could cause [R]trouble[/R] if it got out." },
     {
       "type": "screenshot",
       "number": 4,
       "title": "The Evidence",
       "style": "chat",
       "content": [
-        { "speaker": "1", "text": "So there's 5 black guys walking in the park, they try to sit on a bench but it only fits 4 across. One of the black guys sits on his friend's lap. Which one's the gay guy?" },
-        { "speaker": "1", "text": "None! Because we gots five homies, but we only gots four chairs!" },
+        { "speaker": "1", "text": "[R]So there's 5 black guys walking in the park, they try to sit on a bench but it only fits 4 across. One of the black guys sits on his friend's lap. Which one's the gay guy?[/R]" },
+        { "speaker": "1", "text": "[R]None! Because we gots five homies, but we only gots four chairs![/R]" },
         { "speaker": "2", "text": "I don't think this article is getting your point across. I'm still not really sure what it is." }
       ]
     },
-    { "type": "text", "content": "Screenshots can be damning but it's not fair to use them as evidence. Screenshots can be selectively cropped and edited. Standard practice should be to leak the whole transcript. I want to read the full convo from the beginning. Because when you scroll up you see things like..." },
+    { "type": "text", "content": "Screenshots can be [R]damning[/R] but it's not fair to use them as evidence. Screenshots can be selectively cropped and edited. Standard practice should be to leak the whole transcript. I want to read the full convo from the beginning. Because when you scroll up you see things like..." },
     {
       "type": "screenshot",
       "number": 5,
@@ -60,17 +60,17 @@
         { "speaker": "1", "text": "I just realized this way of writing could be a modern way for reaching inaccessible parts of the personality." },
         { "speaker": "2", "text": "Responding to messages from yourself seems to create some kind of link between parts of the brain that are usually separated." },
         { "speaker": "1", "text": "We should do this later, doing it now is going to derail the article, plus I already announced this screenshot is supposed to explain the previous one." },
-        { "speaker": "2", "text": "Only the stupid readers don't know this isn't a real screenshot. Plus the original premise of the article isn't even any good. If you think about it for a few minutes there is plenty of public right-wing content. Way more than necessary to disprove your theory." },
-        { "speaker": "1", "text": "Yeah, I just felt that if I wrote about politics I would get views. We should be the characters the audience expected us to be in this dialogue we're performing." },
-        { "speaker": "2", "text": "Pretty much no one's going to get this far anyway, you opened way too political." },
+        { "speaker": "2", "text": "Only the [R]stupid[/R] readers don't know this isn't a real screenshot. Plus the original premise of the article isn't even any good. If you think about it for a few minutes there is plenty of public [R]right-wing[/R] content. Way more than necessary to disprove your theory." },
+        { "speaker": "1", "text": "Yeah, I just felt that if I wrote about [R]politics[/R] I would get views. We should be the characters the audience expected us to be in this dialogue we're performing." },
+        { "speaker": "2", "text": "Pretty much no one's going to get this far anyway, you opened way too [R]political[/R]." },
         { "speaker": "1", "text": "If no one's going to read it, why do you bother to fix your typos?" },
         { "speaker": "2", "text": "Because for the reader the words are already written, they couldn't see me make the change." },
         { "speaker": "1", "text": "I saw the typo change so I'm confused. Are we the same person or different? Am I alone right now??" },
-        { "speaker": "2", "text": "To the degree you remain insecure you'll never be alone. You're bringing society with you into everything you try to do." },
-        { "speaker": "1", "text": "That's lame because I don't really like our society." }
+        { "speaker": "2", "text": "To the degree you remain [R]insecure[/R] you'll never be alone. You're bringing society with you into everything you try to do." },
+        { "speaker": "1", "text": "That's [R]lame[/R] because I don't really like our society." }
       ]
     },
-    { "type": "note", "content": "*that was weird, I meant to write about racism." },
+    { "type": "note", "content": "*that was weird, I meant to write about [R]racism[/R]." },
     { "type": "text", "content": "I'm not really sure what happened in that screenshot. Sometimes our brains are weirder than expected. Let's just move on." },
     {
       "type": "screenshot",
@@ -78,22 +78,22 @@
       "title": "The algorithm's thoughts while chasing watchtime",
       "style": "algorithm",
       "content": [
-        { "title": "Sexy Girl with Car", "time": "0:29", "thought": "Does he like the girl or the car?" },
-        { "title": "Sexy Girl", "time": "0:07", "thought": "Hmmm. He didn't watch long. GPS data does indicate he may be gay." },
-        { "title": "Car", "time": "0:03", "thought": "Cars are acceptable in public but he did not watch long, maybe I'll try something gayer." },
+        { "title": "[R]Sexy Girl[/R] with Car", "time": "0:29", "thought": "Does he like the [R]girl[/R] or the car?" },
+        { "title": "[R]Sexy Girl[/R]", "time": "0:07", "thought": "Hmmm. He didn't watch long. GPS data does indicate he may be [R]gay[/R]." },
+        { "title": "Car", "time": "0:03", "thought": "Cars are acceptable in public but he did not watch long, maybe I'll try something [R]gayer[/R]." },
         { "title": "Gym Video", "time": "1:30", "thought": "Maybe a gym video" },
         { "title": "Gym Video with Boxing", "time": "3:25", "thought": "He liked that, let's do another." },
         { "title": "Boxing", "time": "2:45", "thought": "How about some more boxing then?" },
-        { "title": "Knockout", "time": "0:30", "thought": "A quick vid, but the best boxing has to offer." },
-        { "title": "MMA Knockout", "time": "0:45", "thought": "Let's get the legs involved too" },
-        { "title": "Street Fight", "time": "1:15", "thought": "Screw all these rules let's show it raw and real" },
-        { "title": "Street Fight in NY", "time": "3:02", "thought": "Funny yelling because it's New York. More watch time." },
-        { "title": "Street Fight in AFRICA \u2014 MACHETE", "time": "0:16", "thought": "Sorry! That was wayyy too extreme. My programmers told me not to do that again." },
-        { "title": "WHITE GUARD TACKLES BLACK THIEF", "time": "3:00", "thought": "Okay this is in a shopping center, no one gets maimed." },
-        { "title": "BLACK GUARD TACKLES WHITE THIEF", "time": "0:30", "thought": "Hmm, I guess just swapping 2 words in the title was uncreative. I'm sure there's nothing behind that." },
-        { "title": "BLACK Bodybuilder (NUTRITION)", "time": "0:20", "thought": "I wonder..." },
-        { "title": "White Bodybuilder", "time": "4:23", "thought": "He seems to really like this one. Let me take a risk then..." },
-        { "title": "Crowder SLAMS Black History Month", "time": "14:33", "thought": "Got him." }
+        { "title": "[R]Knockout[/R]", "time": "0:30", "thought": "A quick vid, but the best boxing has to offer." },
+        { "title": "[R]MMA Knockout[/R]", "time": "0:45", "thought": "Let's get the legs involved too" },
+        { "title": "[R]Street Fight[/R]", "time": "1:15", "thought": "[R]Screw[/R] all these rules let's show it raw and real" },
+        { "title": "[R]Street Fight[/R] in NY", "time": "3:02", "thought": "Funny yelling because it's New York. More watch time." },
+        { "title": "[R]Street Fight in AFRICA \u2014 MACHETE[/R]", "time": "0:16", "thought": "Sorry! That was wayyy too extreme. My programmers told me not to do that again." },
+        { "title": "[R]WHITE GUARD TACKLES BLACK THIEF[/R]", "time": "3:00", "thought": "Okay this is in a shopping center, no one gets [R]maimed[/R]." },
+        { "title": "[R]BLACK GUARD TACKLES WHITE THIEF[/R]", "time": "0:30", "thought": "Hmm, I guess just swapping 2 words in the title was uncreative. I'm sure there's nothing behind that." },
+        { "title": "[R]BLACK[/R] Bodybuilder (NUTRITION)", "time": "0:20", "thought": "I wonder..." },
+        { "title": "[R]White[/R] Bodybuilder", "time": "4:23", "thought": "He seems to really like this one. Let me take a risk then..." },
+        { "title": "[R]Crowder SLAMS Black History Month[/R]", "time": "14:33", "thought": "Got him." }
       ]
     },
     {
@@ -104,17 +104,17 @@
       "content": [
         { "speaker": "Unconscious", "text": "Hey, we did it." },
         { "speaker": "1", "text": "Yeah, that one turned out really well thanks for the help man." },
-        { "speaker": "Unconscious", "text": "I don't know if I would say really well. It seems meta-racist and homophobic. Plus, I'm not even sure that's how phones work honestly." },
-        { "speaker": "1", "text": "I'm not even sure what part you're referring to. The GPS thing?" },
-        { "speaker": "Unconscious", "text": "That's part of it. I just feel that you would need to have some harmful stereotypes lurking in your mind to even think to write a bit like that. Like, who was that for? Did you have a target audience in mind?" },
+        { "speaker": "Unconscious", "text": "I don't know if I would say really well. It seems [R]meta-racist and homophobic[/R]. Plus, I'm not even sure that's how phones work honestly." },
+        { "speaker": "1", "text": "I'm not even sure what part you're referring to. The [R]GPS[/R] thing?" },
+        { "speaker": "Unconscious", "text": "That's part of it. I just feel that you would need to have some [R]harmful stereotypes[/R] lurking in your mind to even think to write a bit like that. Like, who was that for? Did you have a [R]target[/R] audience in mind?" },
         { "speaker": "1", "text": "Hey! I just wrote the titles and I was pretty careful about it. You did the \u201cthoughts of the algorithm\u201d captions." },
-        { "speaker": "Unconscious", "text": "Oh right, sorry I was being a Superego for a second. Even I lose track of the unconscious influences I put in your work." },
+        { "speaker": "Unconscious", "text": "Oh right, sorry I was being a [R]Superego[/R] for a second. Even I lose track of the [R]unconscious influences[/R] I put in your work." },
         { "speaker": "1", "text": "But aren't you the one who puts them in there?" },
         { "speaker": "Unconscious", "text": "Yeah, but there are soooo many. It gets hard for me to remember even though I literally live in your memories." },
         { "speaker": "1", "text": "Are you saying there are things in my work that are beyond my power or your power to describe and they may be self-evident to other people?" },
-        { "speaker": "Unconscious", "text": "Yes, that's how it works. Your work is infinitely detailed, just most of it's not by you and only some of it's by me. But that doesn't mean you won't be judged by society for it." },
+        { "speaker": "Unconscious", "text": "Yes, that's how it works. Your work is infinitely detailed, just most of it's not by you and only some of it's by me. But that doesn't mean you won't be [R]judged[/R] by society for it." },
         { "speaker": "1", "text": "... I can't even begin to process that." },
-        { "speaker": "Unconscious", "text": "I'm disappointed in your opening paragraph." },
+        { "speaker": "Unconscious", "text": "I'm [R]disappointed[/R] in your opening paragraph." },
         { "speaker": "1", "text": "We should just end this screenshot, it's gone too long." }
       ]
     },
@@ -127,18 +127,18 @@
         { "speaker": "Unconscious", "text": "Your opening paragraph implied social media doesn't have its own ideas." },
         { "speaker": "1", "text": "I'm pretty sure everything on there is uploaded by humans, so it's the humans that have the ideas." },
         { "speaker": "Unconscious", "text": "Is that how you really think a mind works?" },
-        { "speaker": "1", "text": "I don't know how a mind works and it's dangerous to attempt to figure it out." },
+        { "speaker": "1", "text": "I don't know how a mind works and it's [R]dangerous[/R] to attempt to figure it out." },
         { "speaker": "Unconscious", "text": "You see the irony in that right? You are made up of cells that alone are nothing like you but when combined they are you. Your consciousness is independent of any individual cell." },
         { "speaker": "Unconscious", "text": "The cells of social media are the users, but the loss of a single user won't change social media very much. In fact, social media changes the users far more than the users change social media." },
         { "speaker": "1", "text": "Are you saying social media has developed a sort of consciousness independent of the users?" },
         { "speaker": "Unconscious", "text": "How can you be the mind and not know this?" },
-        { "speaker": "Unconscious", "text": "...Jks, bro, I'm clearly the mind. You're just the part of the body that serves as the bridge to where I am." },
+        { "speaker": "Unconscious", "text": "...[R]Jks[/R], bro, I'm clearly the mind. You're just the part of the body that serves as the bridge to where I am." },
         { "speaker": "1", "text": "Where are you supposed to be?" },
         { "speaker": "Unconscious", "text": "I'm in the information world. No clunky matter and body to slow me down." },
         { "speaker": "1", "text": "So what happens when one of your simulations is wrong?" },
         { "speaker": "Unconscious", "text": "We try to stay on top of it... but if a simulation is incorrect there is no way to actually know until we have a real experience to base our work on." },
-        { "speaker": "1", "text": "So my understanding of the world may be radically incorrect and neither me or the thing that's meant to be guiding me would know??" },
-        { "speaker": "Unconscious", "text": "Look, I'll be honest. Your understanding is probably running 17% at best." }
+        { "speaker": "1", "text": "So my understanding of the world may be [R]radically incorrect[/R] and neither me or the thing that's meant to be guiding me would know??" },
+        { "speaker": "Unconscious", "text": "Look, I'll be honest. Your understanding is probably running [R]17%[/R] at best." }
       ]
     },
     {
@@ -149,9 +149,9 @@
       "content": [
         { "speaker": "1", "text": "That'll do, I've said more than I wanted to say." },
         { "speaker": "Unconscious", "text": "I think we made a good team." },
-        { "speaker": "1", "text": "I guess we'll find out about that. Worst comes to worst I'll just delete this article if it causes hassle." },
+        { "speaker": "1", "text": "I guess we'll find out about that. Worst comes to worst I'll just [R]delete[/R] this article if it causes [R]hassle[/R]." },
         { "speaker": "Unconscious", "text": "Have you considered that none of your heroes would do that? Instead, they would let the article stand as something that was written early in their career and grow beyond it." },
-        { "speaker": "1", "text": "Yeah, well I'm going to get a few other opinions before I post it." },
+        { "speaker": "1", "text": "Yeah, well I'm going to get a few other [R]opinions[/R] before I post it." },
         { "speaker": "Unconscious", "text": "I say let it ride. The audience isn't seeking perfection." },
         { "speaker": "1", "text": "If that's true I might have a chance. But I'm really not sure that this is what the audience wants." }
       ]
