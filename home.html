@@ -394,6 +394,116 @@
     // ==========================================
     // PAGES
     // ==========================================
+    function ForestBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      const frameRef = React.useRef(0);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+        const W = canvas.width, H = canvas.height;
+        const PX = 3; // pixel scale
+
+        function drawPixelRect(x, y, w, h, color) {
+          ctx.fillStyle = color;
+          ctx.fillRect(x*PX, y*PX, w*PX, h*PX);
+        }
+
+        function drawTree(ox, oy, type) {
+          const colors = [
+            { trunk: '#5d4037', leaves: ['#2e7d32','#388e3c','#43a047'] },
+            { trunk: '#4e342e', leaves: ['#1b5e20','#2e7d32','#388e3c'] },
+            { trunk: '#6d4c41', leaves: ['#558b2f','#689f38','#7cb342'] },
+            { trunk: '#3e2723', leaves: ['#4a148c','#6a1b9a','#7b1fa2'] }
+          ];
+          const c = colors[type % 4];
+          drawPixelRect(ox+4, oy+15, 3, 17, c.trunk);
+          drawPixelRect(ox+5, oy+15, 1, 17, '#3e2723');
+          drawPixelRect(ox, oy+3, 11, 7, c.leaves[0]);
+          drawPixelRect(ox-1, oy+8, 13, 6, c.leaves[1]);
+          drawPixelRect(ox+1, oy+12, 10, 5, c.leaves[2]);
+          drawPixelRect(ox+2, oy, 5, 4, c.leaves[0]);
+        }
+
+        function drawPlayer(ox, oy, bob) {
+          const by = Math.round(bob);
+          // Cloak
+          drawPixelRect(ox+3, oy+8+by, 8, 12, '#2980b9');
+          drawPixelRect(ox+2, oy+20+by, 10, 4, '#2980b9');
+          // Head
+          drawPixelRect(ox+4, oy+3+by, 6, 6, '#fad7a0');
+          // Hair
+          drawPixelRect(ox+4, oy+2+by, 6, 3, '#8b4513');
+          drawPixelRect(ox+3, oy+3+by, 2, 2, '#8b4513');
+          // Eyes
+          drawPixelRect(ox+5, oy+5+by, 2, 2, '#3498db');
+          drawPixelRect(ox+8, oy+5+by, 2, 2, '#3498db');
+          // Hood
+          drawPixelRect(ox+2, oy+1+by, 10, 3, '#1a5276');
+          drawPixelRect(ox+1, oy+3+by, 2, 6, '#1a5276');
+          drawPixelRect(ox+11, oy+3+by, 2, 6, '#1a5276');
+        }
+
+        let anim;
+        function render() {
+          frameRef.current++;
+          const f = frameRef.current;
+          ctx.fillStyle = '#0a1a0a';
+          ctx.fillRect(0, 0, W, H);
+          // Ground
+          ctx.fillStyle = '#1a472a';
+          ctx.fillRect(0, 32*PX, W, H);
+          // Grass spots
+          const grassColors = ['#2d5a3f','#1e5631','#174023'];
+          for (let i = 0; i < 20; i++) {
+            ctx.fillStyle = grassColors[i%3];
+            ctx.fillRect(((i*37+11)%180)*PX, (33+(i%4))*PX, 3*PX, 1*PX);
+          }
+          // Trees
+          drawTree(4, 5, 0);
+          drawTree(28, 2, 1);
+          drawTree(120, 3, 3); // purple mystic tree
+          drawTree(148, 6, 2);
+          drawTree(170, 1, 0);
+          // Player walking
+          const px = 65 + Math.sin(f * 0.02) * 15;
+          const bob = Math.sin(f * 0.08) * 0.6;
+          drawPlayer(px, 12, bob);
+          // Stars / particles
+          ctx.fillStyle = '#9b59b6';
+          for (let i = 0; i < 5; i++) {
+            const sx = (f * 0.7 + i * 40) % 190;
+            const sy = 4 + Math.sin(f * 0.03 + i * 2) * 3;
+            const size = (Math.sin(f * 0.05 + i) > 0.3) ? 1 : 0;
+            if (size) ctx.fillRect(sx*PX, sy*PX, PX, PX);
+          }
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <a href="https://aaronunify2.github.io/UnifyVersion1/Forest.html" target="_blank" rel="noopener"
+          onClick={e => { if (onClick) { e.preventDefault(); onClick(); } }}
+          style={{ display: "block", border: "2px solid #2e7d32", background: "#0a1a0a", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#4a9a4a"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#2e7d32"}
+        >
+          <canvas ref={canvasRef} width={570} height={150}
+            style={{ width: "100%", height: "auto", display: "block", imageRendering: "pixelated" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #1a3a1a" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>Mystic Forest Walker</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9a4a", marginTop: "2px" }}>He's been walking since you opened this page. He will never stop. You might as well click him.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#2e7d32", background: "#2e7d3222", padding: "4px 12px", border: "1px solid #2e7d3255", letterSpacing: "1px" }}>PLAY</div>
+          </div>
+        </a>
+      );
+    }
+
     function HomePage({ content, setPage, setSelectedTool, setSelectedArticle }) {
       const items = [];
       const novel = content.novel;
@@ -411,6 +521,7 @@
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           <SectionHeader title="Feed" subtitle="Everything, most recent first" />
+          <ForestBanner />
           {items.map(item => (
             <div key={item.type+item.id} className="feed-item" onClick={() => { if(item.type==="tool"){setSelectedTool(item.id);setPage("tools")} else if(item.type==="article"){setSelectedArticle(item.id);setPage("articles")} else{setPage("novel")} }} style={{ border: "1px solid #333366", padding: "20px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor=item.color} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
               <div className="feed-icon" style={{ width: "48px", height: "48px", background: item.color+"22", border: "2px solid "+item.color, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "14px", color: item.color, flexShrink: 0, textTransform: "uppercase" }}>{item.type==="tool"?"APP":item.type==="article"?"TXT":"FIC"}</div>
