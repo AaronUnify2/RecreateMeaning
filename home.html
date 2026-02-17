@@ -620,6 +620,11 @@
       const [selectedId, setSelectedId] = useState(null);
       const selected = selectedId ? chapters.find(c => c.id === selectedId) : null;
       const { data: chapterData } = useJsonFile(selected?.file || null);
+      const [synopsis] = useState(() => {
+        const s = novel.synopsis;
+        if (Array.isArray(s)) return s[Math.floor(Math.random() * s.length)];
+        return s || "";
+      });
 
       if (selected && chapterData) {
         return <ChapterRenderer data={chapterData} chapterMeta={selected} allChapters={chapters} goBack={() => setSelectedId(null)} onNav={id => { setSelectedId(id); window.scrollTo({top:0,behavior:"smooth"}); }} />;
@@ -632,7 +637,7 @@
             <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "42px", color: "#e8e8d0", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "8px" }}>{novel.title}</h2>
             <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#666680", marginBottom: "20px" }}>by {content.site?.author}</div>
             <div style={{ maxWidth: "500px", margin: "0 auto", padding: "20px", borderTop: "1px solid #333366", borderBottom: "1px solid #333366" }}>
-              <p style={{ fontFamily: "'Lora', serif", fontSize: "15px", fontStyle: "italic", color: "#a0a090", lineHeight: 1.7 }}>{novel.synopsis}</p>
+              <p style={{ fontFamily: "'Lora', serif", fontSize: "15px", fontStyle: "italic", color: "#a0a090", lineHeight: 1.7 }}>{synopsis}</p>
             </div>
           </div>
           {novel.comingSoon && chapters.length === 0 ? (
