@@ -10,9 +10,10 @@
   "tools": [
     { "id": "unify", "title": "Unify Version 2", "tagline": "The Architecture of You", "date": "2025-12-01", "color": "#4a90d9", "file": "tools/unify.json" },
     { "id": "tommypop", "title": "TommyPop", "tagline": "A non-addictive game for toddlers", "date": "2025-11-01", "color": "#e67e22", "file": "tools/tommypop.json" },
+    { "id": "brick-breaker", "title": "3D194 Brick Breaker", "tagline": "A brick breaking game with a twist", "date": "2025-11-15", "color": "#e040fb", "file": "tools/brick-breaker.json", "hideFeed": true },
     { "id": "novelPlanner", "title": "Novel Planner", "tagline": "Software for novel planning", "date": "2025-11-01", "color": "#e67e22", "file": "tools/novelPlanner.json" },
     { "id": "tommyspace", "title": "TommySpace", "tagline": "Explore the solar system to learn the names of the planets", "date": "2025-10-01", "color": "#8e44ad", "file": "tools/tommyspace.json" },
-    { "id": "mystic-forest", "title": "Mystic Forest Walker", "tagline": "A pixel-art RPG adventure in your browser", "date": "2026-02-01", "color": "#2e7d32", "file": "tools/mystic-forest.json" }
+    { "id": "mystic-forest", "title": "Mystic Forest Walker", "tagline": "A pixel-art RPG adventure in your browser", "date": "2026-02-01", "color": "#2e7d32", "file": "tools/mystic-forest.json", "hideFeed": true }
   ],
   "articles": [
     { "id": "origin-of-ideas", "title": "On the Origin of Ideas...", "subtitle": "A normal article", "date": "2022-01-04", "category": "Essay", "file": "articles/origin-of-ideas.json" }
@@ -39,8 +40,8 @@
       "A man covered in other people's regrets is told this is a gift.",
       "The villain is a judge whose legal strategy is to just yell guilty over and over.",
       "A bailiff who navigates by smell.",
-      "The hero's mentor dies :(.",
-      "Bigfoot is real but only his foot is visible.",
+      "The hero's mentor dies, comes back, and is found sitting in a rocking chair with a blanket.",
+      "Bigfoot is real but only his foot is visible and he does construction work.",
       "A man is saved by listening to his own heartbeat.",
       "A retired section of hell is used as a library.",
       "Contains a pyramid covered in regret.",
@@ -48,12 +49,16 @@
       "The hero loses a fight to a slimey basketball.",
       "Features a scene where a man tries not to step on the cracks to stay sane.",
       "A courtroom drama where the jury is unconscious.",
-      "Over 20,000 pages.",
+      "Over 2000 pages.",
       "Not yet banned in any country.",
-      "A novel.",
+      "A novel. Probably.",
+      "Available in hardcover, paperback, and interpretive dance.",
       "The shoe is not a metaphor. There is a literal shoe.",
       "This description changes every time you load the page.",
       "You just missed the good description.",
+      "If you saw what it said last time, no you didn't.",
+      "A story about a man who goes for a walk.",
+      "Two colleagues disagree about a staffing decision.",
       "A travel memoir."
     ],
     "comingSoon": true,
