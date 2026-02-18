@@ -1,0 +1,22 @@
+{
+  "id": "brick-breaker",
+  "title": "3D194 Brick Breaker",
+  "tagline": "A brick breaking game with a twist",
+  "description": "Huge levels, crazy powerups, and an economy system. Break bricks, earn cash, buy weapons of mass brick destruction. Referenced in upcoming articles on economics.",
+  "tech": ["HTML", "JavaScript", "CSS"],
+  "status": "Live",
+  "url": "https://aaronunify2.github.io/UnifyVersion1/3d194.html",
+  "color": "#e040fb",
+  "date": "2025-11-15",
+  "hideFeed": true,
+  "sections": [
+    { "type": "text", "content": "A brick breaking game that starts simple and gets out of hand. Huge procedural levels, a cash economy, and powerups that escalate from sensible to absurd." },
+    { "type": "features", "content": [
+      "Massive Levels: Not your usual 5 rows of bricks. These levels fight back.",
+      "Cash Economy: Earn money by breaking bricks. Spend it on powerups mid-game.",
+      "Multiball, Bombs, Rockets, Fungicide: The powerup names alone should tell you this isn't a normal breakout clone.",
+      "Mobile Friendly: Tap to launch, drag to aim. Works great on phones."
+    ]},
+    { "type": "callout", "content": "This game will be referenced in upcoming articles on economics. Play it now so you're not confused later." }
+  ]
+}
