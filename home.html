@@ -524,6 +524,148 @@
       );
     }
 
+    function BrickBreakerBanner() {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 180;
+        const S = 2;
+        const colors = ['#e040fb','#ff1744','#ff9100','#ffea00','#00e676','#00e5ff','#2979ff','#d500f9'];
+        const COLS = 19, ROWS = 4, BW = 14, BH = 5, BPAD = 1, BOFFX = 3, BOFFY = 3;
+        let bricks, ball, paddle, state, stateTimer, level, anim;
+
+        function initBricks(rows) {
+          const b = [];
+          for (let r = 0; r < rows; r++) for (let c = 0; c < COLS; c++) {
+            b.push({ x: BOFFX + c * (BW + BPAD), y: BOFFY + r * (BH + BPAD), w: BW, h: BH, alive: true, color: colors[(r + c) % colors.length] });
+          }
+          return b;
+        }
+        function reset(lvl) {
+          level = lvl || 1;
+          const rows = Math.min(ROWS + (level - 1) * 2, Math.floor((H/S - 30) / (BH + BPAD)));
+          bricks = initBricks(rows);
+          ball = { x: W/S/2, y: H/S - 18, dx: 1.2, dy: -1.2, r: 2 };
+          paddle = { x: W/S/2 - 12, y: H/S - 12, w: 24, h: 3, dir: 1 };
+          state = 'play';
+          stateTimer = 0;
+        }
+        reset(1);
+
+        function render() {
+          ctx.fillStyle = '#0a0a20';
+          ctx.fillRect(0, 0, W, H);
+
+          if (state === 'play') {
+            paddle.x += paddle.dir * 0.8;
+            if (paddle.x + paddle.w > W/S - 2) paddle.dir = -1;
+            if (paddle.x < 2) paddle.dir = 1;
+            const targetX = ball.x - paddle.w / 2;
+            paddle.x += (targetX - paddle.x) * 0.06;
+
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+            if (ball.x - ball.r < 0 || ball.x + ball.r > W/S) ball.dx = -ball.dx;
+            if (ball.y - ball.r < 0) ball.dy = -ball.dy;
+
+            if (ball.y + ball.r >= paddle.y && ball.y + ball.r <= paddle.y + paddle.h + 2 && ball.x >= paddle.x && ball.x <= paddle.x + paddle.w) {
+              ball.dy = -Math.abs(ball.dy);
+              ball.dx += (ball.x - (paddle.x + paddle.w/2)) * 0.08;
+            }
+            if (ball.y > H/S) { ball.y = H/S - 18; ball.dy = -Math.abs(ball.dy); }
+
+            let hitCount = 0;
+            bricks.forEach(b => {
+              if (!b.alive) return;
+              if (ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w && ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h) {
+                b.alive = false; ball.dy = -ball.dy; hitCount++;
+              }
+            });
+
+            const alive = bricks.filter(b => b.alive).length;
+            if (alive === 0) {
+              state = 'win'; stateTimer = 0;
+            }
+          }
+
+          // Draw bricks
+          bricks.forEach(b => {
+            if (!b.alive) return;
+            ctx.fillStyle = b.color;
+            ctx.fillRect(b.x * S, b.y * S, b.w * S, b.h * S);
+            ctx.fillStyle = 'rgba(255,255,255,0.25)';
+            ctx.fillRect(b.x * S, b.y * S, b.w * S, 1 * S);
+          });
+          // Paddle
+          ctx.fillStyle = '#00e676';
+          ctx.fillRect(paddle.x * S, paddle.y * S, paddle.w * S, paddle.h * S);
+          ctx.fillStyle = 'rgba(255,255,255,0.4)';
+          ctx.fillRect(paddle.x * S, paddle.y * S, paddle.w * S, 1 * S);
+          // Ball
+          ctx.fillStyle = '#fff';
+          ctx.fillRect((ball.x - ball.r) * S, (ball.y - ball.r) * S, ball.r * 2 * S, ball.r * 2 * S);
+          // Ball trail
+          ctx.fillStyle = 'rgba(224,64,251,0.3)';
+          ctx.fillRect((ball.x - ball.dx * 2 - ball.r) * S, (ball.y - ball.dy * 2 - ball.r) * S, ball.r * 2 * S, ball.r * 2 * S);
+
+          if (state === 'win') {
+            stateTimer++;
+            ctx.fillStyle = '#0a0a20';
+            ctx.fillRect(0, 0, W, H);
+            // Paddle still visible
+            ctx.fillStyle = '#00e676';
+            ctx.fillRect(paddle.x * S, paddle.y * S, paddle.w * S, paddle.h * S);
+
+            if (stateTimer < 60) {
+              ctx.font = 'bold 28px "Courier Prime", monospace';
+              ctx.textAlign = 'center';
+              ctx.fillStyle = '#ffea00';
+              ctx.fillText('YOU WIN!', W/2, H/2 - 10);
+              ctx.font = '14px "VT323", monospace';
+              ctx.fillStyle = '#666680';
+              ctx.fillText('Level ' + level + ' cleared', W/2, H/2 + 14);
+            } else if (stateTimer < 70) {
+              ctx.font = 'bold 20px "Courier Prime", monospace';
+              ctx.textAlign = 'center';
+              ctx.fillStyle = '#e040fb';
+              ctx.fillText('LEVEL ' + (level + 1), W/2, H/2);
+            } else {
+              reset(level + 1);
+            }
+          }
+
+          if (level > 3 && state === 'play' && bricks.filter(b => b.alive).length > bricks.length * 0.9) {
+            stateTimer++;
+            if (stateTimer > 180) reset(1);
+          }
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <a href="https://aaronunify2.github.io/UnifyVersion1/3d194.html" target="_blank" rel="noopener"
+          style={{ display: "block", border: "2px solid #e040fb", background: "#0a0a20", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#ff80ff"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#e040fb"}
+        >
+          <canvas ref={canvasRef} width={570} height={180}
+            style={{ width: "100%", height: "auto", display: "block", imageRendering: "pixelated" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #3a1040" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>3D194 Brick Breaker</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#e040fb", marginTop: "2px" }}>This ball has been breaking bricks for eternity and it has learned nothing. Sound familiar?</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#e040fb", background: "#e040fb22", padding: "4px 12px", border: "1px solid #e040fb55", letterSpacing: "1px" }}>PLAY</div>
+          </div>
+        </a>
+      );
+    }
+
     function HomePage({ content, setPage, setSelectedTool, setSelectedArticle }) {
       const items = [];
       const novel = content.novel;
@@ -537,13 +679,14 @@
           items.push({ type: "novel", id: "novel", title: novel.title, subtitle: homeSyn, date: "2026-02-15", color: "#e67e22" });
         }
       }
-      (content.tools||[]).forEach(t => items.push({ type: "tool", id: t.id, title: t.title, subtitle: t.tagline, date: t.date, color: t.color||"#4a90d9" }));
+      (content.tools||[]).filter(t => !t.hideFeed).forEach(t => items.push({ type: "tool", id: t.id, title: t.title, subtitle: t.tagline, date: t.date, color: t.color||"#4a90d9" }));
       (content.articles||[]).forEach(a => items.push({ type: "article", id: a.id, title: a.title, subtitle: a.subtitle, date: a.date, color: "#4a9aea" }));
       items.sort((a,b) => new Date(b.date)-new Date(a.date));
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           <SectionHeader title="Feed" subtitle="Everything, most recent first" />
           <ForestBanner />
+          <BrickBreakerBanner />
           {items.map(item => (
             <div key={item.type+item.id} className="feed-item" onClick={() => { if(item.type==="tool"){setSelectedTool(item.id);setPage("tools")} else if(item.type==="article"){setSelectedArticle(item.id);setPage("articles")} else{setPage("novel")} }} style={{ border: "1px solid #333366", padding: "20px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor=item.color} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
               <div className="feed-icon" style={{ width: "48px", height: "48px", background: item.color+"22", border: "2px solid "+item.color, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "14px", color: item.color, flexShrink: 0, textTransform: "uppercase" }}>{item.type==="tool"?"APP":item.type==="article"?"TXT":"FIC"}</div>
