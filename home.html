@@ -161,6 +161,7 @@
 
     function ArticleRenderer({ data, goBack }) {
       if (!data) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center" }}>Loading...</div>;
+      if (data.interactive) return <InteractiveArticleRenderer data={data} goBack={goBack} />;
       return (
         <div>
           <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
@@ -170,6 +171,68 @@
             <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>{data.subtitle}</p>
             <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
             {data.sections.map((s, i) => <RenderArticleSection key={i} section={s} />)}
+          </article>
+        </div>
+      );
+    }
+
+    function InteractiveArticleRenderer({ data, goBack }) {
+      const [scene, setScene] = useState(data.start || "opening");
+      const [history, setHistory] = useState([]);
+      const sceneRef = React.useRef(null);
+      const sc = data.scenes[scene];
+
+      const goToScene = useCallback((id) => {
+        setHistory(h => [...h, scene]);
+        setScene(id);
+        setTimeout(() => { if (sceneRef.current) sceneRef.current.scrollIntoView({ behavior: "smooth", block: "start" }); }, 50);
+      }, [scene]);
+
+      const handleGoBack = useCallback(() => {
+        if (sc.goBack) {
+          setScene(sc.goBack);
+          setHistory(h => h.slice(0, -1));
+          setTimeout(() => { if (sceneRef.current) sceneRef.current.scrollIntoView({ behavior: "smooth", block: "start" }); }, 50);
+        }
+      }, [sc]);
+
+      const isScolding = !!sc.goBack;
+
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
+          <article ref={sceneRef} className="article-body" style={{ border: "1px solid " + (isScolding ? "#aa3333" : "#333366"), background: "#0f0f23", padding: "40px", maxWidth: "720px", transition: "border-color 0.3s" }}>
+            {scene === data.start && <>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>{data.category} {"\u00b7"} {data.readTime || "10 min"} {"\u00b7"} {new Date(data.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+              <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "34px", color: "#e8e8d0", lineHeight: 1.2, marginBottom: "6px" }}>{data.title}</h2>
+              <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>{data.subtitle}</p>
+              <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
+            </>}
+            {sc.content.map((para, i) => {
+              if (para === "\u2026" || para === "\u2022 \u2022 \u2022") return <div key={i} style={{ textAlign: "center", color: "#555560", fontSize: "20px", margin: "20px 0", letterSpacing: "8px" }}>{para}</div>;
+              if (para === "THE END") return <div key={i} style={{ textAlign: "center", fontFamily: "'Special Elite', monospace", fontSize: "28px", color: "#e67e22", letterSpacing: "6px", margin: "32px 0" }}>{para}</div>;
+              const isDialogue = para.startsWith('"') || para.startsWith('\u201c');
+              return <p key={i} style={{ fontSize: "16px", lineHeight: 1.9, color: isScolding && i >= sc.content.indexOf("\u2026") + 1 ? "#c0a060" : "#c8c8b8", marginBottom: "16px", fontStyle: isDialogue ? "normal" : "italic" }}>{redact(para)}</p>;
+            })}
+            {sc.choices && (
+              <div style={{ marginTop: "32px", paddingTop: "24px", borderTop: "2px solid #333366", display: "flex", flexDirection: "column", gap: "12px" }}>
+                <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#666680", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "4px" }}>What does Claire do?</div>
+                {sc.choices.map((c, i) => (
+                  <button key={i} onClick={() => goToScene(c.goto)} style={{ background: "#12122a", border: "1px solid #4a4a8a", padding: "14px 20px", color: "#e8e8d0", fontFamily: "'Courier Prime', monospace", fontSize: "15px", cursor: "pointer", textAlign: "left", transition: "all 0.2s" }}
+                    onMouseEnter={e => { e.target.style.borderColor = "#e67e22"; e.target.style.background = "#1a1530"; }}
+                    onMouseLeave={e => { e.target.style.borderColor = "#4a4a8a"; e.target.style.background = "#12122a"; }}
+                  >{"\u2192 " + c.label}</button>
+                ))}
+              </div>
+            )}
+            {sc.goBack && (
+              <div style={{ marginTop: "32px", paddingTop: "24px", borderTop: "2px solid #aa3333", textAlign: "center" }}>
+                <button onClick={handleGoBack} style={{ background: "none", border: "2px solid #4a9aea", padding: "12px 32px", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", letterSpacing: "1px", transition: "all 0.2s" }}
+                  onMouseEnter={e => { e.target.style.background = "#4a9aea"; e.target.style.color = "#fff"; }}
+                  onMouseLeave={e => { e.target.style.background = "none"; e.target.style.color = "#4a9aea"; }}
+                >{"\u2190 Go back and choose differently"}</button>
+              </div>
+            )}
           </article>
         </div>
       );
@@ -666,6 +729,127 @@
       );
     }
 
+    function LoneClownBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 170, S = 2;
+        let anim, f = 0;
+        const vanX = { v: W/S * 0.4 };
+        let vanDX = 0.6, vanWobble = 0;
+
+        function px(x,y,w,h,c) { ctx.fillStyle=c; ctx.fillRect(x*S,y*S,w*S,h*S); }
+
+        function drawMoon(x, y) {
+          ctx.fillStyle = '#e8e8b0';
+          ctx.beginPath(); ctx.arc(x*S, y*S, 14*S, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = '#d8d8a0';
+          ctx.beginPath(); ctx.arc((x+2)*S, (y-1)*S, 12*S, 0, Math.PI*2); ctx.fill();
+        }
+
+        function drawTree(ox, oy, h, dark) {
+          const tc = dark ? '#1a2a1a' : '#0f1f0f';
+          const lc = dark ? ['#0a1a0a','#0f220f','#122812'] : ['#0a140a','#0d1a0d','#101e10'];
+          px(ox+3, oy+h-16, 3, 16, tc);
+          px(ox-2, oy, 13, h-16, lc[0]);
+          px(ox-1, oy+2, 11, h-18, lc[1]);
+          px(ox+1, oy+4, 7, h-20, lc[2]);
+          px(ox+3, oy-3, 3, 5, lc[0]);
+        }
+
+        function drawVan(x, y, wobble) {
+          const wy = Math.sin(wobble) * 0.8;
+          const vy = y + wy;
+          px(x, vy-12, 20, 10, '#d8d8d0');
+          px(x+1, vy-11, 7, 4, '#4a6a8a');
+          px(x+12, vy-11, 7, 4, '#4a6a8a');
+          px(x-1, vy-2, 22, 4, '#c0c0b8');
+          px(x+2, vy+2, 4, 2, '#222');
+          px(x+15, vy+2, 4, 2, '#222');
+          // headlights
+          ctx.fillStyle = 'rgba(255,255,180,0.15)';
+          ctx.beginPath();
+          ctx.moveTo((x+20)*S, (vy-6)*S);
+          ctx.lineTo((x+45)*S, (vy-14)*S);
+          ctx.lineTo((x+45)*S, (vy+4)*S);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        function render() {
+          f++;
+          ctx.fillStyle = '#060812';
+          ctx.fillRect(0, 0, W, H);
+
+          // Stars
+          ctx.fillStyle = '#ffffff';
+          for (let i = 0; i < 30; i++) {
+            const sx = (i * 73 + 11) % (W/S), sy = (i * 37 + 7) % 50;
+            const twinkle = Math.sin(f * 0.02 + i) > 0.5 ? 1 : 0;
+            if (twinkle) ctx.fillRect(sx*S, sy*S, S, S);
+          }
+
+          drawMoon(W/S * 0.72, 20);
+
+          // Fog
+          ctx.fillStyle = 'rgba(100,120,140,0.04)';
+          for (let i = 0; i < 5; i++) {
+            const fx = ((f * 0.15 + i * 60) % (W/S + 40)) - 20;
+            ctx.fillRect(fx*S, (55+i*3)*S, 50*S, 6*S);
+          }
+
+          // Back trees
+          for (let i = 0; i < 12; i++) drawTree(i * 25 - 5, 20 + (i%3)*4, 40 + (i%2)*8, true);
+
+          // Dirt road
+          px(0, 70, W/S, 16, '#2a1f14');
+          px(0, 71, W/S, 14, '#33261a');
+          // Road texture
+          for (let i = 0; i < 15; i++) px(((i*19+f*0.3)%(W/S)), 76, 6, 1, '#3d2e20');
+
+          // Van
+          vanWobble += 0.12;
+          vanX.v += vanDX + Math.sin(f * 0.03) * 0.3;
+          if (vanX.v > W/S + 10) { vanX.v = -30; vanDX = 0.4 + Math.random() * 0.4; }
+          drawVan(vanX.v, 68, vanWobble);
+
+          // Front trees (silhouettes)
+          drawTree(10, 10, 65, false);
+          drawTree(50, 15, 55, false);
+          drawTree(W/S-20, 8, 68, false);
+          drawTree(W/S-55, 18, 52, false);
+
+          // Moon occluded by tree
+          ctx.fillStyle = '#060812';
+          ctx.fillRect((W/S-20)*S, 0, 15*S, 75*S);
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #aa3333", background: "#060812", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#dd4444"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#aa3333"}
+        >
+          <canvas ref={canvasRef} width={570} height={170}
+            style={{ width: "100%", height: "auto", display: "block", imageRendering: "pixelated" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #2a1015" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>The Lone Clown</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#aa3333", marginTop: "2px" }}>A choose your own adventure. Nothing bad happens. Probably.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#aa3333", background: "#aa333322", padding: "4px 12px", border: "1px solid #aa333355", letterSpacing: "1px" }}>READ</div>
+          </div>
+        </div>
+      );
+    }
+
     function HomePage({ content, setPage, setSelectedTool, setSelectedArticle }) {
       const items = [];
       const novel = content.novel;
@@ -680,12 +864,13 @@
         }
       }
       (content.tools||[]).filter(t => !t.hideFeed).forEach(t => items.push({ type: "tool", id: t.id, title: t.title, subtitle: t.tagline, date: t.date, color: t.color||"#4a90d9" }));
-      (content.articles||[]).forEach(a => items.push({ type: "article", id: a.id, title: a.title, subtitle: a.subtitle, date: a.date, color: "#4a9aea" }));
+      (content.articles||[]).filter(a => !a.hideFeed).forEach(a => items.push({ type: "article", id: a.id, title: a.title, subtitle: a.subtitle, date: a.date, color: "#4a9aea" }));
       items.sort((a,b) => new Date(b.date)-new Date(a.date));
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           <SectionHeader title="Feed" subtitle="Everything, most recent first" />
           <ForestBanner />
+          <LoneClownBanner onClick={() => { setSelectedArticle("lone-clown"); setPage("articles"); }} />
           {items.map(item => (
             <React.Fragment key={item.type+item.id}>
             <div className="feed-item" onClick={() => { if(item.type==="tool"){setSelectedTool(item.id);setPage("tools")} else if(item.type==="article"){setSelectedArticle(item.id);setPage("articles")} else{setPage("novel")} }} style={{ border: "1px solid #333366", padding: "20px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor=item.color} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
