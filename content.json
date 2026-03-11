@@ -16,7 +16,8 @@
     { "id": "mystic-forest", "title": "Mystic Forest Walker", "tagline": "A pixel-art RPG adventure in your browser", "date": "2026-02-01", "color": "#2e7d32", "file": "tools/mystic-forest.json", "hideFeed": true }
   ],
   "articles": [
-    { "id": "origin-of-ideas", "title": "On the Origin of Ideas...", "subtitle": "A normal article", "date": "2022-01-04", "category": "Essay", "file": "articles/origin-of-ideas.json" }
+    { "id": "origin-of-ideas", "title": "On the Origin of Ideas...", "subtitle": "A normal article", "date": "2022-01-04", "category": "Essay", "file": "articles/origin-of-ideas.json" },
+    { "id": "lone-clown", "title": "The Lone Clown", "subtitle": "A Choose Your Own Adventure", "date": "2026-03-11", "category": "Interactive Fiction", "file": "articles/lone-clown.json", "hideFeed": true }
   ],
   "novel": {
     "title": "BIGFOOT'S SHOE",
