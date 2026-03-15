@@ -1,0 +1,49 @@
+{
+  "title": "Who Hears It First",
+  "subtitle": "Change radiates from centers in predictable waves",
+  "date": "2026-03-30",
+  "category": "Economics",
+  "readTime": "6 min",
+  "sections": [
+    { "type": "text", "content": "In 1755, an Irish-French economist named Richard Cantillon made an observation so obvious that most people still haven't noticed it: when new money enters an economy, it doesn't arrive everywhere at once." },
+    { "type": "text", "content": "It enters at a point. A specific point — a bank, a government, a treasury. The people closest to that point get the new money first. They spend it at current prices, before the market has adjusted. The people one step further away receive it second, after prices have started to rise. The people at the edge — the furthest from the source — receive it last, after prices have already risen, and they are now poorer in real terms than they were before the money existed." },
+    { "type": "text", "content": "Same money. Same economy. Completely different experience depending on where you're standing when it arrives." },
+    { "type": "text", "content": "This is the Cantillon Effect, and it explains more about how the world actually works than almost any other idea in economics. But Cantillon was only thinking about money. The principle is far bigger than that." },
+
+    { "type": "viz", "module": "ripple-sim" },
+
+    { "type": "heading", "content": "Information Radiates" },
+    { "type": "text", "content": "Every piece of new information enters the world at a point. A lab, a boardroom, a group chat, a leaked document, a conference keynote. The people in that room know first. They act on it first. They position themselves before anyone else understands what's happening." },
+    { "type": "text", "content": "The next ring of people hear about it from the first ring. Journalists, analysts, early adopters, people who follow the right accounts. They act second. Their actions are still informed, still timely, but the best positions have already been taken." },
+    { "type": "text", "content": "The third ring hears about it from the second ring. By now it's a headline, a trend piece, a segment on the evening news. The information is public, which means it's priced in, which means acting on it now generates no advantage. You're not early. You're not even on time. You're in the audience watching a play that started without you." },
+    { "type": "text", "content": "The fourth ring hears about it from the third ring, at a dinner party, six months later, and says: \"Did you know that...\" Yes. Everyone knew. You are the last person to know, and the confident way you're sharing this information is making everyone at the table uncomfortable." },
+
+    { "type": "heading", "content": "Technology Radiates" },
+    { "type": "text", "content": "When a new technology appears, it doesn't land evenly across the population. It lands in San Francisco, or Shenzhen, or a university lab, and it radiates outward at a speed determined by cost, complexity, and infrastructure." },
+    { "type": "text", "content": "The people closest to the source get the tool first. They learn its capabilities, find its applications, build businesses on top of it, and establish advantages that compound over time. By the time the tool reaches the general population, these people have had months or years of head start." },
+    { "type": "text", "content": "This isn't a conspiracy. Nobody is deliberately keeping technology from you. It's just physics — information and tools move at finite speeds through networks of finite density, and your position in those networks determines when things reach you." },
+    { "type": "text", "content": "The question is not whether this is fair. The question is whether you know where you are in the wave." },
+
+    { "type": "heading", "content": "Culture Radiates" },
+    { "type": "text", "content": "Fashion starts in a studio and ends in a shopping mall. Music starts in a basement and ends in a commercial. Slang starts in a community and ends in a corporate tweet. The pattern is always the same: something new is created at a center, adopted by people close to the center, observed by people further out, imitated by people further still, and finally mass-produced for people at the edge, by which point the people at the center have moved on to something else." },
+    { "type": "text", "content": "This isn't snobbery. It's the Cantillon Effect applied to culture. The people closest to the point of creation experience the thing at its most authentic, most potent, most undiluted. Each ring outward receives a slightly more processed version, slightly more packaged, slightly more explained, until the original energy has been fully captured and redistributed and the thing that arrives at the edge bears only a passing resemblance to the thing that was made at the center." },
+    { "type": "text", "content": "If you've ever discovered a band early, watched them get popular, and felt that the later fans were experiencing something different from what you experienced — you're not wrong. They are. Not because they're less discerning, but because the wave has changed shape by the time it reaches them. That's not their fault. It's just how waves work." },
+
+    { "type": "heading", "content": "The Practical Implications" },
+    { "type": "text", "content": "Knowing that change radiates from centers gives you two things: a diagnostic and a strategy." },
+    { "type": "text", "content": "The diagnostic: where are you right now? When new information in your field appears, how many rings away from the source do you typically hear about it? If your first encounter with a new idea is a newspaper article, you are several rings out. If your first encounter is a pre-print paper or a conversation with someone building it, you're closer. Neither position is inherently better — but they have very different implications for how you should act on the information." },
+    { "type": "text", "content": "The strategy: you cannot be at the center of every wave. Nobody can. The world generates too many simultaneous waves across too many domains for any single person to be early to all of them. But you can choose which waves matter to you and position yourself closer to those specific centers." },
+    { "type": "text", "content": "This means following the right people, not the most popular people. Reading the source, not the summary. Attending the small conference, not the big one. Being in the room where the thing is being discussed for the first time, not the room where it's being explained for the hundredth." },
+
+    { "type": "heading", "content": "The Uncomfortable Part" },
+    { "type": "text", "content": "The Cantillon Effect has an implication that most people would prefer to ignore: proximity to centers of change is itself a form of wealth." },
+    { "type": "text", "content": "A person living in a major city with access to industry events, professional networks, and early-stage information has a structural advantage over a person living in a rural area with none of those things. Not because the urban person is smarter or works harder — but because waves reach them sooner, and time is the most valuable resource in a compounding system." },
+    { "type": "text", "content": "The internet has compressed this somewhat. Information that used to take months to travel from center to edge now takes hours. But \"compressed\" is not \"eliminated.\" The person following the researcher on social media still hears about the breakthrough before the person who reads about it in a magazine three months later. The rings are smaller but they still exist, and the advantage of being in an inner ring is still real." },
+    { "type": "text", "content": "This is not a reason to move to San Francisco. It's a reason to be deliberate about which networks you're in, which sources you follow, and how many intermediaries sit between you and the information that matters to your life. Every intermediary is a ring. Every ring is a delay. Every delay is a cost." },
+
+    { "type": "heading", "content": "The Choice" },
+    { "type": "text", "content": "You can't control where the waves start. You can't control how fast they travel. But you can control where you're standing when they arrive." },
+    { "type": "text", "content": "For the domains that matter most to you — your career, your industry, your investments, your craft — ask yourself: am I hearing about changes from the source, or from someone who heard it from someone who heard it from the source? If it's the latter, the information isn't wrong. It's just late. And in a world where compounding rewards early action, late is expensive." },
+    { "type": "text", "content": "Cantillon figured this out in 1755, writing about gold and grain. The principle hasn't changed. Only the things radiating from the center have." }
+  ]
+}
