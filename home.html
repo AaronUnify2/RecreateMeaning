@@ -202,7 +202,7 @@
     function OvenSimViz() {
       const [guests, setGuests] = useState(0);
       const [ovens, setOvens] = useState(1);
-      const maxGuests = 12;
+      const maxGuests = 96;
       const ovenCap = 6;
       const totalCap = ovenCap * ovens;
       const withinCapacity = guests <= totalCap;
@@ -304,6 +304,31 @@
           {ovens >= 2 && guests >= totalCap - 1 && guests <= totalCap && (
             <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #4a9a4a", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
               Look at that — cost per guest is dropping again. The second oven is paying for itself. This is economies of scale recovering after a capital threshold.
+            </div>
+          )}
+          {guests >= 20 && guests < 40 && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #e67e22", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              This is no longer a dinner party. This is a catering operation. You're going to need staff. And parking.
+            </div>
+          )}
+          {guests >= 40 && guests < 60 && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #e67e22", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              You are now running a restaurant. You will need a health inspection, a liquor licence, and a therapist.
+            </div>
+          )}
+          {guests >= 60 && guests < 80 && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #aa3333", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              Sixty guests. You've crossed from hospitality into logistics. Someone is eating in the garden. Someone else is eating in the car.
+            </div>
+          )}
+          {guests >= 80 && guests < 96 && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #aa3333", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              You are now feeding a small wedding. The original four guests have not been seen for some time. They may have left. No one noticed.
+            </div>
+          )}
+          {guests >= 96 && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #aa3333", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              96 guests. 16 ovens. You started this article trying to learn about economies of scale and you ended up building an industrial kitchen. The opportunity cost of clicking this button 96 times was reading the rest of the article. You are living proof of the Fifth Slice.
             </div>
           )}
         </div>
