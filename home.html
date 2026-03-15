@@ -140,10 +140,78 @@
       );
     }
 
+    function PizzaSliderViz() {
+      const [slices, setSlices] = useState(0);
+      const maxSlices = 8;
+      const enjoyData = [0, 95, 85, 68, 45, 20, 5, -10, -25];
+      const regretData = [0, 0, 0, 5, 15, 35, 55, 75, 90];
+      const labels = ["", "Transcendent. This is why pizza exists.", "Excellent. Nearly as good as the first.", "Good. You're still glad you ordered.", "Fine. This is just eating now.", "Why. You don't want this but you're eating it.", "Your body is asking you to stop.", "You have made an enemy of your stomach.", "Congratulations. You hate pizza now."];
+      const enjoyment = enjoyData[slices] || 0;
+      const regret = regretData[slices] || 0;
+
+      return (
+        <div style={{ border: "2px solid #333366", background: "#0a0a18", padding: "24px", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px", textAlign: "center" }}>The Pizza Experiment</div>
+          <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginBottom: "16px", flexWrap: "wrap" }}>
+            {Array.from({ length: maxSlices }).map((_, i) => (
+              <div key={i} onClick={() => setSlices(i + 1)} style={{
+                width: "48px", height: "48px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "28px", background: i < slices ? (enjoyData[i+1] > 40 ? "#2a3a1a" : enjoyData[i+1] > 0 ? "#2a2a1a" : "#3a1a1a") : "#12122a",
+                border: "1px solid " + (i < slices ? (enjoyData[i+1] > 40 ? "#4a8a3a" : enjoyData[i+1] > 0 ? "#8a8a3a" : "#8a3a3a") : "#222244"),
+                transition: "all 0.2s", borderRadius: "4px"
+              }}>{i < slices ? "\uD83C\uDF55" : "\u25CB"}</div>
+            ))}
+          </div>
+          <div style={{ textAlign: "center", marginBottom: "20px" }}>
+            <button onClick={() => setSlices(0)} style={{ background: "none", border: "1px solid #333366", color: "#666680", fontFamily: "'VT323', monospace", fontSize: "13px", padding: "4px 16px", cursor: "pointer" }}>Reset</button>
+          </div>
+          {slices > 0 && (
+            <div style={{ marginBottom: "20px" }}>
+              <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#e8e8d0", textAlign: "center", marginBottom: "4px" }}>Slice {slices} of {maxSlices}</div>
+              <div style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: enjoyment > 40 ? "#4a9a4a" : enjoyment > 0 ? "#c0a060" : "#aa3333", textAlign: "center", fontStyle: "italic" }}>{labels[slices]}</div>
+            </div>
+          )}
+          <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+            <div style={{ flex: 1, minWidth: "200px" }}>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9a4a", letterSpacing: "1px", marginBottom: "6px" }}>ENJOYMENT</div>
+              <div style={{ height: "20px", background: "#12122a", border: "1px solid #222244", overflow: "hidden" }}>
+                <div style={{ height: "100%", width: Math.max(0, enjoyment) + "%", background: enjoyment > 60 ? "linear-gradient(90deg, #2d7a2d, #4a9a4a)" : enjoyment > 30 ? "linear-gradient(90deg, #7a7a2d, #9a9a4a)" : "linear-gradient(90deg, #4a3a2d, #6a5a3a)", transition: "all 0.4s ease" }} />
+              </div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: enjoyment > 0 ? "#4a9a4a" : "#aa3333", textAlign: "right", marginTop: "4px" }}>{enjoyment > 0 ? enjoyment + "%" : enjoyment + "%"}</div>
+            </div>
+            <div style={{ flex: 1, minWidth: "200px" }}>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#aa3333", letterSpacing: "1px", marginBottom: "6px" }}>REGRET</div>
+              <div style={{ height: "20px", background: "#12122a", border: "1px solid #222244", overflow: "hidden" }}>
+                <div style={{ height: "100%", width: regret + "%", background: regret > 50 ? "linear-gradient(90deg, #7a2d2d, #aa3333)" : "linear-gradient(90deg, #5a3a2d, #7a4a3a)", transition: "all 0.4s ease" }} />
+              </div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: regret > 30 ? "#aa3333" : "#666680", textAlign: "right", marginTop: "4px" }}>{regret}%</div>
+            </div>
+          </div>
+          {slices >= 5 && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #aa3333", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              {slices === 5 && "You knew this was coming. You ate it anyway."}
+              {slices === 6 && "The pizza hasn't changed. You have."}
+              {slices === 7 && "This is no longer about hunger. This is about something else entirely."}
+              {slices === 8 && "You just ate 8 slices of pizza in an economics article. The opportunity cost of this experiment was reading the rest of the article sooner. But you had to click every single one, didn't you."}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const ARTICLE_VIZ_MODULES = {
+      "pizza-slider": () => <PizzaSliderViz />
+    };
+
     function RenderArticleSection({ section }) {
       switch (section.type) {
         case "text": return <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>{redact(section.content)}</p>;
+        case "heading": return <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>{section.content}</h3>;
         case "note": return <p style={{ fontSize: "14px", color: "#666680", fontStyle: "italic", marginBottom: "20px" }}>{redact(section.content)}</p>;
+        case "viz": {
+          const mod = ARTICLE_VIZ_MODULES[section.module];
+          return mod ? mod() : null;
+        }
         case "screenshot": {
           const s = section;
           return (
@@ -842,7 +910,7 @@
           <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #2a1015" }}>
             <div>
               <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>The Lone Clown</div>
-              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#aa3333", marginTop: "2px" }}>A choose your own adventure. Help Claire find love.</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#aa3333", marginTop: "2px" }}>A choose your own adventure. Nothing bad happens. Probably.</div>
             </div>
             <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#aa3333", background: "#aa333322", padding: "4px 12px", border: "1px solid #aa333355", letterSpacing: "1px" }}>READ</div>
           </div>
