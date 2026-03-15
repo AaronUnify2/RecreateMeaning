@@ -17,7 +17,8 @@
   ],
   "articles": [
     { "id": "origin-of-ideas", "title": "On the Origin of Ideas...", "subtitle": "A normal article", "date": "2022-01-04", "category": "Essay", "file": "articles/origin-of-ideas.json" },
-    { "id": "lone-clown", "title": "The Lone Clown", "subtitle": "A Choose Your Own Adventure", "date": "2026-03-11", "category": "Interactive Fiction", "file": "articles/lone-clown.json", "hideFeed": true }
+    { "id": "lone-clown", "title": "The Lone Clown", "subtitle": "A Choose Your Own Adventure", "date": "2026-03-11", "category": "Interactive Fiction", "file": "articles/lone-clown.json", "hideFeed": true },
+    { "id": "fifth-slice", "title": "The Fifth Slice", "subtitle": "A short article about knowing when to stop", "date": "2026-03-15", "category": "Economics", "file": "articles/fifth-slice.json" }
   ],
   "novel": {
     "title": "BIGFOOT'S SHOE",
