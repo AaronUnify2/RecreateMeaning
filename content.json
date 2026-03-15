@@ -21,9 +21,9 @@
     { "id": "fifth-slice", "title": "The Fifth Slice", "subtitle": "A short article about knowing when to stop", "date": "2026-03-15", "category": "Economics", "file": "articles/fifth-slice.json" },
     { "id": "oven-problem", "title": "The Oven Problem", "subtitle": "Why the 6th dinner guest ruins everything", "date": "2026-03-15", "category": "Economics", "file": "articles/oven-problem.json" },
     { "id": "good-enough", "title": "Good Enough", "subtitle": "The most dangerous words in business are \"we could improve this\"[I]... by involving a bear[/I]", "date": "2026-03-16", "category": "Economics", "file": "articles/good-enough.json" },
-    { "id": "zero-to-something", "title": "Zero to Something", "subtitle": "The most important threshold in economics and life", "date": "2026-03-20", "category": "Economics", "file": "articles/zero-to-something.json", "comingSoon": true },
-    { "id": "furniture-store", "title": "The Furniture Store", "subtitle": "A short story about watching your advantages disappear", "date": "2026-03-25", "category": "Economics", "file": "articles/furniture-store.json", "comingSoon": true },
-    { "id": "who-hears-it-first", "title": "Who Hears It First", "subtitle": "Change radiates from centers in predictable waves", "date": "2026-03-30", "category": "Economics", "file": "articles/who-hears-it-first.json", "comingSoon": true }
+    { "id": "zero-to-something", "title": "Zero to Something", "subtitle": "The most important threshold in economics and life", "date": "2026-03-20", "category": "Economics", "file": "articles/zero-to-something.json" },
+    { "id": "furniture-store", "title": "The Furniture Store", "subtitle": "A short story about watching your advantages disappear", "date": "2026-03-25", "category": "Economics", "file": "articles/furniture-store.json" },
+    { "id": "who-hears-it-first", "title": "Who Hears It First", "subtitle": "Change radiates from centers in predictable waves", "date": "2026-03-30", "category": "Economics", "file": "articles/who-hears-it-first.json" }
   ],
   "novel": {
     "title": "BIGFOOT'S SHOE",
