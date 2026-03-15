@@ -1,0 +1,60 @@
+{
+  "title": "The Snowball",
+  "subtitle": "How $500 a week builds a self-funding investment engine",
+  "date": "2026-04-02",
+  "category": "Strategy",
+  "readTime": "7 min",
+  "sections": [
+    { "type": "text", "content": "The previous article described the barbell — property on one end, a global index fund on the other. This article describes the engine that makes the growth end accelerate over time, funded partly by you and partly by the asset itself." },
+    { "type": "text", "content": "The core idea: borrow against your property equity, invest the borrowed funds into VGS, and use a combination of your personal income and the growing dividends from VGS to service the debt. As the dividends compound, they cover more and more of the mortgage cost, freeing up capacity to borrow again. The portfolio funds its own expansion." },
+    { "type": "text", "content": "This is not a get-rich-quick scheme. It's a get-rich-slowly scheme with a thirty-year timeline and a very specific set of constraints. Let's walk through the numbers." },
+
+    { "type": "heading", "content": "The Rules" },
+    { "type": "text", "content": "Rule one: you will contribute a maximum of $500 per week from your personal income. Not a dollar more. This is your hard cap. If the strategy ever requires more than $500 a week from you personally, you stop buying and wait for the dividends to catch up." },
+    { "type": "text", "content": "Rule two: every $100,000 borrowed against your property costs approximately $161 per week in mortgage repayments at 6% interest. This is your cost per lot." },
+    { "type": "text", "content": "Rule three: VGS pays approximately 2.5% in dividends annually. On a $100,000 holding, that's roughly $48 per week. This income offsets your mortgage cost." },
+    { "type": "text", "content": "Rule four: every time your growing dividends create an additional $161 per week in free cash flow, you buy another $100,000 lot. The dividends fund the expansion. You never increase your personal contribution beyond $500." },
+
+    { "type": "heading", "content": "Year Zero: The Launchpad" },
+    { "type": "text", "content": "Each $100,000 lot costs you $161 per week in mortgage payments, but it immediately pays you $48 per week in dividends. The net cost to hold one lot is $113 per week." },
+    { "type": "text", "content": "With $500 per week available, you can service four lots from day one. Four lots means $400,000 invested in VGS, costing you $644 per week in mortgage payments, offset by $192 per week in dividends. Net cost: $452 per week. You have $48 per week to spare." },
+    { "type": "text", "content": "You are now holding $400,000 in the world's largest companies, funded by debt that inflation is quietly eroding, generating dividends that grow as the underlying companies grow. The engine is running." },
+
+    { "type": "heading", "content": "The Snowball Effect" },
+    { "type": "text", "content": "To buy lot number five, you need another $161 per week in cash flow. You already have a $48 surplus, so you need your existing dividends to grow by roughly $113 per week — about 33% growth on your current dividend income." },
+    { "type": "text", "content": "At a historical dividend growth rate of around 7%, the Rule of 72 tells you this takes approximately four years. By 2030, your dividends have grown enough to cover the cost of a fifth lot without increasing your personal contribution." },
+    { "type": "text", "content": "You buy lot five. The engine now holds $500,000. The dividends are larger. The next surplus accumulates faster. The snowball is rolling." },
+    { "type": "text", "content": "The timeline for each subsequent lot compresses slightly as the base grows, then stretches as the gap between surplus and cost widens. The approximate schedule looks like this:" },
+    { "type": "text", "content": "2026: Lots 1 through 4. Your starting position." },
+    { "type": "text", "content": "2030: Lot 5. Dividends cover the gap." },
+    { "type": "text", "content": "2037: Lot 6. Larger base, but the full $161 gap takes time." },
+    { "type": "text", "content": "2043: Lot 7." },
+    { "type": "text", "content": "2048: Lot 8." },
+    { "type": "text", "content": "2053: Lot 9." },
+    { "type": "text", "content": "2057: Lot 10." },
+    { "type": "text", "content": "By retirement, you hold ten lots — $1 million in initial face value — acquired over thirty years, funded by $500 a week and the asset's own income." },
+
+    { "type": "heading", "content": "The Compounding Payoff" },
+    { "type": "text", "content": "The magic isn't the number of lots. It's the age of the early ones." },
+    { "type": "text", "content": "The first four lots have been compounding for thirty-four years. At 8% annual growth, the Rule of 72 says money doubles every nine years. Thirty-four years is nearly four doublings. Your initial $400,000 becomes roughly $4.2 million." },
+    { "type": "text", "content": "Lot five, bought in 2030, compounds for thirty years — approximately $800,000. Lot six for twenty-three years — around $500,000. Each subsequent lot is worth less because it had less time to grow, but it cost you nothing extra from your own pocket. The later lots were funded by the dividends of the earlier lots. The engine built itself." },
+    { "type": "text", "content": "Total estimated portfolio value at age 65: approximately $6.3 million gross. Subtract the $1 million in outstanding debt and your net equity is around $5.3 million — plus whatever your property is worth, which after thirty-four years of modest growth could be another $4 to $5 million." },
+
+    { "type": "heading", "content": "The Debt Illusion" },
+    { "type": "text", "content": "A million dollars in debt sounds terrifying. It should — if the million is static and the assets aren't growing. But in this structure, the debt is fixed in nominal terms while everything around it inflates." },
+    { "type": "text", "content": "You borrowed $1 million in 2026 through 2057 dollars. By 2060, inflation has eroded the real value of that debt significantly. If inflation averages 3% over thirty years, $1 million in 2060 has the purchasing power of roughly $400,000 today. Your debt shrinks in real terms while your assets grow in real terms. You're repaying expensive money with cheap money." },
+    { "type": "text", "content": "This is the Cantillon Effect working in your favor. You accessed the money early, deployed it into productive assets, and time did the rest. The people who waited — who saved cash, who avoided debt, who stayed cautious — are further from the center of the ripple. Their savings bought less each year while your borrowed capital bought more." },
+
+    { "type": "heading", "content": "The Risk" },
+    { "type": "text", "content": "This strategy has a specific vulnerability: interest rates." },
+    { "type": "text", "content": "At 6%, each lot costs $161 per week. At 8%, it costs roughly $215 per week. At 9%, it's about $240. A sustained rise in interest rates doesn't just slow the snowball — it can reverse it. Your holding costs increase while your dividends, which are tied to company earnings rather than interest rates, may not keep pace." },
+    { "type": "text", "content": "The defense is the $500 hard cap. You never over-commit. You only buy a new lot when the dividends can comfortably service it. If rates spike, you stop buying and wait. The existing lots continue to compound. The dividends continue to grow. The engine slows but it doesn't stop, because you built it within your means." },
+    { "type": "text", "content": "The worst-case scenario is a simultaneous property crash, market crash, and interest rate spike — all three at once. This is rare but it has happened. It happened in 2008. The people who survived 2008 were the people who could service their debts through the downturn without being forced to sell. The $500 cap exists to make sure you are one of those people." },
+
+    { "type": "heading", "content": "The Summary" },
+    { "type": "text", "content": "Contribute $500 a week. Borrow against your property in $100,000 lots. Invest each lot in a global index fund. Use dividends to offset mortgage costs. When the dividends grow enough to cover another lot, buy another lot. Never exceed your personal cap. Hold everything for decades." },
+    { "type": "text", "content": "The strategy works because of four forces operating simultaneously: compound growth on the equity, dividend growth funding expansion, inflation eroding the real value of the debt, and tax efficiency from holding rather than trading. No single force is dramatic. Together, over thirty years, they're transformative." },
+    { "type": "text", "content": "You don't need to predict the market. You don't need to time anything. You don't need private information or behavioral insight or a Bloomberg terminal. You need a house, a brokerage account, $500 a week, and the willingness to be patient for a very long time." },
+    { "type": "text", "content": "The snowball doesn't care if you're watching. It rolls either way." }
+  ]
+}
