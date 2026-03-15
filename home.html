@@ -354,7 +354,7 @@
         { id: "accounting", name: "Accounting", health: 88, improved: 0, bottleneck: false },
         { id: "website", name: "Website", health: 55, improved: 0, bottleneck: false },
         { id: "support", name: "Support", health: 50, improved: 0, bottleneck: false },
-        { id: "filing", name: "Shared Drive", health: 99, improved: 0, bottleneck: false }
+        { id: "filing", name: "Shared Drive", health: 93, improved: 0, bottleneck: false }
       ];
       const [modules, setModules] = useState(initModules);
       const [energy, setEnergy] = useState(7);
@@ -370,7 +370,7 @@
         setModules(prev => {
           const next = prev.map(m => {
             if (m.id !== id) return m;
-            const newHealth = m.id === "filing" ? (m.improved >= 6 ? 100 : 99) : Math.min(99, m.health + 8);
+            const newHealth = m.id === "filing" ? Math.min(100, m.health + 1) : Math.min(99, m.health + 8);
             return { ...m, health: newHealth, improved: m.improved + 1 };
           });
           const f = next.find(m => m.id === "filing");
@@ -405,7 +405,7 @@
 
       const reset = () => { setModules(initModules); setEnergy(maxEnergy); setLog([]); setAscended(false); };
       const bottleneck = modules.find(m => m.bottleneck);
-      const systemHealth = Math.min(...modules.map(m => m.health));
+      const systemHealth = Math.min(...modules.map(m => (m.id === "filing" && m.health < 100) ? 99 : m.health));
       const wastedEnergy = modules.reduce((sum, m) => sum + ((!m.bottleneck && m.health >= 80) ? m.improved : 0), 0);
       const filingImproved = filing ? filing.improved : 0;
 
@@ -416,7 +416,8 @@
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "16px" }}>
             {modules.map(m => {
-              const col = m.health >= 100 ? "#ffd700" : m.health >= 80 ? "#4a9a4a" : m.health >= 60 ? "#c0a060" : "#aa3333";
+              const displayHealth = (m.id === "filing" && m.health < 100) ? 99 : m.health;
+              const col = displayHealth >= 100 ? "#ffd700" : displayHealth >= 80 ? "#4a9a4a" : displayHealth >= 60 ? "#c0a060" : "#aa3333";
               const pulse = m.bottleneck && m.improved === 0 && !ascended;
               return (
                 <div key={m.id} onClick={() => improve(m.id)} style={{
@@ -426,9 +427,9 @@
                 }}>
                   <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: col, letterSpacing: "1px", marginBottom: "6px" }}>{m.name}</div>
                   <div style={{ height: "8px", background: "#1a1a2e", border: "1px solid #222244", marginBottom: "4px" }}>
-                    <div style={{ height: "100%", width: m.health + "%", background: m.health >= 100 ? "linear-gradient(90deg, #ffd700, #ffaa00)" : col, transition: "all 0.4s" }} />
+                    <div style={{ height: "100%", width: displayHealth + "%", background: displayHealth >= 100 ? "linear-gradient(90deg, #ffd700, #ffaa00)" : col, transition: "all 0.4s" }} />
                   </div>
-                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: col, textAlign: "right" }}>{m.health}%</div>
+                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: col, textAlign: "right" }}>{displayHealth}%</div>
                   {m.improved > 0 && <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: "#666680", marginTop: "4px" }}>Improved {m.improved}x</div>}
                 </div>
               );
