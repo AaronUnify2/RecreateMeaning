@@ -1745,6 +1745,111 @@
       );
     }
 
+    function FinanceBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 130, S = 2;
+        let anim, f = 0;
+
+        // Generate a long-term upward stock chart with volatility
+        const pts = [];
+        let val = 40;
+        for (let i = 0; i < W/S; i++) {
+          val += (Math.random() - 0.46) * 2.5;
+          if (i > 200) val += 0.05;
+          if (i > 50 && i < 70) val -= 0.6; // crash
+          if (i > 70 && i < 100) val += 0.3; // recovery
+          val = Math.max(10, Math.min(H/S - 10, val));
+          pts.push(val);
+        }
+
+        function render() {
+          f++;
+          ctx.fillStyle = '#060a10';
+          ctx.fillRect(0, 0, W, H);
+
+          // Grid
+          ctx.strokeStyle = '#0d1520';
+          ctx.lineWidth = 1;
+          for (let gy = 20; gy < H; gy += 20) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+          for (let gx = 40; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+
+          // Draw progress
+          const drawPts = Math.min(pts.length, Math.floor((f * 0.8) % (pts.length + 80)));
+
+          // Filled area
+          if (drawPts > 1) {
+            ctx.beginPath();
+            ctx.moveTo(0, H);
+            for (let i = 0; i < drawPts; i++) ctx.lineTo(i*S, (H/S - pts[i])*S);
+            ctx.lineTo((drawPts-1)*S, H);
+            ctx.closePath();
+            const fillGrad = ctx.createLinearGradient(0, 0, 0, H);
+            fillGrad.addColorStop(0, 'rgba(74,154,74,0.15)');
+            fillGrad.addColorStop(1, 'rgba(74,154,74,0)');
+            ctx.fillStyle = fillGrad;
+            ctx.fill();
+          }
+
+          // Line
+          if (drawPts > 1) {
+            ctx.beginPath();
+            for (let i = 0; i < drawPts; i++) {
+              const x = i*S, y = (H/S - pts[i])*S;
+              if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = '#4a9a4a';
+            ctx.lineWidth = S;
+            ctx.stroke();
+
+            // Dot at tip
+            const tipX = (drawPts-1)*S, tipY = (H/S - pts[drawPts-1])*S;
+            ctx.fillStyle = '#4a9a4a';
+            ctx.beginPath(); ctx.arc(tipX, tipY, 3*S, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(74,154,74,0.3)';
+            ctx.beginPath(); ctx.arc(tipX, tipY, 6*S, 0, Math.PI*2); ctx.fill();
+          }
+
+          // Ticker text scrolling
+          const tickers = ["VGS +1.2%", "AAPL +0.8%", "MSFT +0.4%", "ALL ORDS +0.6%", "BRK.A +1.1%", "INDEX \u25B2"];
+          ctx.font = (5*S) + 'px "VT323", monospace';
+          const tickerWidth = tickers.join("    ").length * 5 * S;
+          const scrollX = -(f * 1.2) % (tickerWidth + W);
+          ctx.fillStyle = '#4a9a4a88';
+          let tx = scrollX;
+          tickers.forEach(t => {
+            ctx.fillText(t, tx, 12*S);
+            tx += (t.length + 4) * 5 * S;
+          });
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #4a9a4a", background: "#060a10", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#6aba6a"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#4a9a4a"}
+        >
+          <canvas ref={canvasRef} width={570} height={130}
+            style={{ width: "100%", height: "auto", display: "block" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #0d2010" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>Exploring Finance</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9a4a", marginTop: "2px" }}>Four articles on why doing nothing is the hardest strategy to beat.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#4a9a4a", background: "#4a9a4a22", padding: "4px 12px", border: "1px solid #4a9a4a55", letterSpacing: "1px" }}>READ</div>
+          </div>
+        </div>
+      );
+    }
+
     function HomePage({ content, setPage, setSelectedTool, setSelectedArticle }) {
       const items = [];
       const novel = content.novel;
@@ -1766,6 +1871,7 @@
           <SectionHeader title="Feed" subtitle="Everything, most recent first" />
           <LoneClownBanner onClick={() => { setSelectedArticle("lone-clown"); setPage("articles"); }} />
           <EconAddendumBanner onClick={() => { setSelectedArticle("econ-series"); setPage("articles"); }} />
+          <FinanceBanner onClick={() => { setSelectedArticle("finance-series"); setPage("articles"); }} />
           {items.map(item => (
             <React.Fragment key={item.type+item.id}>
             {item.id === "mystic-forest" ? <ForestBanner /> : item.type === "novel" ? <BigfootShoeBanner synopsis={item.subtitle} onClick={() => setPage("novel")} /> : (
@@ -1846,33 +1952,72 @@
       );
     }
 
+    function FinanceSeriesPage({ articles, onSelect, goBack }) {
+      const finArticles = articles.filter(a => a.category === "Finance" && !a.comingSoon);
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
+          <div style={{ border: "2px solid #4a9a4a", background: "linear-gradient(180deg, #0a1a0f 0%, #0f0f23 100%)", padding: "32px", textAlign: "center", marginBottom: "28px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#3a6a4a", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "12px" }}>Article Series</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "36px", color: "#e8e8d0", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "8px" }}>Exploring Finance</h2>
+            <div style={{ maxWidth: "500px", margin: "0 auto", padding: "16px 0" }}>
+              <p style={{ fontFamily: "'Lora', serif", fontSize: "15px", fontStyle: "italic", color: "#a0a090", lineHeight: 1.7 }}>Can you beat the market? Four articles on index funds, manager skill, private information, and why two Nobel laureates can't agree on whether prices are real.</p>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {finArticles.map((a, i) => (
+              <div key={a.id} onClick={() => onSelect(a.id)}
+                style={{ border: "1px solid #333366", padding: "16px 20px", cursor: "pointer", background: "#0f0f23", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "border-color 0.2s", gap: "12px" }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = "#4a9a4a"}
+                onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
+              >
+                <div style={{ display: "flex", gap: "16px", alignItems: "baseline", flex: 1, minWidth: 0 }}>
+                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: "#4a9a4a", flexShrink: 0 }}>{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <span style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>{a.title}</span>
+                    <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>{redact(a.subtitle)}</p>
+                  </div>
+                </div>
+                <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     function ArticlesPage({ content, selectedArticle, setSelectedArticle }) {
       const articles = content.articles || [];
       const econArticles = articles.filter(a => a.category === "Economics" && !a.comingSoon);
-      const selected = selectedArticle === "econ-series" ? null : (selectedArticle ? articles.find(a => a.id === selectedArticle) : null);
+      const finArticles = articles.filter(a => a.category === "Finance" && !a.comingSoon);
+      const selected = (selectedArticle === "econ-series" || selectedArticle === "finance-series") ? null : (selectedArticle ? articles.find(a => a.id === selectedArticle) : null);
       const showEconSeries = selectedArticle === "econ-series";
+      const showFinSeries = selectedArticle === "finance-series";
       const { data: articleData, loading } = useJsonFile(selected && !selected.comingSoon ? selected.file : null);
 
-      // If viewing an econ article, find prev/next in series
-      const econIdx = selected ? econArticles.findIndex(a => a.id === selected.id) : -1;
-      const isEcon = econIdx >= 0;
-      const prevEcon = isEcon && econIdx > 0 ? econArticles[econIdx - 1] : null;
-      const nextEcon = isEcon && econIdx < econArticles.length - 1 ? econArticles[econIdx + 1] : null;
+      const isEcon = selected ? econArticles.findIndex(a => a.id === selected.id) >= 0 : false;
+      const isFin = selected ? finArticles.findIndex(a => a.id === selected.id) >= 0 : false;
+      const seriesArticles = isEcon ? econArticles : isFin ? finArticles : [];
+      const seriesIdx = seriesArticles.findIndex(a => a.id === (selected?.id));
+      const prevSeries = seriesIdx > 0 ? seriesArticles[seriesIdx - 1] : null;
+      const nextSeries = seriesIdx >= 0 && seriesIdx < seriesArticles.length - 1 ? seriesArticles[seriesIdx + 1] : null;
+      const seriesId = isEcon ? "econ-series" : isFin ? "finance-series" : null;
 
       if (selected && !selected.comingSoon && articleData) return (
         <div>
-          <ArticleRenderer data={articleData} goBack={() => setSelectedArticle(isEcon ? "econ-series" : null)} />
-          {isEcon && (
+          <ArticleRenderer data={articleData} goBack={() => setSelectedArticle(seriesId)} />
+          {seriesId && (
             <div style={{ maxWidth: "720px", display: "flex", justifyContent: "space-between", marginTop: "20px", paddingTop: "16px", borderTop: "1px dashed #333366", gap: "12px", flexWrap: "wrap" }}>
-              {prevEcon ? <button onClick={() => { setSelectedArticle(prevEcon.id); window.scrollTo({top:0,behavior:"smooth"}); }} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", padding: 0, textAlign: "left" }}>{"\u2190 " + prevEcon.title}</button> : <span />}
-              <button onClick={() => { setSelectedArticle("econ-series"); window.scrollTo({top:0,behavior:"smooth"}); }} style={{ background: "none", border: "1px solid #333366", color: "#666680", fontFamily: "'VT323', monospace", fontSize: "13px", padding: "4px 12px", cursor: "pointer" }}>All Articles</button>
-              {nextEcon ? <button onClick={() => { setSelectedArticle(nextEcon.id); window.scrollTo({top:0,behavior:"smooth"}); }} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", padding: 0, textAlign: "right" }}>{nextEcon.title + " \u2192"}</button> : <span />}
+              {prevSeries ? <button onClick={() => { setSelectedArticle(prevSeries.id); window.scrollTo({top:0,behavior:"smooth"}); }} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", padding: 0, textAlign: "left" }}>{"\u2190 " + prevSeries.title}</button> : <span />}
+              <button onClick={() => { setSelectedArticle(seriesId); window.scrollTo({top:0,behavior:"smooth"}); }} style={{ background: "none", border: "1px solid #333366", color: "#666680", fontFamily: "'VT323', monospace", fontSize: "13px", padding: "4px 12px", cursor: "pointer" }}>All Articles</button>
+              {nextSeries ? <button onClick={() => { setSelectedArticle(nextSeries.id); window.scrollTo({top:0,behavior:"smooth"}); }} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", padding: 0, textAlign: "right" }}>{nextSeries.title + " \u2192"}</button> : <span />}
             </div>
           )}
         </div>
       );
       if (selected && !selected.comingSoon && loading) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center", fontSize: "18px" }}>Loading...</div>;
       if (showEconSeries) return <EconSeriesPage articles={articles} onSelect={id => { setSelectedArticle(id); window.scrollTo({top:0,behavior:"smooth"}); }} goBack={() => setSelectedArticle(null)} />;
+      if (showFinSeries) return <FinanceSeriesPage articles={articles} onSelect={id => { setSelectedArticle(id); window.scrollTo({top:0,behavior:"smooth"}); }} goBack={() => setSelectedArticle(null)} />;
       return (
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
