@@ -1,0 +1,35 @@
+{
+  "title": "Private Information",
+  "subtitle": "The legal edge that actually works",
+  "date": "2026-03-18",
+  "category": "Finance",
+  "readTime": "6 min",
+  "sections": [
+    { "type": "text", "content": "There's a distinction in finance that most people outside the industry don't know about, and it explains more about why some investors outperform than almost anything else." },
+    { "type": "text", "content": "Insider information is knowledge about the plans or conditions of a business that hasn't been made public. Trading on insider information is illegal. This is the version most people think of — the executive who dumps shares before bad earnings, the friend who tips you off about a merger. Clear, prosecutable, wrong." },
+    { "type": "text", "content": "Private information is different. Private information is what a fund manager learns by meeting the CEO of a company, attending an industry conference, walking through a factory, or having a conversation with someone who knows the sector. The CEO doesn't reveal anything secret. But the way they answer questions — the confidence, the hesitation, the things they emphasise and the things they avoid — tells a skilled listener something that investors reading the annual report will never know." },
+    { "type": "text", "content": "Trading on private information is entirely legal. And research has shown that it is directly correlated with outperformance. Funds that act on private information outperform. Funds that rely on public information underperform. The edge isn't math. It's access." },
+
+    { "type": "heading", "content": "The Buffett Model" },
+    { "type": "text", "content": "Warren Buffett is the most famous investor alive, and his success is usually attributed to \"value investing\" — buying stocks priced below their intrinsic value. This is true but incomplete." },
+    { "type": "text", "content": "Buffett doesn't just buy stocks. He buys businesses. He selects and installs competent managers when companies need them. He provides stability — he likes to hold stocks indefinitely, which gives companies a long-term anchor investor. He takes a hands-off approach to strategy, which means talented CEOs seek him out because his money comes without interference." },
+    { "type": "text", "content": "This is not value investing. This is closer to activist investing combined with a reputation so powerful that it generates its own deal flow. Companies want Buffett's money because Buffett's money comes with Buffett's name, and Buffett's name comes with decades of demonstrated judgement. This reputation attracts CEOs who share private information to secure his investment." },
+    { "type": "text", "content": "The edge compounds. Better access produces better information. Better information produces better returns. Better returns produce a better reputation. A better reputation produces better access. The cycle feeds itself for fifty years and people call it stock picking." },
+
+    { "type": "heading", "content": "The Lynch Insight" },
+    { "type": "text", "content": "Peter Lynch, another legendary fund manager, made a different argument: retail investors have private information that fund managers don't." },
+    { "type": "text", "content": "You use products every day. You know which ones are good and which are terrible. You know which restaurant in your neighbourhood is always packed and which one changes its name every six months. You work in an industry and you can see which companies are gaining ground and which are losing it. You talk to people. You notice things. This is private information — not illegal, not secret, just specific knowledge that you have and the market hasn't fully priced in." },
+    { "type": "text", "content": "Lynch's argument is that ordinary people are closer to certain kinds of economic reality than professional analysts sitting in offices looking at spreadsheets. The analyst knows the company's P/E ratio. You know the company's product is incredible because you use it every day and so does everyone you know. Both are valuable. Only one of them requires a Bloomberg terminal." },
+    { "type": "text", "content": "The caveat — and it's a serious one — is that knowing a product is good is not the same as knowing the stock is underpriced. You still need to do the financial homework. A great company at an expensive price is a bad investment. Lynch's edge only works if you combine your private information about the product with public information about the price." },
+
+    { "type": "heading", "content": "Who Hears It First (Again)" },
+    { "type": "text", "content": "If you've read the Econ Addendum series on this site, you'll recognise what's happening here. This is the Cantillon Effect applied to information in financial markets." },
+    { "type": "text", "content": "New information enters the market at a point — a boardroom, a factory floor, a product launch. The people closest to that point act first. Their trades move the price slightly. Analysts notice the movement and investigate. Their reports move the price further. The financial press picks it up. Retail investors read the headline. By the time the information is public, the price has already adjusted." },
+    { "type": "text", "content": "Private information is simply the state of being closer to the point of origin. You don't need a secret. You need proximity — to the product, to the industry, to the people making decisions. Proximity is the edge, and unlike insider information, it's available to anyone willing to pay attention." },
+
+    { "type": "heading", "content": "The Practical Takeaway" },
+    { "type": "text", "content": "Most people should buy an index fund and hold it. This was true in the last article and it hasn't changed. The tax advantages of holding, the low fees, the automatic rebalancing, and the decades of evidence all point in the same direction: patience beats activity for the vast majority of investors." },
+    { "type": "text", "content": "But if you're going to pick stocks — if you insist on trying — then Lynch's insight is the place to start. Don't pick stocks because a chart looks promising or because someone on the internet is excited. Pick stocks because you genuinely know something about the business that most investors don't. Because you use the product. Because you work in the industry. Because you've spoken to people who have information that hasn't reached the spreadsheet yet." },
+    { "type": "text", "content": "And then still hold. Because even if you're right about the company, the tax advantages of patience and the transaction costs of activity mean that buying and holding your conviction will almost always outperform trading it. Find the right thing. Buy it. Then do what Buffett does: sit in a room and wait." }
+  ]
+}
