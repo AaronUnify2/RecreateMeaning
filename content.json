@@ -23,7 +23,11 @@
     { "id": "good-enough", "title": "Good Enough", "subtitle": "The most dangerous words in business are \"we could improve this\"[I]... by involving a bear[/I]", "date": "2026-03-16", "category": "Economics", "file": "articles/good-enough.json", "hideFeed": true },
     { "id": "zero-to-something", "title": "Zero to Something", "subtitle": "The most important threshold in economics and life", "date": "2026-03-20", "category": "Economics", "file": "articles/zero-to-something.json", "hideFeed": true },
     { "id": "furniture-store", "title": "The Furniture Store", "subtitle": "A short story about watching your advantages disappear", "date": "2026-03-25", "category": "Economics", "file": "articles/furniture-store.json", "hideFeed": true },
-    { "id": "who-hears-it-first", "title": "Who Hears It First", "subtitle": "Change radiates from centers in predictable waves", "date": "2026-03-30", "category": "Economics", "file": "articles/who-hears-it-first.json", "hideFeed": true }
+    { "id": "who-hears-it-first", "title": "Who Hears It First", "subtitle": "Change radiates from centers in predictable waves", "date": "2026-03-30", "category": "Economics", "file": "articles/who-hears-it-first.json", "hideFeed": true },
+    { "id": "the-index", "title": "The Index", "subtitle": "Why doing nothing beats almost everyone", "date": "2026-03-16", "category": "Finance", "file": "articles/the-index.json", "hideFeed": true },
+    { "id": "beating-the-market", "title": "Beating the Market", "subtitle": "What it actually means and why most people can't", "date": "2026-03-17", "category": "Finance", "file": "articles/beating-the-market.json", "hideFeed": true },
+    { "id": "private-information", "title": "Private Information", "subtitle": "The legal edge that actually works", "date": "2026-03-18", "category": "Finance", "file": "articles/private-information.json", "hideFeed": true },
+    { "id": "the-bubble", "title": "The Bubble", "subtitle": "Two Nobel laureates disagree about whether markets can go insane", "date": "2026-03-19", "category": "Finance", "file": "articles/the-bubble.json", "hideFeed": true }
   ],
   "novel": {
     "title": "BIGFOOT'S SHOE",
