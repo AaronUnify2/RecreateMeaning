@@ -1427,6 +1427,150 @@
       );
     }
 
+    function EconAddendumBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 150, S = 2;
+        let anim, f = 0;
+
+        const icons = [
+          { x: 38, sym: "pizza", color: "#e67e22" },
+          { x: 90, sym: "oven", color: "#aa3333" },
+          { x: 142, sym: "gear", color: "#4a9a4a" },
+          { x: 194, sym: "coin", color: "#ffd700" },
+          { x: 232, sym: "store", color: "#c0a060" },
+          { x: 262, sym: "ripple", color: "#4a9aea" }
+        ];
+
+        function drawIcon(x, y, sym, color, alpha) {
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = color;
+          if (sym === "pizza") {
+            ctx.beginPath(); ctx.moveTo(x*S, (y-6)*S); ctx.lineTo((x+5)*S, (y+4)*S); ctx.lineTo((x-5)*S, (y+4)*S); ctx.fill();
+            ctx.fillStyle = "#ffd700"; ctx.fillRect((x-1)*S, (y-2)*S, 2*S, 2*S);
+          } else if (sym === "oven") {
+            ctx.fillRect((x-4)*S, (y-4)*S, 8*S, 8*S);
+            ctx.fillStyle = "#1a1a2e"; ctx.fillRect((x-2)*S, (y-2)*S, 4*S, 3*S);
+            ctx.fillStyle = "#e67e22"; ctx.fillRect((x-1)*S, (y+2)*S, 1*S, 1*S); ctx.fillRect((x+1)*S, (y+2)*S, 1*S, 1*S);
+          } else if (sym === "gear") {
+            for (let i = 0; i < 4; i++) {
+              const a = (i/4)*Math.PI*2; ctx.fillRect((x+Math.cos(a)*4-1)*S,(y+Math.sin(a)*4-1)*S,2*S,2*S);
+            }
+            ctx.beginPath(); ctx.arc(x*S,y*S,3*S,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle="#1a1a2e"; ctx.beginPath(); ctx.arc(x*S,y*S,1.5*S,0,Math.PI*2); ctx.fill();
+          } else if (sym === "coin") {
+            ctx.beginPath(); ctx.arc(x*S,y*S,4*S,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle="#1a1a2e"; ctx.fillRect((x-1)*S,(y-2)*S,2*S,4*S);
+          } else if (sym === "store") {
+            ctx.fillRect((x-5)*S,(y-2)*S,10*S,6*S);
+            ctx.fillStyle="#1a1a2e"; ctx.fillRect((x-1)*S,(y)*S,2*S,4*S);
+            ctx.beginPath(); ctx.moveTo((x-6)*S,(y-2)*S); ctx.lineTo(x*S,(y-6)*S); ctx.lineTo((x+6)*S,(y-2)*S); ctx.fill();
+            ctx.fillStyle = color;
+          } else if (sym === "ripple") {
+            for (let r = 2; r <= 5; r++) { ctx.beginPath(); ctx.arc(x*S,y*S,r*S,0,Math.PI*2); ctx.strokeStyle=color; ctx.globalAlpha=alpha*(1-r/6); ctx.lineWidth=S; ctx.stroke(); }
+          }
+          ctx.globalAlpha = 1;
+        }
+
+        function render() {
+          f++;
+          ctx.fillStyle = '#080810';
+          ctx.fillRect(0, 0, W, H);
+
+          // Background grid
+          ctx.strokeStyle = '#111122';
+          ctx.lineWidth = 1;
+          for (let gx = 0; gx < W/S; gx += 10) { ctx.beginPath(); ctx.moveTo(gx*S,0); ctx.lineTo(gx*S,H); ctx.stroke(); }
+          for (let gy = 0; gy < H/S; gy += 10) { ctx.beginPath(); ctx.moveTo(0,gy*S); ctx.lineTo(W,gy*S); ctx.stroke(); }
+
+          // Animated curve
+          const baseY = H/S - 15;
+          const curvePoints = [];
+          const drawProgress = Math.min(1, (f % 300) / 200);
+          const totalPts = Math.floor(W/S * drawProgress);
+
+          ctx.beginPath();
+          for (let i = 0; i <= totalPts; i++) {
+            const t = i / (W/S);
+            const y = baseY - Math.pow(t, 2.2) * (baseY - 12);
+            if (i === 0) ctx.moveTo(i*S, y*S); else ctx.lineTo(i*S, y*S);
+            curvePoints.push({ x: i, y });
+          }
+
+          // Gradient stroke
+          const grad = ctx.createLinearGradient(0, H, W * drawProgress, 0);
+          grad.addColorStop(0, '#aa3333');
+          grad.addColorStop(0.3, '#e67e22');
+          grad.addColorStop(0.6, '#ffd700');
+          grad.addColorStop(1, '#4a9aea');
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = S * 1.5;
+          ctx.stroke();
+
+          // Glow under curve
+          if (curvePoints.length > 2) {
+            ctx.beginPath();
+            ctx.moveTo(0, baseY*S);
+            curvePoints.forEach(p => ctx.lineTo(p.x*S, p.y*S));
+            ctx.lineTo(curvePoints[curvePoints.length-1].x*S, baseY*S);
+            ctx.closePath();
+            const fillGrad = ctx.createLinearGradient(0, 0, W * drawProgress, 0);
+            fillGrad.addColorStop(0, 'rgba(170,51,51,0.08)');
+            fillGrad.addColorStop(0.5, 'rgba(230,126,34,0.06)');
+            fillGrad.addColorStop(1, 'rgba(74,154,234,0.04)');
+            ctx.fillStyle = fillGrad;
+            ctx.fill();
+          }
+
+          // Icons along curve
+          icons.forEach((icon, i) => {
+            if (icon.x > totalPts) return;
+            const t = icon.x / (W/S);
+            const y = baseY - Math.pow(t, 2.2) * (baseY - 12);
+            const bob = Math.sin(f * 0.03 + i * 1.5) * 1.5;
+            drawIcon(icon.x, y - 8 + bob, icon.sym, icon.color, 0.8);
+          });
+
+          // Axis labels
+          ctx.fillStyle = '#333355';
+          ctx.font = (7*S) + 'px "VT323", monospace';
+          ctx.fillText('ZERO', 4, (baseY+7)*S);
+          if (drawProgress > 0.9) ctx.fillText('SOMETHING', (W/S - 45)*S, 18*S);
+
+          // Reset animation
+          if (f % 300 > 280) {
+            ctx.fillStyle = 'rgba(8,8,16,' + ((f%300-280)/20) + ')';
+            ctx.fillRect(0,0,W,H);
+          }
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #4a9aea", background: "#080810", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#6ab0ff"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#4a9aea"}
+        >
+          <canvas ref={canvasRef} width={570} height={150}
+            style={{ width: "100%", height: "auto", display: "block", imageRendering: "auto" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #1a2040" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>Econ Addendum</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9aea", marginTop: "2px" }}>Six articles about money, time, and knowing when to stop eating pizza.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#4a9aea", background: "#4a9aea22", padding: "4px 12px", border: "1px solid #4a9aea55", letterSpacing: "1px" }}>READ</div>
+          </div>
+        </div>
+      );
+    }
+
     function HomePage({ content, setPage, setSelectedTool, setSelectedArticle }) {
       const items = [];
       const novel = content.novel;
@@ -1446,10 +1590,11 @@
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           <SectionHeader title="Feed" subtitle="Everything, most recent first" />
-          <ForestBanner />
           <LoneClownBanner onClick={() => { setSelectedArticle("lone-clown"); setPage("articles"); }} />
+          <EconAddendumBanner onClick={() => { setSelectedArticle("fifth-slice"); setPage("articles"); }} />
           {items.map(item => (
             <React.Fragment key={item.type+item.id}>
+            {item.id === "mystic-forest" ? <ForestBanner /> : (
             <div className="feed-item" onClick={() => { if(item.type==="tool"){setSelectedTool(item.id);setPage("tools")} else if(item.type==="article"){setSelectedArticle(item.id);setPage("articles")} else{setPage("novel")} }} style={{ border: "1px solid #333366", padding: "20px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor=item.color} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
               <div className="feed-icon" style={{ width: "48px", height: "48px", background: item.color+"22", border: "2px solid "+item.color, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "14px", color: item.color, flexShrink: 0, textTransform: "uppercase" }}>{item.type==="tool"?"APP":item.type==="article"?"TXT":"FIC"}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -1461,6 +1606,7 @@
                 <span style={{ display: "inline-block", marginTop: "8px", fontFamily: "'VT323', monospace", fontSize: "12px", letterSpacing: "1px", color: item.color, background: item.color+"15", padding: "2px 8px", border: "1px solid "+item.color+"40", textTransform: "uppercase" }}>{item.type}</span>
               </div>
             </div>
+            )}
             {item.id === "tommypop" && <BrickBreakerBanner />}
             </React.Fragment>
           ))}
