@@ -199,8 +199,120 @@
       );
     }
 
+    function OvenSimViz() {
+      const [guests, setGuests] = useState(0);
+      const [ovens, setOvens] = useState(1);
+      const maxGuests = 12;
+      const ovenCap = 6;
+      const totalCap = ovenCap * ovens;
+      const withinCapacity = guests <= totalCap;
+      const ovenCost = 100;
+
+      const getCostPerGuest = (g, o) => {
+        if (g === 0) return 0;
+        const baseCost = o * ovenCost;
+        const foodCost = g * 8;
+        const workerCost = o > 1 ? (o - 1) * 40 : 0;
+        return Math.round((baseCost + foodCost + workerCost) / g);
+      };
+
+      const costPerGuest = getCostPerGuest(guests, ovens);
+      const prevCost = guests > 1 ? getCostPerGuest(guests - 1, ovens) : 0;
+      const costDelta = guests > 1 ? costPerGuest - prevCost : 0;
+
+      const ovenSlots = [];
+      for (let o = 0; o < ovens; o++) {
+        const slots = [];
+        for (let s = 0; s < ovenCap; s++) {
+          const guestIdx = o * ovenCap + s;
+          slots.push(guestIdx < guests);
+        }
+        ovenSlots.push(slots);
+      }
+
+      const needsNewOven = guests > totalCap;
+      const justCrossedThreshold = guests > 0 && guests === totalCap + 1;
+
+      return (
+        <div style={{ border: "2px solid #333366", background: "#0a0a18", padding: "24px", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px", textAlign: "center" }}>The Kitchen Simulator</div>
+
+          <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginBottom: "20px", flexWrap: "wrap" }}>
+            <button onClick={() => { setGuests(g => Math.max(0, g - 1)); }} style={{ background: "#12122a", border: "1px solid #333366", color: "#e8e8d0", fontFamily: "'VT323', monospace", fontSize: "20px", width: "40px", height: "40px", cursor: "pointer" }}>{"\u2212"}</button>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "28px", color: "#e8e8d0", display: "flex", alignItems: "center", minWidth: "140px", justifyContent: "center" }}>{guests} Guest{guests !== 1 ? "s" : ""}</div>
+            <button onClick={() => { if (guests < maxGuests) setGuests(g => g + 1); }} style={{ background: "#12122a", border: "1px solid " + (needsNewOven ? "#aa3333" : "#333366"), color: needsNewOven ? "#aa3333" : "#e8e8d0", fontFamily: "'VT323', monospace", fontSize: "20px", width: "40px", height: "40px", cursor: "pointer" }}>+</button>
+          </div>
+
+          <div style={{ display: "flex", gap: "16px", justifyContent: "center", marginBottom: "20px", flexWrap: "wrap" }}>
+            {ovenSlots.map((slots, oi) => (
+              <div key={oi} style={{ border: "2px solid " + (slots.every(s => s) ? "#aa3333" : "#4a4a8a"), background: "#12122a", padding: "12px", minWidth: "140px", transition: "border-color 0.3s" }}>
+                <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680", textAlign: "center", marginBottom: "8px" }}>OVEN {oi + 1}</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px" }}>
+                  {slots.map((filled, si) => (
+                    <div key={si} style={{ width: "36px", height: "24px", background: filled ? "#e67e2244" : "#1a1a2e", border: "1px solid " + (filled ? "#e67e22" : "#222244"), display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", transition: "all 0.2s" }}>{filled ? "\uD83C\uDF72" : ""}</div>
+                  ))}
+                </div>
+                <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: slots.every(s => s) ? "#aa3333" : "#4a9a4a", textAlign: "center", marginTop: "6px" }}>{slots.filter(s => s).length}/{ovenCap} {slots.every(s => s) ? "FULL" : ""}</div>
+              </div>
+            ))}
+          </div>
+
+          {needsNewOven && (
+            <div style={{ textAlign: "center", marginBottom: "16px" }}>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#aa3333", marginBottom: "8px" }}>{"\u26A0"} CAPACITY EXCEEDED — Guest {guests} needs a new oven!</div>
+              <button onClick={() => setOvens(o => o + 1)} style={{ background: "#aa3333", color: "#fff", border: "none", padding: "8px 24px", fontFamily: "'Courier Prime', monospace", fontSize: "13px", cursor: "pointer", letterSpacing: "1px" }}>Buy Oven #{ovens + 1} ($100)</button>
+            </div>
+          )}
+
+          <div style={{ marginTop: "16px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9aea", letterSpacing: "1px", marginBottom: "8px" }}>COST PER GUEST</div>
+            <div style={{ display: "flex", alignItems: "flex-end", gap: "3px", height: "100px", padding: "0 4px" }}>
+              {Array.from({ length: Math.max(guests, 1) }).map((_, i) => {
+                const c = getCostPerGuest(i + 1, i + 1 > ovenCap ? Math.ceil((i + 1) / ovenCap) : ovens > 1 && i + 1 > ovenCap * (ovens - 1) ? ovens : i + 1 <= ovenCap ? 1 : ovens);
+                const actualC = getCostPerGuest(i + 1, Math.ceil((i + 1) / ovenCap));
+                const h = Math.min(95, Math.max(10, actualC * 0.6));
+                const isSpike = i > 0 && actualC > getCostPerGuest(i, Math.ceil(i / ovenCap)) + 10;
+                return <div key={i} style={{ flex: 1, maxWidth: "36px", height: h + "%", background: isSpike ? "linear-gradient(180deg, #aa3333, #7a2222)" : "linear-gradient(180deg, #4a9aea, #2a6aaa)", border: "1px solid " + (isSpike ? "#cc4444" : "#5ab0ff"), borderBottom: "none", transition: "height 0.3s", display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: "2px" }}>
+                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "10px", color: "#fff" }}>{i + 1}</span>
+                </div>;
+              })}
+            </div>
+            <div style={{ height: "2px", background: "#333366" }} />
+          </div>
+
+          {guests > 0 && (
+            <div style={{ marginTop: "12px", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#e8e8d0" }}>Cost per guest: <span style={{ color: costDelta > 5 ? "#aa3333" : costDelta < -3 ? "#4a9a4a" : "#e67e22" }}>${costPerGuest}</span></div>
+              {guests > 1 && <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: costDelta > 0 ? "#aa3333" : "#4a9a4a" }}>{costDelta > 0 ? "\u25B2" : "\u25BC"} ${Math.abs(costDelta)} vs previous guest</div>}
+            </div>
+          )}
+
+          <div style={{ textAlign: "center", marginTop: "12px" }}>
+            <button onClick={() => { setGuests(0); setOvens(1); }} style={{ background: "none", border: "1px solid #333366", color: "#666680", fontFamily: "'VT323', monospace", fontSize: "13px", padding: "4px 16px", cursor: "pointer" }}>Reset Kitchen</button>
+          </div>
+
+          {guests >= 6 && guests <= totalCap && ovens === 1 && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #e67e22", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              The oven is getting full. Each guest is still getting cheaper — but you can feel the ceiling approaching.
+            </div>
+          )}
+          {ovens === 2 && guests <= ovenCap + 2 && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              New oven, new cost spike. You're paying for capacity you haven't filled yet. Keep adding guests — the economics will recover.
+            </div>
+          )}
+          {ovens >= 2 && guests >= totalCap - 1 && guests <= totalCap && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #4a9a4a", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              Look at that — cost per guest is dropping again. The second oven is paying for itself. This is economies of scale recovering after a capital threshold.
+            </div>
+          )}
+        </div>
+      );
+    }
+
     const ARTICLE_VIZ_MODULES = {
-      "pizza-slider": () => <PizzaSliderViz />
+      "pizza-slider": () => <PizzaSliderViz />,
+      "oven-sim": () => <OvenSimViz />
     };
 
     function RenderArticleSection({ section }) {
