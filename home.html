@@ -1850,6 +1850,107 @@
       );
     }
 
+    function StrategyBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 130, S = 2;
+        let anim, f = 0;
+
+        function render() {
+          f++;
+          ctx.fillStyle = '#0a0808';
+          ctx.fillRect(0, 0, W, H);
+
+          const midY = H/S/2;
+          const barL = 40, barR = W/S - 40;
+          const barMid = (barL + barR) / 2;
+
+          // Bar
+          ctx.fillStyle = '#333340';
+          ctx.fillRect(barL*S, (midY-1)*S, (barR-barL)*S, 2*S);
+
+          // Left weight (property) - solid, heavy
+          const lBob = Math.sin(f * 0.015) * 2;
+          ctx.fillStyle = '#e67e22';
+          ctx.fillRect((barL-12)*S, (midY-18+lBob)*S, 24*S, 14*S);
+          ctx.fillStyle = '#c06018';
+          ctx.fillRect((barL-8)*S, (midY-4+lBob)*S, 16*S, 4*S);
+          // House icon
+          ctx.fillStyle = '#1a1210';
+          ctx.fillRect((barL-4)*S, (midY-14+lBob)*S, 8*S, 6*S);
+          ctx.beginPath();
+          ctx.moveTo((barL-6)*S, (midY-14+lBob)*S);
+          ctx.lineTo(barL*S, (midY-18+lBob)*S);
+          ctx.lineTo((barL+6)*S, (midY-14+lBob)*S);
+          ctx.fill();
+
+          // Right weight (VGS) - dynamic, glowing
+          const rBob = Math.sin(f * 0.015 + Math.PI) * 2;
+          const glow = 0.4 + Math.sin(f * 0.03) * 0.2;
+          ctx.fillStyle = 'rgba(74,154,74,' + glow + ')';
+          ctx.beginPath(); ctx.arc(barR*S, (midY-8+rBob)*S, 16*S, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = '#4a9a4a';
+          ctx.beginPath(); ctx.arc(barR*S, (midY-8+rBob)*S, 12*S, 0, Math.PI*2); ctx.fill();
+          // $ symbol
+          ctx.fillStyle = '#1a3a1a';
+          ctx.font = 'bold ' + (10*S) + 'px "VT323", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText('VGS', barR*S, (midY-4+rBob)*S);
+
+          // Fulcrum
+          ctx.fillStyle = '#555570';
+          ctx.beginPath();
+          ctx.moveTo((barMid-8)*S, (midY+20)*S);
+          ctx.lineTo(barMid*S, midY*S);
+          ctx.lineTo((barMid+8)*S, (midY+20)*S);
+          ctx.fill();
+
+          // Snowball particles floating from left to right
+          for (let i = 0; i < 8; i++) {
+            const t = ((f * 0.5 + i * 40) % (barR - barL)) / (barR - barL);
+            const px = barL + t * (barR - barL);
+            const py = midY - 6 + Math.sin(t * Math.PI * 3 + i) * 4;
+            const sz = 1 + t * 1.5;
+            ctx.fillStyle = 'rgba(230,126,34,' + (0.2 + t * 0.6) + ')';
+            ctx.beginPath(); ctx.arc(px*S, py*S, sz*S, 0, Math.PI*2); ctx.fill();
+          }
+
+          // Labels
+          ctx.fillStyle = '#e67e2288';
+          ctx.font = (5*S) + 'px "VT323", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText('PROPERTY', barL*S, (midY+30)*S);
+          ctx.fillStyle = '#4a9a4a88';
+          ctx.fillText('GLOBAL INDEX', barR*S, (midY+30)*S);
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #e67e22", background: "#0a0808", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#ffa040"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#e67e22"}
+        >
+          <canvas ref={canvasRef} width={570} height={130}
+            style={{ width: "100%", height: "auto", display: "block" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #1a1210" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>Investment Strategy</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#e67e22", marginTop: "2px" }}>Property as defense. Global equities as offense. Inflation as fuel.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#e67e22", background: "#e67e2222", padding: "4px 12px", border: "1px solid #e67e2255", letterSpacing: "1px" }}>READ</div>
+          </div>
+        </div>
+      );
+    }
+
     function HomePage({ content, setPage, setSelectedTool, setSelectedArticle }) {
       const items = [];
       const novel = content.novel;
@@ -1872,6 +1973,7 @@
           <LoneClownBanner onClick={() => { setSelectedArticle("lone-clown"); setPage("articles"); }} />
           <EconAddendumBanner onClick={() => { setSelectedArticle("econ-series"); setPage("articles"); }} />
           <FinanceBanner onClick={() => { setSelectedArticle("finance-series"); setPage("articles"); }} />
+          <StrategyBanner onClick={() => { setSelectedArticle("strategy-series"); setPage("articles"); }} />
           {items.map(item => (
             <React.Fragment key={item.type+item.id}>
             {item.id === "mystic-forest" ? <ForestBanner /> : item.type === "novel" ? <BigfootShoeBanner synopsis={item.subtitle} onClick={() => setPage("novel")} /> : (
@@ -1986,22 +2088,60 @@
       );
     }
 
+    function StrategySeriesPage({ articles, onSelect, goBack }) {
+      const stratArticles = articles.filter(a => a.category === "Strategy" && !a.comingSoon);
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
+          <div style={{ border: "2px solid #e67e22", background: "linear-gradient(180deg, #1a120a 0%, #0f0f23 100%)", padding: "32px", textAlign: "center", marginBottom: "28px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#8a5a2a", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "12px" }}>Article Series</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "36px", color: "#e8e8d0", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "8px" }}>Investment Strategy</h2>
+            <div style={{ maxWidth: "500px", margin: "0 auto", padding: "16px 0" }}>
+              <p style={{ fontFamily: "'Lora', serif", fontSize: "15px", fontStyle: "italic", color: "#a0a090", lineHeight: 1.7 }}>Property as defense. Global equities as offense. Inflation as fuel. A practical framework for building wealth over decades using borrowed money, compound growth, and patience.</p>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {stratArticles.map((a, i) => (
+              <div key={a.id} onClick={() => onSelect(a.id)}
+                style={{ border: "1px solid #333366", padding: "16px 20px", cursor: "pointer", background: "#0f0f23", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "border-color 0.2s", gap: "12px" }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = "#e67e22"}
+                onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
+              >
+                <div style={{ display: "flex", gap: "16px", alignItems: "baseline", flex: 1, minWidth: 0 }}>
+                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: "#e67e22", flexShrink: 0 }}>{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <span style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>{a.title}</span>
+                    <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>{redact(a.subtitle)}</p>
+                  </div>
+                </div>
+                <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     function ArticlesPage({ content, selectedArticle, setSelectedArticle }) {
       const articles = content.articles || [];
       const econArticles = articles.filter(a => a.category === "Economics" && !a.comingSoon);
       const finArticles = articles.filter(a => a.category === "Finance" && !a.comingSoon);
-      const selected = (selectedArticle === "econ-series" || selectedArticle === "finance-series") ? null : (selectedArticle ? articles.find(a => a.id === selectedArticle) : null);
+      const stratArticles = articles.filter(a => a.category === "Strategy" && !a.comingSoon);
+      const seriesIds = ["econ-series", "finance-series", "strategy-series"];
+      const selected = seriesIds.includes(selectedArticle) ? null : (selectedArticle ? articles.find(a => a.id === selectedArticle) : null);
       const showEconSeries = selectedArticle === "econ-series";
       const showFinSeries = selectedArticle === "finance-series";
+      const showStratSeries = selectedArticle === "strategy-series";
       const { data: articleData, loading } = useJsonFile(selected && !selected.comingSoon ? selected.file : null);
 
       const isEcon = selected ? econArticles.findIndex(a => a.id === selected.id) >= 0 : false;
       const isFin = selected ? finArticles.findIndex(a => a.id === selected.id) >= 0 : false;
-      const seriesArticles = isEcon ? econArticles : isFin ? finArticles : [];
+      const isStrat = selected ? stratArticles.findIndex(a => a.id === selected.id) >= 0 : false;
+      const seriesArticles = isEcon ? econArticles : isFin ? finArticles : isStrat ? stratArticles : [];
       const seriesIdx = seriesArticles.findIndex(a => a.id === (selected?.id));
       const prevSeries = seriesIdx > 0 ? seriesArticles[seriesIdx - 1] : null;
       const nextSeries = seriesIdx >= 0 && seriesIdx < seriesArticles.length - 1 ? seriesArticles[seriesIdx + 1] : null;
-      const seriesId = isEcon ? "econ-series" : isFin ? "finance-series" : null;
+      const seriesId = isEcon ? "econ-series" : isFin ? "finance-series" : isStrat ? "strategy-series" : null;
 
       if (selected && !selected.comingSoon && articleData) return (
         <div>
@@ -2018,6 +2158,7 @@
       if (selected && !selected.comingSoon && loading) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center", fontSize: "18px" }}>Loading...</div>;
       if (showEconSeries) return <EconSeriesPage articles={articles} onSelect={id => { setSelectedArticle(id); window.scrollTo({top:0,behavior:"smooth"}); }} goBack={() => setSelectedArticle(null)} />;
       if (showFinSeries) return <FinanceSeriesPage articles={articles} onSelect={id => { setSelectedArticle(id); window.scrollTo({top:0,behavior:"smooth"}); }} goBack={() => setSelectedArticle(null)} />;
+      if (showStratSeries) return <StrategySeriesPage articles={articles} onSelect={id => { setSelectedArticle(id); window.scrollTo({top:0,behavior:"smooth"}); }} goBack={() => setSelectedArticle(null)} />;
       return (
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
