@@ -1,0 +1,43 @@
+{
+  "title": "The Bubble",
+  "subtitle": "Two Nobel laureates disagree about whether markets can go insane",
+  "date": "2026-03-19",
+  "category": "Finance",
+  "readTime": "7 min",
+  "sections": [
+    { "type": "text", "content": "In 2016, two Nobel Prize winners sat across from each other at the Chicago Booth Review and had a polite argument about whether the stock market can lose its mind." },
+    { "type": "text", "content": "Eugene Fama, the father of efficient market theory, said no. Prices reflect all available information. What looks like a bubble in hindsight was a rational estimate at the time. There is no reliable test for a bubble while it's happening — only after it pops do people point at the wreckage and call it irrational. Before the pop, it was just the market doing its job." },
+    { "type": "text", "content": "Richard Thaler, the pioneer of behavioural economics, said yes. Markets are made of people. People are not rational. People panic, herding into exits. People get greedy, piling into assets because the price is going up and the price going up feels like a reason for the price to keep going up. Markets can and do become temporarily insane, and the insanity creates opportunities for people who can see it." },
+    { "type": "text", "content": "They agreed on more than you'd expect. Both acknowledged that prices are generally a good approximation of intrinsic value. Both agreed that no model is completely true. Fama even conceded that markets can take several days to fully price in new information — a small crack in the fortress of perfect efficiency, but a crack nonetheless." },
+    { "type": "text", "content": "The crack is where the interesting stuff lives." },
+
+    { "type": "heading", "content": "The Instability Hypothesis" },
+    { "type": "text", "content": "In 1992, the economist Hyman Minsky proposed something that should have been obvious but wasn't: stability creates instability." },
+    { "type": "text", "content": "During long periods of prosperity, investors get comfortable. They take on more debt. They make riskier bets. The bets work, because the economy is good, which confirms that the bets were smart, which encourages even riskier bets. Lending standards loosen. Speculation increases. Prices rise above any reasonable estimate of value, sustained not by fundamentals but by the shared belief that someone else will pay even more tomorrow." },
+    { "type": "text", "content": "Then something shifts. It doesn't need to be dramatic — a small downturn, a missed earnings report, a change in interest rates. The most leveraged positions unwind first. Selling pressure creates more selling pressure. The shared belief that prices only go up is replaced, overnight, by the shared belief that they only go down. The bubble doesn't deflate. It pops." },
+    { "type": "text", "content": "Minsky's insight is that this cycle is not a bug in capitalism. It's a feature. Prosperity breeds complacency, complacency breeds risk-taking, risk-taking breeds fragility, fragility breeds collapse. The cycle repeats because the conditions for the next bubble are created by the recovery from the last one." },
+
+    { "type": "heading", "content": "The Behavioural Toolkit" },
+    { "type": "text", "content": "If Minsky explains why bubbles happen, behavioural finance explains how." },
+    { "type": "text", "content": "Daniel Kahneman and Amos Tversky identified a catalogue of cognitive biases that affect investors. Overconfidence — the belief that your analysis is better than the market's. Anchoring — fixating on a purchase price rather than current value. Loss aversion — feeling losses roughly twice as intensely as equivalent gains, which makes investors sell winners too early and hold losers too long. Herding — following the crowd because the crowd's behaviour feels like information even when it isn't." },
+    { "type": "text", "content": "These aren't rare failures of judgement. They're default settings. Kahneman distinguished between Type 1 thinking — fast, intuitive, bias-prone — and Type 2 thinking — slow, deliberate, rational. Most investment decisions are made by Type 1. The market runs on gut feelings wearing a suit." },
+    { "type": "text", "content": "Thaler and Cass Sunstein went further with nudge theory: the way choices are presented predictably alters behaviour. Stock prices are themselves nudges — a rising price signals success and attracts buyers, a falling price signals danger and repels them. The market doesn't just reflect sentiment. It amplifies it. Prices nudge investors into the behaviour that creates the next price movement, which nudges the next investor, which creates the next movement. The feedback loop is the bubble." },
+
+    { "type": "heading", "content": "The Practitioners" },
+    { "type": "text", "content": "Thaler didn't just write about behavioural finance. He bet on it. His hedge fund, Fuller & Thaler Asset Management, has been applying behavioural insights to stock selection since the early 2000s. By 2017, the fund had nearly doubled the returns of the S&P 500 since 2009." },
+    { "type": "text", "content": "Buffett, decades earlier, was doing something similar without the academic framework. In 1965 he wrote that short-term fluctuations in market prices are often driven by swings in market psychology, and that he explicitly takes advantage of irrational pricing. His mentor Benjamin Graham taught him to treat market mood swings as opportunities rather than information — when the market panics, prices drop below intrinsic value, and patient investors buy." },
+    { "type": "text", "content": "The strategy is simple to describe and extremely difficult to execute: when everyone is terrified, buy. When everyone is euphoric, wait. The difficulty isn't intellectual — it's emotional. Buying when the market is crashing requires acting against every instinct your brain has developed to keep you alive. Your Type 1 system is screaming at you to sell. Type 2 is quietly suggesting that this is exactly the opportunity you've been waiting for. Most people listen to the screaming." },
+
+    { "type": "heading", "content": "What This Means For You" },
+    { "type": "text", "content": "If you're holding a broad index fund through a crash, you don't need to do anything. The index will recover. It always has. The companies that fail will drop out and be replaced by companies that succeed. Your patience IS the strategy, and it costs nothing." },
+    { "type": "text", "content": "If you have cash available during a crash, you are holding the rarest thing in finance: the ability to buy quality assets at irrational prices. This is the moment where holding blue-chip companies long-term generates generational returns — not because you were clever, but because you were solvent when others weren't." },
+    { "type": "text", "content": "The worst thing you can do is sell during a crash and buy during a boom. This is what most retail investors do, because it's what Type 1 thinking demands. Sell the pain. Buy the euphoria. It feels right every time and it's wrong every time." },
+
+    { "type": "heading", "content": "The Series Conclusion" },
+    { "type": "text", "content": "Four articles. One conclusion. The market is mostly efficient, occasionally irrational, and very difficult to beat." },
+    { "type": "text", "content": "The evidence says: buy a broad, low-fee, globally diversified index fund. Hold it for decades. Reinvest the dividends. Enjoy the automatic rebalancing. Pay almost no tax until you sell. Let compound growth do what compound growth does when you stop interrupting it." },
+    { "type": "text", "content": "The exceptions — private information, behavioural insight, professional expertise — are real but rare and hard to exploit consistently. If you have a genuine edge, use it. If you don't, the index is not a consolation prize. It's the best strategy available to the vast majority of human beings who have ever lived." },
+    { "type": "text", "content": "Fama and Thaler disagree about whether the market is perfectly efficient or merely mostly efficient. For your purposes, it doesn't matter. Either way, the answer is the same: buy the index, hold it, and go live your life. The money will take care of itself." },
+    { "type": "text", "content": "There will be more to say about the relationship between investing and inflation in future articles. For now, understand this: in a world where the value of cash is quietly declining, owning productive assets isn't just smart — it's necessary. But that's a story for another time." }
+  ]
+}
