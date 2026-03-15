@@ -1,1 +1,38 @@
+{
+  "title": "The Barbell",
+  "subtitle": "A house that can't move and shares that never sleep",
+  "date": "2026-04-01",
+  "category": "Strategy",
+  "readTime": "6 min",
+  "sections": [
+    { "type": "text", "content": "There are two kinds of assets in the world. Assets that sit still and assets that move. The best investment strategy most people will never hear about uses both at the same time, pointed in opposite directions, for completely different reasons." },
+    { "type": "text", "content": "This is the barbell strategy. On one end: property — heavy, immovable, defensive, local. On the other end: a global index fund — liquid, borderless, growth-oriented, and exposed to the largest companies on earth. In the middle: nothing. No crypto. No gold. No speculative bets. Just the two ends of the bar, doing two different jobs." },
+    { "type": "text", "content": "A note before we go further: the strategies in this series involve taking on debt. This is deliberate. If you're in your twenties or thirties, working full-time, and trying to build wealth through savings alone, the math is brutal. Wages grow slowly. Savings accumulate slowly. Meanwhile, asset prices — property, equities, everything — tend to rise faster than the average person can save. Debt, used carefully, is how you close that gap. It's not without risk. But the alternative — waiting until you can afford to buy assets with cash — means watching from the sidelines while compounding works for everyone except you." },
 
+    { "type": "heading", "content": "The Defensive End: Property" },
+    { "type": "text", "content": "Property is not exciting. Property doesn't double overnight. Property doesn't trend on social media. Property sits on a piece of ground and exists, and the piece of ground sits on the earth and exists, and between the two of them they provide the most boring and most reliable form of wealth storage humans have ever invented." },
+    { "type": "text", "content": "A house on land does several things at once. It gives you somewhere to live, which eliminates your largest ongoing expense. It appreciates slowly — not always, not everywhere, but over decades, land near population centers tends to go up. It's your primary residence, which in Australia means it's capital gains tax free when you sell. And critically, it gives you something that no other asset class provides: equity you can borrow against." },
+    { "type": "text", "content": "That last point is the one that matters most for this strategy. Your property is a sleeping giant. It sits there, growing in value by a few percent a year, and as it grows, it unlocks borrowing capacity that you can deploy into the other end of the barbell." },
+
+    { "type": "heading", "content": "The Growth End: The Global Index" },
+    { "type": "text", "content": "If you've read the Exploring Finance series on this site, you already know the argument for index funds. They beat most active managers. They're tax efficient. They rebalance automatically. They're cheap to hold." },
+    { "type": "text", "content": "A global index fund like VGS takes this further. You're not just buying the Australian market — you're buying the world's largest companies, weighted by market cap, across every major economy. Apple, Microsoft, Nestlé, Toyota, LVMH. The companies with the greatest economies of scale, the deepest moats, the most entrenched competitive advantages on the planet." },
+    { "type": "text", "content": "When the Australian economy struggles — when mining slows, when property cools, when the banks tighten — the Australian dollar typically falls. And when the Australian dollar falls, your international shares become worth more in local terms. The worse things get at home, the more your VGS holding is worth in the currency you spend. This inverse correlation isn't guaranteed, but it's happened often enough that it functions as a natural hedge." },
+    { "type": "text", "content": "Your property protects you when global markets wobble. Your global shares protect you when the local market wobbles. The barbell doesn't eliminate risk. It makes sure both ends aren't wobbling at the same time." },
+
+    { "type": "heading", "content": "The Inflation Argument" },
+    { "type": "text", "content": "Here's where it gets interesting — and where you need to understand the Cantillon Effect to see why this works." },
+    { "type": "text", "content": "When new money enters an economy, it enters at a point. Banks create money through lending. The people who borrow first spend at today's prices. By the time that new money has circulated through the economy and pushed prices up, the borrower has already deployed it. The borrower is at the center of the ripple. Everyone else is further out, paying higher prices with the same income." },
+    { "type": "text", "content": "Borrowing against your property to invest puts you closer to the center. You're accessing new money — money the bank creates through the lending process — and deploying it into productive assets before inflation erodes its value. The debt you take on is denominated in today's dollars. The asset you buy with it grows in tomorrow's dollars. If inflation runs at 4% and your investment returns 8%, the real return on the borrowed portion is extraordinary because you're earning the spread between the growth rate and the inflation rate on money that isn't even yours." },
+    { "type": "text", "content": "This is not free money. It's leveraged exposure, and leverage amplifies losses as well as gains. If your investment drops 20%, you still owe the bank. If interest rates spike, your holding costs spike with them. The strategy works when you can service the debt comfortably and hold through downturns. It fails when you can't." },
+
+    { "type": "heading", "content": "The Australian Housing Question" },
+    { "type": "text", "content": "Some people think Australian property is in a bubble. Maybe they're right. The Fama in you says you can't identify a bubble until it pops. The Thaler in you says the prices look detached from fundamentals and something has to give." },
+    { "type": "text", "content": "The barbell strategy sidesteps this debate. Your property is your home — you live in it, it's not an investment property, and you're not relying on capital gains from additional properties for your retirement. If property prices crash, you still have a roof over your head and your VGS holdings are unaffected. If property prices boom, your equity grows and you can borrow more to deploy into the growth end of the barbell." },
+    { "type": "text", "content": "You don't need Australian property prices to go up. You just need a house to live in and equity to borrow against. The growth comes from the other end of the bar." },
+
+    { "type": "heading", "content": "The Setup" },
+    { "type": "text", "content": "The next article covers the mechanics — the self-funding engine that turns a weekly contribution and growing dividends into an expanding portfolio. But before you read the numbers, understand the philosophy: you are building a system with two components that serve different purposes, hedged against different risks, in different currencies, on different continents. One protects your lifestyle. The other builds your wealth. Neither depends on the other to succeed, but together they're stronger than either alone." },
+    { "type": "text", "content": "The barbell isn't balanced. It's not supposed to be. It's supposed to be heavy on both ends and empty in the middle, because the middle is where most people put their money and the middle is where most of the risk lives." }
+  ]
+}
