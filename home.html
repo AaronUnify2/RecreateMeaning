@@ -92,20 +92,32 @@
     }
 
     function redact(text) {
-      if (!text || typeof text !== 'string' || !text.includes('[R]')) return text;
+      if (!text || typeof text !== 'string') return text;
+      if (!text.includes('[R]') && !text.includes('[I]')) return text;
       const parts = [];
       let remaining = text;
       let key = 0;
-      while (remaining.includes('[R]')) {
-        const start = remaining.indexOf('[R]');
-        const end = remaining.indexOf('[/R]');
+      while (remaining.includes('[R]') || remaining.includes('[I]')) {
+        const rIdx = remaining.indexOf('[R]');
+        const iIdx = remaining.indexOf('[I]');
+        const useR = rIdx !== -1 && (iIdx === -1 || rIdx < iIdx);
+        const tag = useR ? '[R]' : '[I]';
+        const closeTag = useR ? '[/R]' : '[/I]';
+        const start = useR ? rIdx : iIdx;
+        const end = remaining.indexOf(closeTag);
         if (end === -1) break;
         if (start > 0) parts.push(remaining.slice(0, start));
-        const redactedText = remaining.slice(start + 3, end);
-        parts.push(
-          React.createElement('span', { key: key++, style: { background: '#111', color: '#111', padding: '1px 2px', borderRadius: '2px', userSelect: 'none', cursor: 'default', border: '1px solid #222', letterSpacing: '0px' }, title: 'REDACTED' }, redactedText)
-        );
-        remaining = remaining.slice(end + 4);
+        const inner = remaining.slice(start + tag.length, end);
+        if (useR) {
+          parts.push(
+            React.createElement('span', { key: key++, style: { background: '#111', color: '#111', padding: '1px 2px', borderRadius: '2px', userSelect: 'none', cursor: 'default', border: '1px solid #222', letterSpacing: '0px' }, title: 'REDACTED' }, inner)
+          );
+        } else {
+          parts.push(
+            React.createElement('span', { key: key++, style: { color: 'transparent', transition: 'color 0.3s', cursor: 'default' }, onMouseEnter: e => { e.target.style.color = '#666680'; }, onMouseLeave: e => { e.target.style.color = 'transparent'; } }, inner)
+          );
+        }
+        remaining = remaining.slice(end + closeTag.length);
       }
       if (remaining) parts.push(remaining);
       return parts.length ? parts : text;
@@ -340,24 +352,39 @@
         { id: "sales", name: "Sales", health: 82, improved: 0, bottleneck: false },
         { id: "onboarding", name: "Onboarding", health: 31, improved: 0, bottleneck: true },
         { id: "accounting", name: "Accounting", health: 88, improved: 0, bottleneck: false },
-        { id: "website", name: "Website", health: 74, improved: 0, bottleneck: false },
-        { id: "support", name: "Support", health: 68, improved: 0, bottleneck: false },
-        { id: "filing", name: "Shared Drive", health: 90, improved: 0, bottleneck: false }
+        { id: "website", name: "Website", health: 55, improved: 0, bottleneck: false },
+        { id: "support", name: "Support", health: 50, improved: 0, bottleneck: false },
+        { id: "filing", name: "Shared Drive", health: 99, improved: 0, bottleneck: false }
       ];
       const [modules, setModules] = useState(initModules);
-      const [energy, setEnergy] = useState(5);
+      const [energy, setEnergy] = useState(7);
       const [log, setLog] = useState([]);
-      const maxEnergy = 5;
+      const [ascended, setAscended] = useState(false);
+      const maxEnergy = 7;
+
+      const filing = modules.find(m => m.id === "filing");
+      const filingPerfect = filing && filing.health >= 100;
 
       const improve = (id) => {
         if (energy <= 0) return;
-        setModules(prev => prev.map(m => {
-          if (m.id !== id) return m;
-          return { ...m, health: Math.min(99, m.health + 8), improved: m.improved + 1 };
-        }));
+        setModules(prev => {
+          const next = prev.map(m => {
+            if (m.id !== id) return m;
+            const newHealth = m.id === "filing" ? Math.min(100, m.health + 1) : Math.min(99, m.health + 8);
+            return { ...m, health: newHealth, improved: m.improved + 1 };
+          });
+          const f = next.find(m => m.id === "filing");
+          if (f && f.health >= 100) {
+            setAscended(true);
+            return next.map(m => ({ ...m, health: 100 }));
+          }
+          return next;
+        });
         setEnergy(e => e - 1);
         const mod = modules.find(m => m.id === id);
-        if (mod.bottleneck) {
+        if (id === "filing") {
+          setLog(l => [...l, "You improved Shared Drive from " + mod.health + "% to " + Math.min(100, mod.health + 1) + "%. It was at 99%. You are choosing this."]);
+        } else if (mod.bottleneck) {
           setLog(l => [...l, "You improved " + mod.name + ". This was the bottleneck. Good use of energy."]);
         } else if (mod.health >= 80) {
           setLog(l => [...l, "You improved " + mod.name + " from " + mod.health + "% to " + Math.min(99, mod.health + 8) + "%. It was already fine. That energy is gone now."]);
@@ -366,29 +393,30 @@
         }
       };
 
-      const reset = () => { setModules(initModules); setEnergy(maxEnergy); setLog([]); };
+      const reset = () => { setModules(initModules); setEnergy(maxEnergy); setLog([]); setAscended(false); };
       const bottleneck = modules.find(m => m.bottleneck);
       const systemHealth = Math.min(...modules.map(m => m.health));
-      const wastedEnergy = modules.reduce((sum, m) => sum + ((!m.bottleneck && m.health >= 74) ? m.improved : 0), 0);
+      const wastedEnergy = modules.reduce((sum, m) => sum + ((!m.bottleneck && m.health >= 80) ? m.improved : 0), 0);
+      const filingImproved = filing ? filing.improved : 0;
 
       return (
-        <div style={{ border: "2px solid #333366", background: "#0a0a18", padding: "24px", margin: "28px 0" }}>
-          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px", textAlign: "center" }}>System Diagram</div>
-          <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "12px", color: "#666680", textAlign: "center", marginBottom: "16px" }}>You have {energy} improvement{energy !== 1 ? "s" : ""} to spend. Click a module to improve it.</div>
+        <div style={{ border: "2px solid " + (ascended ? "#ffd700" : "#333366"), background: ascended ? "#0f0f10" : "#0a0a18", padding: "24px", margin: "28px 0", transition: "all 0.5s" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: ascended ? "#ffd700" : "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px", textAlign: "center" }}>{ascended ? "Perfection Achieved" : "System Diagram"}</div>
+          <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "12px", color: "#666680", textAlign: "center", marginBottom: "16px" }}>{ascended ? "Every module is at 100%. The shared drive has ascended." : "You have " + energy + " improvement" + (energy !== 1 ? "s" : "") + " to spend. Click a module to improve it."}</div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "16px" }}>
             {modules.map(m => {
-              const col = m.health >= 80 ? "#4a9a4a" : m.health >= 60 ? "#c0a060" : "#aa3333";
-              const pulse = m.bottleneck && m.improved === 0;
+              const col = m.health >= 100 ? "#ffd700" : m.health >= 80 ? "#4a9a4a" : m.health >= 60 ? "#c0a060" : "#aa3333";
+              const pulse = m.bottleneck && m.improved === 0 && !ascended;
               return (
                 <div key={m.id} onClick={() => improve(m.id)} style={{
-                  border: "2px solid " + (pulse ? "#aa3333" : col), background: "#12122a", padding: "12px", cursor: energy > 0 ? "pointer" : "default",
-                  transition: "all 0.3s", opacity: energy > 0 ? 1 : 0.6,
-                  boxShadow: pulse ? "0 0 12px #aa333366, inset 0 0 12px #aa333322" : "none"
+                  border: "2px solid " + (pulse ? "#aa3333" : col), background: ascended ? "#12120a" : "#12122a", padding: "12px", cursor: energy > 0 && !ascended ? "pointer" : "default",
+                  transition: "all 0.3s", opacity: energy > 0 || ascended ? 1 : 0.6,
+                  boxShadow: pulse ? "0 0 12px #aa333366, inset 0 0 12px #aa333322" : ascended ? "0 0 8px #ffd70033" : "none"
                 }}>
                   <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: col, letterSpacing: "1px", marginBottom: "6px" }}>{m.name}</div>
                   <div style={{ height: "8px", background: "#1a1a2e", border: "1px solid #222244", marginBottom: "4px" }}>
-                    <div style={{ height: "100%", width: m.health + "%", background: col, transition: "all 0.4s" }} />
+                    <div style={{ height: "100%", width: m.health + "%", background: m.health >= 100 ? "linear-gradient(90deg, #ffd700, #ffaa00)" : col, transition: "all 0.4s" }} />
                   </div>
                   <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: col, textAlign: "right" }}>{m.health}%</div>
                   {m.improved > 0 && <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: "#666680", marginTop: "4px" }}>Improved {m.improved}x</div>}
@@ -398,7 +426,7 @@
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "8px" }}>
-            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#e8e8d0" }}>System Output: <span style={{ color: systemHealth >= 60 ? "#4a9a4a" : "#aa3333" }}>{systemHealth}%</span> <span style={{ color: "#666680", fontSize: "12px" }}>(limited by weakest module)</span></div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#e8e8d0" }}>System Output: <span style={{ color: ascended ? "#ffd700" : systemHealth >= 60 ? "#4a9a4a" : "#aa3333" }}>{systemHealth}%</span> <span style={{ color: "#666680", fontSize: "12px" }}>{ascended ? "(transcendent)" : "(limited by weakest module)"}</span></div>
             <div style={{ display: "flex", gap: "4px" }}>{Array.from({ length: maxEnergy }).map((_, i) => (
               <div key={i} style={{ width: "16px", height: "16px", background: i < energy ? "#e67e22" : "#222244", border: "1px solid " + (i < energy ? "#e67e22" : "#333366"), transition: "all 0.3s" }} />
             ))}</div>
@@ -406,22 +434,30 @@
 
           {log.length > 0 && (
             <div style={{ maxHeight: "120px", overflowY: "auto", marginBottom: "12px", padding: "8px", background: "#0f0f1a", border: "1px solid #222244" }}>
-              {log.map((l, i) => <div key={i} style={{ fontFamily: "'Courier Prime', monospace", fontSize: "12px", color: l.includes("bottleneck") ? "#4a9a4a" : l.includes("already fine") ? "#aa3333" : "#c0a060", marginBottom: "4px" }}>{"> " + l}</div>)}
+              {log.map((l, i) => <div key={i} style={{ fontFamily: "'Courier Prime', monospace", fontSize: "12px", color: l.includes("bottleneck") || l.includes("Perfection") ? "#4a9a4a" : l.includes("already fine") || l.includes("choosing this") ? "#aa3333" : "#c0a060", marginBottom: "4px" }}>{"> " + l}</div>)}
             </div>
           )}
 
-          {energy === 0 && (
+          {ascended && (
+            <div style={{ padding: "16px", background: "#1a1a08", border: "2px solid #ffd700", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#ffd700", textAlign: "center", marginBottom: "12px" }}>
+              We... we owe you an apology. We wrote an entire article about how the Shared Drive didn't need improving, and you went ahead and improved it to 100%, and — look at this. Everything is at 100%. Every module. We can't explain it. We've never seen it happen before. The Onboarding module fixed itself. Support and Website somehow jumped to perfection. The entire system is running flawlessly and all you did was organise some folders.<br /><br />
+              We take it all back. We just never saw the vision. You were right about the Shared Drive. You were always right about the Shared Drive.
+            </div>
+          )}
+
+          {energy === 0 && !ascended && (
             <div style={{ padding: "12px", background: "#1a1520", border: "1px dashed " + (bottleneck.improved > 0 ? "#4a9a4a" : "#aa3333"), fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic", marginBottom: "12px" }}>
               {bottleneck.improved === 0 && wastedEnergy >= 3 && "You spent all your energy and never touched Onboarding — the one module that was actually failing. The system output didn't change. Everything you improved was already fine."}
               {bottleneck.improved === 0 && wastedEnergy < 3 && "You didn't fix the bottleneck. The system is still limited by its weakest module — no matter how much you improved everything else."}
               {bottleneck.improved > 0 && bottleneck.improved < 3 && "You found the bottleneck, but you also spent energy on modules that were already working. Partial credit."}
-              {bottleneck.improved >= 3 && "You identified the bottleneck and focused your energy on it. The system output improved because the weakest link got stronger. This is triage."}
-              {bottleneck.improved > 0 && bottleneck.improved <= 4 && wastedEnergy >= 2 && " The Shared Drive did not need your help. It was at 90%. The Shared Drive was hegemonica."}
+              {bottleneck.improved >= 3 && wastedEnergy < 2 && "You identified the bottleneck and focused your energy on it. The system output improved because the weakest link got stronger. This is triage."}
+              {bottleneck.improved >= 3 && wastedEnergy >= 2 && "You found the bottleneck but couldn't resist tinkering with things that were already working. The Shared Drive was at 99%. It did not need you."}
+              {filingImproved > 0 && !ascended && " The Shared Drive was hegemonica."}
             </div>
           )}
 
           <div style={{ textAlign: "center" }}>
-            <button onClick={reset} style={{ background: "none", border: "1px solid #333366", color: "#666680", fontFamily: "'VT323', monospace", fontSize: "13px", padding: "4px 16px", cursor: "pointer" }}>Reset System</button>
+            <button onClick={reset} style={{ background: "none", border: "1px solid " + (ascended ? "#ffd700" : "#333366"), color: ascended ? "#ffd700" : "#666680", fontFamily: "'VT323', monospace", fontSize: "13px", padding: "4px 16px", cursor: "pointer" }}>{ascended ? "Return to Reality" : "Reset System"}</button>
           </div>
         </div>
       );
@@ -466,7 +502,7 @@
           <article className="article-body" style={{ border: "1px solid #333366", background: "#0f0f23", padding: "40px", maxWidth: "720px" }}>
             <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>{data.category} {"\u00b7"} {data.readTime || "5 min"} {"\u00b7"} {new Date(data.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
             <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "34px", color: "#e8e8d0", lineHeight: 1.2, marginBottom: "6px" }}>{data.title}</h2>
-            <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>{data.subtitle}</p>
+            <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>{redact(data.subtitle)}</p>
             <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
             {data.sections.map((s, i) => <RenderArticleSection key={i} section={s} />)}
           </article>
@@ -503,7 +539,7 @@
             {scene === data.start && <>
               <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>{data.category} {"\u00b7"} {data.readTime || "10 min"} {"\u00b7"} {new Date(data.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
               <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "34px", color: "#e8e8d0", lineHeight: 1.2, marginBottom: "6px" }}>{data.title}</h2>
-              <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>{data.subtitle}</p>
+              <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>{redact(data.subtitle)}</p>
               <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
             </>}
             {sc.content.map((para, i) => {
@@ -1178,7 +1214,7 @@
                   <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "20px", color: "#e8e8d0" }}>{item.title}</h3>
                   <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(item.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
                 </div>
-                <p style={{ fontSize: "14px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>{item.subtitle}</p>
+                <p style={{ fontSize: "14px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>{redact(item.subtitle)}</p>
                 <span style={{ display: "inline-block", marginTop: "8px", fontFamily: "'VT323', monospace", fontSize: "12px", letterSpacing: "1px", color: item.color, background: item.color+"15", padding: "2px 8px", border: "1px solid "+item.color+"40", textTransform: "uppercase" }}>{item.type}</span>
               </div>
             </div>
@@ -1236,7 +1272,7 @@
                   <div>
                     <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "6px" }}>{a.category}{a.comingSoon ? " \u00b7 COMING SOON" : ""}</div>
                     <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: a.comingSoon ? "#666680" : "#e8e8d0", marginBottom: "4px" }}>{a.title}</h3>
-                    <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#888880", fontStyle: "italic" }}>{a.subtitle}</p>
+                    <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#888880", fontStyle: "italic" }}>{redact(a.subtitle)}</p>
                   </div>
                   {!a.comingSoon && <span style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>}
                 </div>
