@@ -1,0 +1,43 @@
+{
+  "title": "Good Enough",
+  "subtitle": "The most dangerous words in business are \"we could improve this\"",
+  "date": "2026-03-16",
+  "category": "Economics",
+  "readTime": "5 min",
+  "sections": [
+    { "type": "text", "content": "There is a man in your office who has reorganised the shared drive three times this year. Each time he presents the new structure to the team with the energy of someone who has solved a problem that matters. Each time the team nods politely, moves their files into the new folders, and continues doing their actual work. The shared drive was fine before. It is fine now. It will be fine after his next reorganisation, which is already being planned, because the man has confused activity with progress and no one has told him to stop." },
+    { "type": "text", "content": "He is optimising a module that doesn't need optimising. And the thing he should be working on — the thing that is actually broken, actually losing money, actually causing people to stay late on Thursdays — sits untouched, because fixing real problems is harder and less satisfying than rearranging folders." },
+    { "type": "text", "content": "This is one of the most common and least discussed failures in business, in personal productivity, and in life: improving the wrong thing." },
+
+    { "type": "heading", "content": "Hegemonica" },
+    { "type": "text", "content": "The Roman statesman Cicero used the term hegemonica to describe the governing part of the soul — the part that is in charge, that directs, that should not be tampered with lightly. We're going to borrow the word and repurpose it for something more practical." },
+    { "type": "text", "content": "Hegemonica: that which cannot or should not be improved upon." },
+    { "type": "text", "content": "Not \"perfect.\" Not \"the best it could ever be.\" Just: good enough, in a way that deserves respect rather than interference. When you identify something as hegemonica, you are acknowledging that it is functioning, it is not the bottleneck, and your attention belongs elsewhere." },
+    { "type": "text", "content": "This is harder than it sounds. The instinct to optimise is strong, especially in people who are good at their jobs. When you can see how something could be better, leaving it alone feels negligent. It feels like laziness. It feels like you're accepting mediocrity. But the ability to look at something adequate and walk away from it is not laziness. It's triage. And triage is one of the most valuable skills a person can develop." },
+
+    { "type": "heading", "content": "The System Has Parts" },
+    { "type": "text", "content": "Everything you interact with — your job, your morning routine, your business, your health, your kitchen — is a system made of modules. Some modules are working well. Some are working badly. Most are working fine." },
+    { "type": "text", "content": "The modules that are working fine are hegemonica. They are not exciting. They do not generate complaints or inspire TED talks. They just sit there, doing their job, day after day, and because they never break, you forget they exist. Your accounting software. Your commute. The way your team handles invoicing. The part of your diet that isn't causing problems." },
+    { "type": "text", "content": "The modules that are working badly are the ones that need your attention. They are the bottleneck, the complaint, the thing that wakes you up at 3 AM, the reason customers leave. They are where your effort generates the most return." },
+    { "type": "text", "content": "The mistake — the shared-drive mistake — is spending your finite energy improving a module that was already fine, while the broken module continues to bleed value." },
+
+    { "type": "viz", "module": "hegemonica-system" },
+
+    { "type": "heading", "content": "Why We Do It Anyway" },
+    { "type": "text", "content": "Improving the wrong thing is not stupidity. It's psychology. There are very good reasons why people gravitate toward optimising modules that don't need it." },
+    { "type": "text", "content": "The working module is familiar. You understand it. You can see exactly how to make it better. The broken module is intimidating. It might involve confrontation, or admitting a mistake, or learning something new. The working module offers a guaranteed small win. The broken module offers an uncertain large win. Most people will choose the guaranteed small win every time, because human brains are wired to avoid uncertainty, even when the uncertain option is obviously more important." },
+    { "type": "text", "content": "There's also a status component. Reorganising the shared drive is visible. Everyone sees you doing it. Fixing the Thursday overtime problem might involve a quiet conversation with a difficult manager, and nobody sees quiet conversations. The optimiser gets credit for activity. The problem-solver gets credit for results, but only after the results materialise, which might take months." },
+    { "type": "text", "content": "This is why companies can have dozens of people working very hard on things that don't matter while one critical problem goes unaddressed. Everyone is busy. Everyone is improving something. The tragedy is that most of them are improving the wrong thing." },
+
+    { "type": "heading", "content": "The Diagnostic" },
+    { "type": "text", "content": "Two questions will save you more time than any productivity system ever invented." },
+    { "type": "text", "content": "First: what is the actual bottleneck? Not what annoys you most, not what's easiest to fix, not what you noticed this morning — what is the thing that, if improved, would generate the most value? This is where your attention belongs." },
+    { "type": "text", "content": "Second: is the thing I'm about to improve actually broken, or is it just not perfect? If it's not broken — if it works, if people aren't complaining, if it isn't losing money or time — then it's hegemonica. Leave it alone. It has earned your respect by functioning quietly, and the kindest thing you can do for a working module is to ignore it and go fix the one that's on fire." },
+
+    { "type": "heading", "content": "The Permission" },
+    { "type": "text", "content": "There is a particular relief in declaring something good enough. Not as a surrender, but as a deliberate act of allocation. You are not saying \"this can't be better.\" You are saying \"this doesn't need to be better right now, and my energy is finite, and there is something over there that is actually failing.\"" },
+    { "type": "text", "content": "Your desk is a bit messy but you know where everything is. Hegemonica. Your morning routine could be more efficient but it gets you to work on time. Hegemonica. Your company's website is slightly outdated but it converts customers at an acceptable rate. Hegemonica." },
+    { "type": "text", "content": "Meanwhile: your sleep is terrible. Your onboarding process loses 30% of new hires. Your relationship with your biggest client is deteriorating. These are not hegemonica. These are where your attention belongs." },
+    { "type": "text", "content": "The shared drive can wait. It was always fine. Go fix the thing that isn't." }
+  ]
+}
