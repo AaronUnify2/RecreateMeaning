@@ -370,7 +370,7 @@
         setModules(prev => {
           const next = prev.map(m => {
             if (m.id !== id) return m;
-            const newHealth = m.id === "filing" ? Math.min(100, m.health + 1) : Math.min(99, m.health + 8);
+            const newHealth = m.id === "filing" ? (m.improved >= 6 ? 100 : 99) : Math.min(99, m.health + 8);
             return { ...m, health: newHealth, improved: m.improved + 1 };
           });
           const f = next.find(m => m.id === "filing");
@@ -383,7 +383,17 @@
         setEnergy(e => e - 1);
         const mod = modules.find(m => m.id === id);
         if (id === "filing") {
-          setLog(l => [...l, "You improved Shared Drive from " + mod.health + "% to " + Math.min(100, mod.health + 1) + "%. It was at 99%. You are choosing this."]);
+          const clicks = mod.improved + 1;
+          const msgs = [
+            "You improved Shared Drive. It's still 99%. Nothing visible changed.",
+            "You improved Shared Drive again. Still 99%. The folders are... more organised, maybe?",
+            "Third time on the Shared Drive. Still 99%. You are aware the Onboarding module is at 31%, right?",
+            "Four energy on a module that was already at 99%. This is the behaviour the article is about.",
+            "Five. You've spent five improvement points on the Shared Drive. It has not moved. It will not move. It doesn't need to move.",
+            "Six energy on the Shared Drive. You have one energy left. Onboarding is still broken. We are begging you.",
+            "...oh."
+          ];
+          setLog(l => [...l, msgs[Math.min(clicks - 1, msgs.length - 1)]]);
         } else if (mod.bottleneck) {
           setLog(l => [...l, "You improved " + mod.name + ". This was the bottleneck. Good use of energy."]);
         } else if (mod.health >= 80) {
