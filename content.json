@@ -13,17 +13,17 @@
     { "id": "brick-breaker", "title": "3D194 Brick Breaker", "tagline": "A brick breaking game with a twist", "date": "2025-11-15", "color": "#e040fb", "file": "tools/brick-breaker.json", "hideFeed": true },
     { "id": "novelPlanner", "title": "Novel Planner", "tagline": "Software for novel planning", "date": "2025-11-01", "color": "#e67e22", "file": "tools/novelPlanner.json" },
     { "id": "tommyspace", "title": "TommySpace", "tagline": "Explore the solar system to learn the names of the planets", "date": "2025-10-01", "color": "#8e44ad", "file": "tools/tommyspace.json" },
-    { "id": "mystic-forest", "title": "Mystic Forest Walker", "tagline": "A pixel-art RPG adventure in your browser", "date": "2026-02-01", "color": "#2e7d32", "file": "tools/mystic-forest.json", "hideFeed": true }
+    { "id": "mystic-forest", "title": "Mystic Forest Walker", "tagline": "A pixel-art RPG adventure in your browser", "date": "2026-02-01", "color": "#2e7d32", "file": "tools/mystic-forest.json" }
   ],
   "articles": [
     { "id": "origin-of-ideas", "title": "On the Origin of Ideas...", "subtitle": "A normal article", "date": "2022-01-04", "category": "Essay", "file": "articles/origin-of-ideas.json" },
     { "id": "lone-clown", "title": "The Lone Clown", "subtitle": "A Choose Your Own Adventure", "date": "2026-03-11", "category": "Interactive Fiction", "file": "articles/lone-clown.json", "hideFeed": true },
-    { "id": "fifth-slice", "title": "The Fifth Slice", "subtitle": "A short article about knowing when to stop", "date": "2026-03-15", "category": "Economics", "file": "articles/fifth-slice.json" },
-    { "id": "oven-problem", "title": "The Oven Problem", "subtitle": "Why the 6th dinner guest ruins everything", "date": "2026-03-15", "category": "Economics", "file": "articles/oven-problem.json" },
-    { "id": "good-enough", "title": "Good Enough", "subtitle": "The most dangerous words in business are \"we could improve this\"[I]... by involving a bear[/I]", "date": "2026-03-16", "category": "Economics", "file": "articles/good-enough.json" },
-    { "id": "zero-to-something", "title": "Zero to Something", "subtitle": "The most important threshold in economics and life", "date": "2026-03-20", "category": "Economics", "file": "articles/zero-to-something.json" },
-    { "id": "furniture-store", "title": "The Furniture Store", "subtitle": "A short story about watching your advantages disappear", "date": "2026-03-25", "category": "Economics", "file": "articles/furniture-store.json" },
-    { "id": "who-hears-it-first", "title": "Who Hears It First", "subtitle": "Change radiates from centers in predictable waves", "date": "2026-03-30", "category": "Economics", "file": "articles/who-hears-it-first.json" }
+    { "id": "fifth-slice", "title": "The Fifth Slice", "subtitle": "A short article about knowing when to stop", "date": "2026-03-15", "category": "Economics", "file": "articles/fifth-slice.json", "hideFeed": true },
+    { "id": "oven-problem", "title": "The Oven Problem", "subtitle": "Why the 6th dinner guest ruins everything", "date": "2026-03-15", "category": "Economics", "file": "articles/oven-problem.json", "hideFeed": true },
+    { "id": "good-enough", "title": "Good Enough", "subtitle": "The most dangerous words in business are \"we could improve this\"[I]... by involving a bear[/I]", "date": "2026-03-16", "category": "Economics", "file": "articles/good-enough.json", "hideFeed": true },
+    { "id": "zero-to-something", "title": "Zero to Something", "subtitle": "The most important threshold in economics and life", "date": "2026-03-20", "category": "Economics", "file": "articles/zero-to-something.json", "hideFeed": true },
+    { "id": "furniture-store", "title": "The Furniture Store", "subtitle": "A short story about watching your advantages disappear", "date": "2026-03-25", "category": "Economics", "file": "articles/furniture-store.json", "hideFeed": true },
+    { "id": "who-hears-it-first", "title": "Who Hears It First", "subtitle": "Change radiates from centers in predictable waves", "date": "2026-03-30", "category": "Economics", "file": "articles/who-hears-it-first.json", "hideFeed": true }
   ],
   "novel": {
     "title": "BIGFOOT'S SHOE",
