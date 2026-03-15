@@ -1,0 +1,50 @@
+{
+  "title": "The Oven Problem",
+  "subtitle": "Why the 6th dinner guest ruins everything",
+  "date": "2026-03-15",
+  "category": "Economics",
+  "readTime": "6 min",
+  "sections": [
+    { "type": "text", "content": "You're cooking dinner for four people. You've got a lasagna in the oven, a salad on the counter, and garlic bread warming on the top rack. Someone calls and asks if they can bring a friend. Sure. One more portion of lasagna is nothing — you already made the sauce, already grated the cheese, already heated the oven. The additional cost of feeding a fifth person is close to zero. This is the best deal in economics and you don't even know you're getting it." },
+    { "type": "text", "content": "Then someone else calls. Can they bring two friends? You look at the lasagna dish. You look at the oven. You do the math that isn't really math — it's spatial reasoning and mild panic — and you realise that the dish you've made feeds six at a push. Seven is a new dish. Seven means a second round of prep, a second bake, another forty-five minutes, and a kitchen that now has two timelines running simultaneously." },
+    { "type": "text", "content": "You've just hit a wall that economists call a capital threshold and normal people call \"I need a bigger oven.\"" },
+
+    { "type": "viz", "module": "oven-sim" },
+
+    { "type": "heading", "content": "The Free Lunch (Almost)" },
+    { "type": "text", "content": "Economies of scale is one of those ideas that everyone understands instinctively and almost nobody applies deliberately. The principle is simple: if you're already doing something, doing slightly more of it is often nearly free." },
+    { "type": "text", "content": "You're already driving to the shops — picking up an extra item costs you nothing. You're already running payroll for ten employees — adding an eleventh barely changes your accountant's workload. You're already heating the oven — cooking a bit more food in it uses the same gas." },
+    { "type": "text", "content": "This is not a minor advantage. This is the force that determines which businesses survive and which ones don't. The furniture store that buys a hundred sofas from the factory pays less per sofa than the store that buys ten. The factory that makes a thousand chairs can spread the cost of its machinery across more units than the workshop that makes fifty. The bigger operation isn't just bigger — it's cheaper per unit, which means it can charge less, which means it gets more customers, which means it gets even bigger, which means it gets even cheaper." },
+    { "type": "text", "content": "This cycle is why one enormous furniture store on the edge of town eventually replaces four small ones in the centre. It's not because the big store is better. It's because the big store is cheaper, and it's cheaper because it's big. The circle feeds itself." },
+
+    { "type": "heading", "content": "The Wall" },
+    { "type": "text", "content": "But here's the thing about ovens. They have a fixed size. You can optimise the layout, use every rack, rotate dishes efficiently — and eventually you run out of space. The oven is full. One more dish means waiting for the first batch to finish, or buying a second oven." },
+    { "type": "text", "content": "This is the moment when economies of scale stop being your friend. Economists have a term for this — diseconomies of scale — which is a polite way of saying \"you've outgrown your infrastructure and everything is about to get more expensive, not less.\"" },
+    { "type": "text", "content": "The pattern looks like this: cost per unit drops as you scale up, drops further, drops further, and then suddenly jumps. Not a gradual increase. A jump. Because you don't need half a second oven. You need a whole second oven, and a whole second oven costs a whole second oven's worth of money whether you're going to fill it or not." },
+    { "type": "text", "content": "That's the capital threshold. The point where scaling up requires a discrete, expensive investment — a new oven, a new warehouse, a new hire, a new production line — that you can't make incrementally. You either buy the whole thing or you don't, and if you buy it, your cost per unit spikes until you've grown enough to spread that cost back down." },
+
+    { "type": "heading", "content": "Two Kinds of Chaos" },
+    { "type": "text", "content": "When you outgrow your capacity, the chaos comes in two flavours, and they're worth distinguishing." },
+    { "type": "text", "content": "The first is technical. Your oven is full. This is a physics problem. The solution is mechanical — a bigger oven, a second oven, a faster oven. It's expensive but it's straightforward. The constraint is known and the fix is obvious." },
+    { "type": "text", "content": "The second is organisational. You've bought the second oven and hired a second cook. Now you have a coordination problem. Two people sharing a kitchen. Two timelines. Two sets of dishes competing for the same sink, the same counter space, the same fridge. The second cook is competent but she doesn't know where you keep the good knife, and you keep reaching for the olive oil at the same time." },
+    { "type": "text", "content": "Technical diseconomies of scale are solved with money. Organisational diseconomies of scale are solved with time, communication, and patience — three things that are harder to purchase than an oven." },
+
+    { "type": "heading", "content": "The Trap" },
+    { "type": "text", "content": "Here's where people get into trouble. They feel the strain of hitting capacity and they assume the answer is always to scale up. Business is busy, hire more people. Kitchen is full, buy a bigger kitchen. Production line is maxed, build a second one." },
+    { "type": "text", "content": "But scaling up means crossing a capital threshold, and crossing a capital threshold means your costs spike before your revenue catches up. Many businesses have gone bankrupt not because they failed, but because they succeeded too fast and expanded before the economics supported it." },
+    { "type": "text", "content": "The alternative — which is less exciting and therefore less popular — is to ask whether you've fully exploited the economies of scale you already have. Is your current oven actually full, or is it full of things that don't need to be in there? Are you batch-cooking efficiently, or are you making three separate dishes when one big one would feed everyone? Are you doing seven tasks when four of them could be combined?" },
+    { "type": "text", "content": "Before you buy the second oven, make sure you've used all the space in the first one." },
+
+    { "type": "heading", "content": "The Dinner Party" },
+    { "type": "text", "content": "Back to dinner. Your lasagna feeds six. Guest seven needs a whole new batch. But here's the question you should be asking: does guest seven actually need lasagna?" },
+    { "type": "text", "content": "Maybe guest seven gets the salad plus the garlic bread plus a side dish that takes ten minutes on the stovetop. The oven stays as it is. No capital threshold crossed. No second batch. The constraint was never \"I can't feed more people.\" The constraint was \"I can't fit more lasagna in the oven,\" and those are different problems with different solutions." },
+    { "type": "text", "content": "The ability to distinguish between a genuine capacity constraint and a self-imposed one is worth more than most things you'll learn in an economics course. Including this one." },
+
+    { "type": "heading", "content": "The Takeaway" },
+    { "type": "text", "content": "If doing a bit more costs you almost nothing — do more. That's free value. Take it." },
+    { "type": "text", "content": "If doing a bit more means buying a whole new oven — stop and think. Is the oven actually full? Is there a way to reconfigure what's already in there? Is there a different dish that sidesteps the constraint entirely?" },
+    { "type": "text", "content": "And if you do need the second oven — know that you're crossing a threshold, and the other side of that threshold is temporarily more expensive, more chaotic, and more complicated than where you are now. That's not a reason not to cross it. It's a reason to cross it with your eyes open." },
+    { "type": "text", "content": "Economies of scale is the most powerful advantage in business. Knowing when you have it, when you've lost it, and when you need to buy your way back into it is the difference between growing and collapsing." },
+    { "type": "text", "content": "Also, just make more lasagna next time. It reheats well." }
+  ]
+}
