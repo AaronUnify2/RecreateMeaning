@@ -335,9 +335,102 @@
       );
     }
 
+    function HegemmonicaSystemViz() {
+      const initModules = [
+        { id: "sales", name: "Sales", health: 82, improved: 0, bottleneck: false },
+        { id: "onboarding", name: "Onboarding", health: 31, improved: 0, bottleneck: true },
+        { id: "accounting", name: "Accounting", health: 88, improved: 0, bottleneck: false },
+        { id: "website", name: "Website", health: 74, improved: 0, bottleneck: false },
+        { id: "support", name: "Support", health: 68, improved: 0, bottleneck: false },
+        { id: "filing", name: "Shared Drive", health: 90, improved: 0, bottleneck: false }
+      ];
+      const [modules, setModules] = useState(initModules);
+      const [energy, setEnergy] = useState(5);
+      const [log, setLog] = useState([]);
+      const maxEnergy = 5;
+
+      const improve = (id) => {
+        if (energy <= 0) return;
+        setModules(prev => prev.map(m => {
+          if (m.id !== id) return m;
+          return { ...m, health: Math.min(99, m.health + 8), improved: m.improved + 1 };
+        }));
+        setEnergy(e => e - 1);
+        const mod = modules.find(m => m.id === id);
+        if (mod.bottleneck) {
+          setLog(l => [...l, "You improved " + mod.name + ". This was the bottleneck. Good use of energy."]);
+        } else if (mod.health >= 80) {
+          setLog(l => [...l, "You improved " + mod.name + " from " + mod.health + "% to " + Math.min(99, mod.health + 8) + "%. It was already fine. That energy is gone now."]);
+        } else {
+          setLog(l => [...l, "You improved " + mod.name + ". Not the bottleneck, but at least it needed some work."]);
+        }
+      };
+
+      const reset = () => { setModules(initModules); setEnergy(maxEnergy); setLog([]); };
+      const bottleneck = modules.find(m => m.bottleneck);
+      const systemHealth = Math.min(...modules.map(m => m.health));
+      const wastedEnergy = modules.reduce((sum, m) => sum + ((!m.bottleneck && m.health >= 74) ? m.improved : 0), 0);
+
+      return (
+        <div style={{ border: "2px solid #333366", background: "#0a0a18", padding: "24px", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px", textAlign: "center" }}>System Diagram</div>
+          <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "12px", color: "#666680", textAlign: "center", marginBottom: "16px" }}>You have {energy} improvement{energy !== 1 ? "s" : ""} to spend. Click a module to improve it.</div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", marginBottom: "16px" }}>
+            {modules.map(m => {
+              const col = m.health >= 80 ? "#4a9a4a" : m.health >= 60 ? "#c0a060" : "#aa3333";
+              const pulse = m.bottleneck && m.improved === 0;
+              return (
+                <div key={m.id} onClick={() => improve(m.id)} style={{
+                  border: "2px solid " + (pulse ? "#aa3333" : col), background: "#12122a", padding: "12px", cursor: energy > 0 ? "pointer" : "default",
+                  transition: "all 0.3s", opacity: energy > 0 ? 1 : 0.6,
+                  boxShadow: pulse ? "0 0 12px #aa333366, inset 0 0 12px #aa333322" : "none"
+                }}>
+                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: col, letterSpacing: "1px", marginBottom: "6px" }}>{m.name}</div>
+                  <div style={{ height: "8px", background: "#1a1a2e", border: "1px solid #222244", marginBottom: "4px" }}>
+                    <div style={{ height: "100%", width: m.health + "%", background: col, transition: "all 0.4s" }} />
+                  </div>
+                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: col, textAlign: "right" }}>{m.health}%</div>
+                  {m.improved > 0 && <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: "#666680", marginTop: "4px" }}>Improved {m.improved}x</div>}
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "8px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#e8e8d0" }}>System Output: <span style={{ color: systemHealth >= 60 ? "#4a9a4a" : "#aa3333" }}>{systemHealth}%</span> <span style={{ color: "#666680", fontSize: "12px" }}>(limited by weakest module)</span></div>
+            <div style={{ display: "flex", gap: "4px" }}>{Array.from({ length: maxEnergy }).map((_, i) => (
+              <div key={i} style={{ width: "16px", height: "16px", background: i < energy ? "#e67e22" : "#222244", border: "1px solid " + (i < energy ? "#e67e22" : "#333366"), transition: "all 0.3s" }} />
+            ))}</div>
+          </div>
+
+          {log.length > 0 && (
+            <div style={{ maxHeight: "120px", overflowY: "auto", marginBottom: "12px", padding: "8px", background: "#0f0f1a", border: "1px solid #222244" }}>
+              {log.map((l, i) => <div key={i} style={{ fontFamily: "'Courier Prime', monospace", fontSize: "12px", color: l.includes("bottleneck") ? "#4a9a4a" : l.includes("already fine") ? "#aa3333" : "#c0a060", marginBottom: "4px" }}>{"> " + l}</div>)}
+            </div>
+          )}
+
+          {energy === 0 && (
+            <div style={{ padding: "12px", background: "#1a1520", border: "1px dashed " + (bottleneck.improved > 0 ? "#4a9a4a" : "#aa3333"), fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic", marginBottom: "12px" }}>
+              {bottleneck.improved === 0 && wastedEnergy >= 3 && "You spent all your energy and never touched Onboarding — the one module that was actually failing. The system output didn't change. Everything you improved was already fine."}
+              {bottleneck.improved === 0 && wastedEnergy < 3 && "You didn't fix the bottleneck. The system is still limited by its weakest module — no matter how much you improved everything else."}
+              {bottleneck.improved > 0 && bottleneck.improved < 3 && "You found the bottleneck, but you also spent energy on modules that were already working. Partial credit."}
+              {bottleneck.improved >= 3 && "You identified the bottleneck and focused your energy on it. The system output improved because the weakest link got stronger. This is triage."}
+              {bottleneck.improved > 0 && bottleneck.improved <= 4 && wastedEnergy >= 2 && " The Shared Drive did not need your help. It was at 90%. The Shared Drive was hegemonica."}
+            </div>
+          )}
+
+          <div style={{ textAlign: "center" }}>
+            <button onClick={reset} style={{ background: "none", border: "1px solid #333366", color: "#666680", fontFamily: "'VT323', monospace", fontSize: "13px", padding: "4px 16px", cursor: "pointer" }}>Reset System</button>
+          </div>
+        </div>
+      );
+    }
+
     const ARTICLE_VIZ_MODULES = {
       "pizza-slider": () => <PizzaSliderViz />,
-      "oven-sim": () => <OvenSimViz />
+      "oven-sim": () => <OvenSimViz />,
+      "hegemonica-system": () => <HegemmonicaSystemViz />
     };
 
     function RenderArticleSection({ section }) {
@@ -1069,7 +1162,7 @@
         }
       }
       (content.tools||[]).filter(t => !t.hideFeed).forEach(t => items.push({ type: "tool", id: t.id, title: t.title, subtitle: t.tagline, date: t.date, color: t.color||"#4a90d9" }));
-      (content.articles||[]).filter(a => !a.hideFeed).forEach(a => items.push({ type: "article", id: a.id, title: a.title, subtitle: a.subtitle, date: a.date, color: "#4a9aea" }));
+      (content.articles||[]).filter(a => !a.hideFeed && !a.comingSoon).forEach(a => items.push({ type: "article", id: a.id, title: a.title, subtitle: a.subtitle, date: a.date, color: "#4a9aea" }));
       items.sort((a,b) => new Date(b.date)-new Date(a.date));
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
@@ -1123,9 +1216,9 @@
     function ArticlesPage({ content, selectedArticle, setSelectedArticle }) {
       const articles = content.articles || [];
       const selected = selectedArticle ? articles.find(a => a.id === selectedArticle) : null;
-      const { data: articleData, loading } = useJsonFile(selected?.file || null);
-      if (selected && articleData) return <ArticleRenderer data={articleData} goBack={() => setSelectedArticle(null)} />;
-      if (selected && loading) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center", fontSize: "18px" }}>Loading...</div>;
+      const { data: articleData, loading } = useJsonFile(selected && !selected.comingSoon ? selected.file : null);
+      if (selected && !selected.comingSoon && articleData) return <ArticleRenderer data={articleData} goBack={() => setSelectedArticle(null)} />;
+      if (selected && !selected.comingSoon && loading) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center", fontSize: "18px" }}>Loading...</div>;
       return (
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
@@ -1134,14 +1227,18 @@
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             {articles.map(a => (
-              <div key={a.id} onClick={() => setSelectedArticle(a.id)} style={{ border: "1px solid #333366", padding: "24px", cursor: "pointer", background: "#0f0f23", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor="#4a9aea"} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
+              <div key={a.id} onClick={() => !a.comingSoon && setSelectedArticle(a.id)}
+                style={{ border: "1px solid " + (a.comingSoon ? "#222244" : "#333366"), padding: "24px", cursor: a.comingSoon ? "default" : "pointer", background: "#0f0f23", transition: "border-color 0.2s", opacity: a.comingSoon ? 0.5 : 1 }}
+                onMouseEnter={e => { if (!a.comingSoon) e.currentTarget.style.borderColor="#4a9aea"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = a.comingSoon ? "#222244" : "#333366"; }}
+              >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "8px" }}>
                   <div>
-                    <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "6px" }}>{a.category}</div>
-                    <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e8e8d0", marginBottom: "4px" }}>{a.title}</h3>
+                    <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "6px" }}>{a.category}{a.comingSoon ? " \u00b7 COMING SOON" : ""}</div>
+                    <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: a.comingSoon ? "#666680" : "#e8e8d0", marginBottom: "4px" }}>{a.title}</h3>
                     <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#888880", fontStyle: "italic" }}>{a.subtitle}</p>
                   </div>
-                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+                  {!a.comingSoon && <span style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>}
                 </div>
               </div>
             ))}
