@@ -27,7 +27,10 @@
     { "id": "the-index", "title": "The Index", "subtitle": "Why doing nothing beats almost everyone", "date": "2026-03-16", "category": "Finance", "file": "articles/the-index.json", "hideFeed": true },
     { "id": "beating-the-market", "title": "Beating the Market", "subtitle": "What it actually means and why most people can't", "date": "2026-03-17", "category": "Finance", "file": "articles/beating-the-market.json", "hideFeed": true },
     { "id": "private-information", "title": "Private Information", "subtitle": "The legal edge that actually works", "date": "2026-03-18", "category": "Finance", "file": "articles/private-information.json", "hideFeed": true },
-    { "id": "the-bubble", "title": "The Bubble", "subtitle": "Two Nobel laureates disagree about whether markets can go insane", "date": "2026-03-19", "category": "Finance", "file": "articles/the-bubble.json", "hideFeed": true }
+    { "id": "the-bubble", "title": "The Bubble", "subtitle": "Two Nobel laureates disagree about whether markets can go insane", "date": "2026-03-19", "category": "Finance", "file": "articles/the-bubble.json", "hideFeed": true },
+    { "id": "the-barbell", "title": "The Barbell", "subtitle": "A house that can't move and shares that never sleep", "date": "2026-04-01", "category": "Strategy", "file": "articles/the-barbell.json", "hideFeed": true },
+    { "id": "the-snowball", "title": "The Snowball", "subtitle": "How $500 a week builds a self-funding investment engine", "date": "2026-04-02", "category": "Strategy", "file": "articles/the-snowball.json", "hideFeed": true },
+    { "id": "seller-finance", "title": "The Acquisition", "subtitle": "How to buy a business with someone else's confidence", "date": "2026-04-03", "category": "Strategy", "file": "articles/seller-finance.json", "hideFeed": true }
   ],
   "novel": {
     "title": "BIGFOOT'S SHOE",
