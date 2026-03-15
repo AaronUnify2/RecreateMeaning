@@ -1,0 +1,42 @@
+{
+  "title": "The Fifth Slice",
+  "subtitle": "A short article about knowing when to stop",
+  "date": "2026-03-15",
+  "category": "Economics",
+  "readTime": "5 min",
+  "sections": [
+    { "type": "text", "content": "You know the feeling. You know it in your body before you know it in your brain. You're four slices into a pizza, the first one was transcendent, the second was great, the third was good, the fourth was fine, and now you're reaching for the fifth because it's there and because stopping requires a decision and continuing doesn't." },
+    { "type": "text", "content": "The fifth slice is not good. You know this while you're eating it. It's the same pizza — same cheese, same crust, same sauce — but something has shifted between your second bite and your twelfth, and that something has a name." },
+    { "type": "text", "content": "Economists call it diminishing marginal utility. You can call it the fifth slice. It's the principle that each additional unit of something you consume tends to give you less satisfaction than the one before it. The first unit is often the best. The last unit is often a mistake. Everything in between is a negotiation between your present self and the version of you that has to live with the consequences." },
+
+    { "type": "viz", "module": "pizza-slider" },
+
+    { "type": "text", "content": "This is not a pizza problem. This is a everything problem." },
+    { "type": "text", "content": "Think about the last time you sat down to watch a show. The first episode was engaging. You wanted to find out what happened. By the third episode your brain had settled into that warm, frictionless autopilot where the next episode starts before you've consciously decided to watch it. By the fifth episode you weren't really watching anymore. You were present in the room where watching was happening, but the thing that made the first episode enjoyable — curiosity, engagement, the pleasure of a new story — had been replaced by something duller: the absence of a reason to stop." },
+    { "type": "text", "content": "Scrolling works the same way. The first few minutes on your phone after a break can be genuinely pleasant. A message from a friend. A piece of news you actually care about. Something that makes you laugh. But twenty minutes later you're looking at a stranger's opinion about a topic you don't care about, posted by someone you don't follow, served to you by an algorithm that has confused your inability to stop with your desire to continue." },
+    { "type": "text", "content": "These are not the same thing. Your inability to stop is not evidence that you're enjoying yourself. The algorithm doesn't know that. The pizza doesn't know that. But you do, somewhere, in the part of your brain that flinches slightly every time you reach for the fifth slice." },
+
+    { "type": "heading", "content": "The Double Negative" },
+    { "type": "text", "content": "There's a version of this that's merely wasteful. The fifth episode wasn't great, but it wasn't painful. You lost an hour. You'll live." },
+    { "type": "text", "content": "Then there's the version that's actively self-defeating. The consumption that you don't enjoy in the moment AND regret afterwards. The late-night scroll that makes you feel worse and steals your sleep. The extra drinks that stopped being fun two drinks ago. The impulse purchase that gave you a three-second dopamine hit and a six-month reminder on your credit card statement." },
+    { "type": "text", "content": "This is the double negative of marginal utility: negative enjoyment in the moment, compounded by negative consequences after. If the fifth slice is a bad deal, the double negative is a catastrophic one. You're paying twice — once with the experience and once with the regret — for something that delivered nothing." },
+
+    { "type": "heading", "content": "The Uncomfortable Math" },
+    { "type": "text", "content": "Let's say you watch five hours of television a day. Not because you love television, but because it's what you do after work. You enjoy the first hour. The second hour is pleasant. Hours three through five are just... where your evening goes." },
+    { "type": "text", "content": "That's three hours a day of low-value consumption. Twenty-one hours a week. Roughly a thousand hours a year. Enough time to become genuinely competent at almost anything. A language. An instrument. A skill that could change your career. A side project that could become a business." },
+    { "type": "text", "content": "The opportunity cost isn't just the time. It's the difference between who you are and who you could be if you redirected the hours that aren't serving you. Nobody is asking you to give up the first slice. The first slice is wonderful. Keep the first slice. But the fifth slice is costing you more than you think, because every hour spent on something you don't enjoy is an hour not spent on something you might." },
+
+    { "type": "heading", "content": "Zero to Something" },
+    { "type": "text", "content": "Here's the thing that makes this worth thinking about rather than depressing." },
+    { "type": "text", "content": "Going from zero to one is the most valuable transition you can make. Having no savings and having ten dollars in savings are not slightly different — they're categorically different. One is a person with no financial buffer. The other is a person who has started. The gap between zero and something is where possibility lives." },
+    { "type": "text", "content": "The same is true for skills, projects, relationships, and habits. The first hour you spend learning something new generates more value than the fifth hour you spend passively consuming something old. Not because the first hour is easy or fun — it's usually neither — but because it moves you from zero to started, and started is where everything begins to compound." },
+    { "type": "text", "content": "Your fifth slice of pizza is funding someone else's first." },
+
+    { "type": "heading", "content": "The Permission" },
+    { "type": "text", "content": "This isn't an article about discipline. Discipline is a finite resource and spending it on not eating pizza is a waste of good discipline." },
+    { "type": "text", "content": "This is an article about noticing. About the small, honest question that your brain is already asking and your hands are already ignoring: am I still enjoying this?" },
+    { "type": "text", "content": "If the answer is yes, carry on. Eat the pizza. Watch the show. Scroll the feed. Enjoyment is valuable and does not require justification." },
+    { "type": "text", "content": "If the answer is no — if you're consuming out of inertia rather than desire, if the thing you're doing has quietly stopped being the thing you want to be doing — then you have just discovered free time. It was always there. It was hidden inside the fifth slice, disguised as something you were choosing, when really it was something that was choosing you." },
+    { "type": "text", "content": "Keep the first slice. It's perfect. But let the fifth one go. It was never yours to begin with." }
+  ]
+}
