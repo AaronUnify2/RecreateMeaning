@@ -1,0 +1,44 @@
+{
+  "title": "Zero to Something",
+  "subtitle": "The most important threshold in economics and life",
+  "date": "2026-03-20",
+  "category": "Economics",
+  "readTime": "5 min",
+  "sections": [
+    { "type": "text", "content": "There is a difference between zero dollars and ten dollars that has nothing to do with ten dollars." },
+    { "type": "text", "content": "A person with zero dollars saved has no buffer, no options, and no ability to think past next week. Every financial shock — a flat tyre, a medical bill, an unexpected tax — is an emergency. Every decision is made under duress. The future is a thing that happens to you." },
+    { "type": "text", "content": "A person with ten dollars saved is not rich. They are not comfortable. They are not even safe. But they have done something the person with zero has not: they have started. And starting changes everything, because starting is the only state from which compounding is possible." },
+    { "type": "text", "content": "Ten dollars becomes twenty. Twenty becomes fifty. The amounts are laughable and the timeline is long and the point is not the amount — the point is that the line on the graph is no longer flat. It's moving. Slowly, embarrassingly, almost imperceptibly — but moving." },
+    { "type": "text", "content": "Zero doesn't move. Zero is a permanent address." },
+
+    { "type": "viz", "module": "compound-sim" },
+
+    { "type": "heading", "content": "The Phase Change" },
+    { "type": "text", "content": "In physics, there's a concept called a phase change — the moment when a substance shifts from one state to another. Ice becomes water. Water becomes steam. The molecules are the same. The temperature is the same, briefly. But the substance is fundamentally different." },
+    { "type": "text", "content": "Zero to something is a phase change. It's not a gradual improvement — it's a categorical shift. You are no longer a person who doesn't do this thing. You are now a person who has started, and those are different people living in different worlds with different futures." },
+    { "type": "text", "content": "This applies to money, but it applies to everything. Zero hours practising an instrument and one hour practising an instrument are not separated by one hour. They're separated by an identity. Zero words written and one paragraph written. Zero conversations had and one awkward phone call made. Zero applications sent and one rejection received." },
+    { "type": "text", "content": "The rejection is better than the zero. The bad first paragraph is better than the blank page. The off-key scales are better than the silent room. Because all of those things are on the graph, and zero isn't." },
+
+    { "type": "heading", "content": "Why Zero Feels Safe" },
+    { "type": "text", "content": "Zero is comfortable because zero is invisible. If you haven't started, you can't be bad at it. You can't fail at something you're not doing. You can't lose money you haven't saved. You can't be rejected for a job you didn't apply for." },
+    { "type": "text", "content": "This is the seduction of zero: it offers perfect protection from embarrassment in exchange for the complete elimination of possibility. It's the best possible deal if your goal is to avoid feeling stupid. It's the worst possible deal if your goal is anything else." },
+    { "type": "text", "content": "People will spend years at zero — years of thinking about starting, planning to start, reading about starting, buying equipment for starting — without actually starting, because the moment you start, you become a beginner, and beginners are visible and vulnerable and frequently ridiculous. Zero is none of those things. Zero is just a person on the couch with a lot of opinions about what they're going to do eventually." },
+
+    { "type": "heading", "content": "The Compound Curve" },
+    { "type": "text", "content": "The reason zero to something matters more than any other transition is compounding. Not just financial compounding — skill compounding, relationship compounding, knowledge compounding. The principle is the same everywhere: returns build on returns, but only if there's something to build on." },
+    { "type": "text", "content": "Your first week of learning anything is terrible. Your second week is slightly less terrible. Your tenth week, you're starting to recognise patterns. Your fiftieth week, you have instincts you can't fully explain. Your hundredth week, someone asks you for advice and you realise you're no longer a beginner. You're not an expert either — but you're on the curve, and the curve is doing what curves do." },
+    { "type": "text", "content": "None of that happens at zero. At zero, week one never arrives. The curve never starts. The terrible first attempt that would have become a mediocre second attempt that would have become a decent tenth attempt never gets made, and the person stays exactly where they are, which is nowhere, which is comfortable, which is the problem." },
+
+    { "type": "heading", "content": "The Opportunity Cost of Staying at Zero" },
+    { "type": "text", "content": "Remember the fifth slice — the hours spent on consumption that generates no enjoyment and leaves only regret. Those hours are not just wasted. They are hours that could have moved you from zero to something." },
+    { "type": "text", "content": "The person who watches five hours of television a day isn't just losing time. They're losing the compound interest on the skill they could have started building three years ago. They're not behind because they're slow — they're behind because their graph hasn't started yet, and every day it doesn't start is a day the curve can't work." },
+    { "type": "text", "content": "This sounds harsh. It is harsh. But it's also the most optimistic thing in this entire series, because the implication is clear: start now and the curve starts now. The best time to start was ten years ago. The second best time is this week. Not tomorrow. Not Monday. Not January. This week." },
+
+    { "type": "heading", "content": "The Smallest Viable Start" },
+    { "type": "text", "content": "The instinct when starting something is to start big. Join a gym and go five days a week. Save $500 a month. Write for two hours every morning. These are excellent plans that will last approximately eleven days before collapsing under their own ambition, at which point you will return to zero and feel worse than you did before." },
+    { "type": "text", "content": "The alternative is the smallest viable start. The start so small it's almost embarrassing. Ten dollars a week. Five minutes of practice. One paragraph. One pushup. One application." },
+    { "type": "text", "content": "This sounds pathetic. It sounds like the kind of advice you'd get from a motivational poster in a dentist's waiting room. But the poster is right, and here's why: the goal of the smallest viable start is not to achieve anything impressive. The goal is to cross the threshold. To get off zero. To put a number on the graph that isn't zero, so that compounding has something to work with." },
+    { "type": "text", "content": "Once you're on the graph, you can optimise. You can increase the amount, improve the technique, find efficiencies. But you can't optimise zero. There's nothing to adjust. The only move available from zero is to start, and the only start that matters is the one you'll actually do." },
+    { "type": "text", "content": "Save ten dollars. It's not about the ten dollars. It's about becoming a person who saves, and that person has a very different future from the one sitting next to them on the couch, planning to start on Monday." }
+  ]
+}
