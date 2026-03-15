@@ -1427,6 +1427,180 @@
       );
     }
 
+    function BigfootShoeBanner({ synopsis, onClick }) {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 180, S = 2;
+        let anim, f = 0;
+
+        const eyes = [];
+        for (let i = 0; i < 18; i++) {
+          eyes.push({
+            x: 105 + Math.random() * 85,
+            y: 28 + Math.random() * 38,
+            blinkOffset: Math.random() * 600,
+            blinkRate: 200 + Math.random() * 300,
+            size: 1 + Math.random() * 1.5,
+            pupilDrift: Math.random() * Math.PI * 2
+          });
+        }
+
+        function drawFigure(x, y, armOut) {
+          ctx.fillStyle = '#b0a080';
+          ctx.fillRect((x-1)*S, (y-5)*S, 2*S, 4*S);
+          ctx.fillStyle = '#6a6050';
+          ctx.fillRect((x-2)*S, (y-1)*S, 4*S, 6*S);
+          if (armOut) {
+            ctx.fillRect((x+2)*S, (y-1)*S, 6*S, 1*S);
+            ctx.fillRect((x-8)*S, (y)*S, 6*S, 1*S);
+          }
+          ctx.fillRect((x-1)*S, (y+5)*S, 1*S, 3*S);
+          ctx.fillRect((x+1)*S, (y+5)*S, 1*S, 3*S);
+        }
+
+        function render() {
+          f++;
+          ctx.fillStyle = '#08060f';
+          ctx.fillRect(0, 0, W, H);
+
+          // Stars
+          for (let i = 0; i < 50; i++) {
+            const sx = (i * 73 + 17) % (W/S), sy = (i * 41 + 3) % 45;
+            const twinkle = Math.sin(f * 0.015 + i * 1.3) > 0.3;
+            if (twinkle) {
+              ctx.fillStyle = 'rgba(255,255,255,' + (0.3 + Math.sin(f * 0.02 + i) * 0.2) + ')';
+              ctx.fillRect(sx*S, sy*S, S, S);
+            }
+          }
+
+          // The bright star - pulses
+          const starBright = 0.4 + Math.sin(f * 0.008) * 0.3 + Math.max(0, Math.sin(f * 0.003) * 0.3);
+          const starX = 148, starY = 12;
+          ctx.fillStyle = 'rgba(255,240,200,' + starBright + ')';
+          ctx.beginPath(); ctx.arc(starX*S, starY*S, (3 + Math.sin(f*0.01)*1.5)*S, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = 'rgba(255,240,200,' + starBright*0.3 + ')';
+          ctx.beginPath(); ctx.arc(starX*S, starY*S, (8 + Math.sin(f*0.008)*3)*S, 0, Math.PI*2); ctx.fill();
+
+          // Desert ground
+          const groundY = 72;
+          ctx.fillStyle = '#1a1510';
+          ctx.fillRect(0, groundY*S, W, H);
+          ctx.fillStyle = '#211c14';
+          for (let i = 0; i < 30; i++) {
+            const dx = (i * 43 + 7) % (W/S);
+            ctx.fillRect(dx*S, (groundY + 1 + (i%3))*S, (4+i%3)*S, S);
+          }
+
+          // Shoe - phase in based on time
+          const shoePhase = Math.min(1, (f % 800) / 300);
+          const shoeAlpha = f % 800 < 100 ? (f % 800) / 100 : (f % 800 > 700 ? 1 - (f%800-700)/100 : 1);
+
+          if (shoePhase > 0) {
+            // Stone shoe silhouette
+            ctx.globalAlpha = shoeAlpha * 0.7;
+            ctx.fillStyle = '#2a2520';
+            ctx.beginPath();
+            ctx.moveTo(88*S, 70*S);
+            ctx.lineTo(92*S, 25*S);
+            ctx.lineTo(100*S, 18*S);
+            ctx.lineTo(115*S, 15*S);
+            ctx.lineTo(135*S, 15*S);
+            ctx.lineTo(150*S, 18*S);
+            ctx.lineTo(200*S, 35*S);
+            ctx.lineTo(210*S, 50*S);
+            ctx.lineTo(208*S, 65*S);
+            ctx.lineTo(200*S, 72*S);
+            ctx.lineTo(88*S, 72*S);
+            ctx.fill();
+
+            // Stone texture
+            ctx.fillStyle = '#332e25';
+            for (let i = 0; i < 20; i++) {
+              const tx = 95 + (i*7)%110, ty = 22 + (i*11)%45;
+              ctx.fillRect(tx*S, ty*S, (3+i%2)*S, (2+i%2)*S);
+            }
+
+            // Eyes - blink open progressively
+            const eyeProgress = Math.min(1, Math.max(0, (shoePhase - 0.3) / 0.5));
+            eyes.forEach((eye, i) => {
+              if (i / eyes.length > eyeProgress) return;
+              const blinkCycle = (f + eye.blinkOffset) % eye.blinkRate;
+              const isOpen = blinkCycle > 20;
+              const pupilX = Math.sin(f * 0.01 + eye.pupilDrift) * 0.7;
+
+              ctx.globalAlpha = shoeAlpha * 0.9;
+              ctx.fillStyle = '#f0e8c0';
+              ctx.beginPath();
+              ctx.ellipse(eye.x*S, eye.y*S, eye.size*S, (isOpen ? eye.size*0.8 : 0.3)*S, 0, 0, Math.PI*2);
+              ctx.fill();
+
+              if (isOpen) {
+                ctx.fillStyle = '#1a3a1a';
+                ctx.beginPath();
+                ctx.arc((eye.x + pupilX)*S, eye.y*S, eye.size*0.4*S, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc((eye.x + pupilX)*S, eye.y*S, eye.size*0.2*S, 0, Math.PI*2);
+                ctx.fill();
+              }
+            });
+
+            ctx.globalAlpha = 1;
+          }
+
+          // Two figures searching
+          const fig1X = 55 + Math.sin(f * 0.008) * 15;
+          const fig2X = 72 + Math.sin(f * 0.008 + 1) * 12;
+          const searching = f % 800 < 200;
+          drawFigure(fig1X, groundY - 3, searching);
+          drawFigure(fig2X, groundY - 3, searching);
+
+          // Pickaxe sparks when shoe is visible
+          if (shoePhase > 0.5 && f % 30 < 5) {
+            const sparkX = 90 + Math.random() * 80;
+            const sparkY = 40 + Math.random() * 25;
+            ctx.fillStyle = '#ffd700';
+            ctx.globalAlpha = shoeAlpha;
+            ctx.fillRect(sparkX*S, sparkY*S, S, S);
+            ctx.fillRect((sparkX+1)*S, (sparkY-1)*S, S, S);
+            ctx.fillRect((sparkX-1)*S, (sparkY+1)*S, S, S);
+            ctx.globalAlpha = 1;
+          }
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #e67e22", background: "#08060f", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#ffa040"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#e67e22"}
+        >
+          <canvas ref={canvasRef} width={570} height={180}
+            style={{ width: "100%", height: "auto", display: "block" }} />
+          <div style={{ padding: "12px 16px", borderTop: "1px solid #1a1510" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "8px" }}>
+              <div>
+                <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "20px", color: "#e8e8d0", letterSpacing: "2px" }}>BIGFOOT'S SHOE</div>
+                <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#888880", fontStyle: "italic", marginTop: "4px" }}>{synopsis}</div>
+              </div>
+              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <span style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#e67e22", background: "#e67e2215", padding: "2px 8px", border: "1px solid #e67e2240" }}>NOVEL</span>
+                <span style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#e67e22", background: "#e67e2222", padding: "4px 12px", border: "1px solid #e67e2255", letterSpacing: "1px" }}>READ</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     function EconAddendumBanner({ onClick }) {
       const canvasRef = React.useRef(null);
       useEffect(() => {
@@ -1591,10 +1765,10 @@
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           <SectionHeader title="Feed" subtitle="Everything, most recent first" />
           <LoneClownBanner onClick={() => { setSelectedArticle("lone-clown"); setPage("articles"); }} />
-          <EconAddendumBanner onClick={() => { setSelectedArticle("fifth-slice"); setPage("articles"); }} />
+          <EconAddendumBanner onClick={() => { setSelectedArticle("econ-series"); setPage("articles"); }} />
           {items.map(item => (
             <React.Fragment key={item.type+item.id}>
-            {item.id === "mystic-forest" ? <ForestBanner /> : (
+            {item.id === "mystic-forest" ? <ForestBanner /> : item.type === "novel" ? <BigfootShoeBanner synopsis={item.subtitle} onClick={() => setPage("novel")} /> : (
             <div className="feed-item" onClick={() => { if(item.type==="tool"){setSelectedTool(item.id);setPage("tools")} else if(item.type==="article"){setSelectedArticle(item.id);setPage("articles")} else{setPage("novel")} }} style={{ border: "1px solid #333366", padding: "20px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor=item.color} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
               <div className="feed-icon" style={{ width: "48px", height: "48px", background: item.color+"22", border: "2px solid "+item.color, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "14px", color: item.color, flexShrink: 0, textTransform: "uppercase" }}>{item.type==="tool"?"APP":item.type==="article"?"TXT":"FIC"}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -1638,12 +1812,67 @@
       );
     }
 
+    function EconSeriesPage({ articles, onSelect, goBack }) {
+      const econArticles = articles.filter(a => a.category === "Economics" && !a.comingSoon);
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
+          <div style={{ border: "2px solid #4a9aea", background: "linear-gradient(180deg, #0a0f1a 0%, #0f0f23 100%)", padding: "32px", textAlign: "center", marginBottom: "28px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "12px" }}>Article Series</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "36px", color: "#e8e8d0", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "8px" }}>Econ Addendum</h2>
+            <div style={{ maxWidth: "500px", margin: "0 auto", padding: "16px 0" }}>
+              <p style={{ fontFamily: "'Lora', serif", fontSize: "15px", fontStyle: "italic", color: "#a0a090", lineHeight: 1.7 }}>Economics gives you a small number of genuinely powerful mental tools. Most education either buries them under math or oversimplifies them into platitudes. These articles do neither.</p>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {econArticles.map((a, i) => (
+              <div key={a.id} onClick={() => onSelect(a.id)}
+                style={{ border: "1px solid #333366", padding: "16px 20px", cursor: "pointer", background: "#0f0f23", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "border-color 0.2s", gap: "12px" }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = "#4a9aea"}
+                onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
+              >
+                <div style={{ display: "flex", gap: "16px", alignItems: "baseline", flex: 1, minWidth: 0 }}>
+                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: "#4a9aea", flexShrink: 0 }}>{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <span style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>{a.title}</span>
+                    <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>{redact(a.subtitle)}</p>
+                  </div>
+                </div>
+                <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     function ArticlesPage({ content, selectedArticle, setSelectedArticle }) {
       const articles = content.articles || [];
-      const selected = selectedArticle ? articles.find(a => a.id === selectedArticle) : null;
+      const econArticles = articles.filter(a => a.category === "Economics" && !a.comingSoon);
+      const selected = selectedArticle === "econ-series" ? null : (selectedArticle ? articles.find(a => a.id === selectedArticle) : null);
+      const showEconSeries = selectedArticle === "econ-series";
       const { data: articleData, loading } = useJsonFile(selected && !selected.comingSoon ? selected.file : null);
-      if (selected && !selected.comingSoon && articleData) return <ArticleRenderer data={articleData} goBack={() => setSelectedArticle(null)} />;
+
+      // If viewing an econ article, find prev/next in series
+      const econIdx = selected ? econArticles.findIndex(a => a.id === selected.id) : -1;
+      const isEcon = econIdx >= 0;
+      const prevEcon = isEcon && econIdx > 0 ? econArticles[econIdx - 1] : null;
+      const nextEcon = isEcon && econIdx < econArticles.length - 1 ? econArticles[econIdx + 1] : null;
+
+      if (selected && !selected.comingSoon && articleData) return (
+        <div>
+          <ArticleRenderer data={articleData} goBack={() => setSelectedArticle(isEcon ? "econ-series" : null)} />
+          {isEcon && (
+            <div style={{ maxWidth: "720px", display: "flex", justifyContent: "space-between", marginTop: "20px", paddingTop: "16px", borderTop: "1px dashed #333366", gap: "12px", flexWrap: "wrap" }}>
+              {prevEcon ? <button onClick={() => { setSelectedArticle(prevEcon.id); window.scrollTo({top:0,behavior:"smooth"}); }} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", padding: 0, textAlign: "left" }}>{"\u2190 " + prevEcon.title}</button> : <span />}
+              <button onClick={() => { setSelectedArticle("econ-series"); window.scrollTo({top:0,behavior:"smooth"}); }} style={{ background: "none", border: "1px solid #333366", color: "#666680", fontFamily: "'VT323', monospace", fontSize: "13px", padding: "4px 12px", cursor: "pointer" }}>All Articles</button>
+              {nextEcon ? <button onClick={() => { setSelectedArticle(nextEcon.id); window.scrollTo({top:0,behavior:"smooth"}); }} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", padding: 0, textAlign: "right" }}>{nextEcon.title + " \u2192"}</button> : <span />}
+            </div>
+          )}
+        </div>
+      );
       if (selected && !selected.comingSoon && loading) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center", fontSize: "18px" }}>Loading...</div>;
+      if (showEconSeries) return <EconSeriesPage articles={articles} onSelect={id => { setSelectedArticle(id); window.scrollTo({top:0,behavior:"smooth"}); }} goBack={() => setSelectedArticle(null)} />;
       return (
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
