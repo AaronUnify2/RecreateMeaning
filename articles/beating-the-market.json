@@ -1,0 +1,35 @@
+{
+  "title": "Beating the Market",
+  "subtitle": "What it actually means and why most people can't",
+  "date": "2026-03-17",
+  "category": "Finance",
+  "readTime": "6 min",
+  "sections": [
+    { "type": "text", "content": "There's a difference between outperforming and beating the market, and the difference matters more than most investors realise." },
+    { "type": "text", "content": "Outperforming means getting a higher return than the index over some period. This can happen by chance. If you pick ten stocks at random from the All Ords, your portfolio will almost certainly perform differently from the index — sometimes better, sometimes worse. The index is a weighted average of everything. Any subset will deviate from the average. Coin flippers occasionally flip ten heads in a row. That doesn't make them skilled." },
+    { "type": "text", "content": "Beating the market means something harder: identifying stocks that are priced below their intrinsic value and buying them before the market corrects. This requires genuine skill or genuine information or both, and it requires doing it consistently enough that the pattern can't be explained by luck alone." },
+
+    { "type": "heading", "content": "The Coin Flip Room" },
+    { "type": "text", "content": "Imagine a room with ten thousand people. Each one flips a coin ten times. After ten rounds, roughly ten people will have flipped heads every single time. They are not skilled coin flippers. They are statistical inevitabilities." },
+    { "type": "text", "content": "The stock market has millions of participants, each making decisions over decades. Some of them will produce extraordinary returns. The question is whether those returns are the ten-heads-in-a-row of a large enough sample, or whether something else is going on." },
+    { "type": "text", "content": "Nassim Taleb put it bluntly: in a simulation of random trading, it's impossible not to have outperformers, even those with Buffett-like track records, if the sample is large enough. If markets are perfectly efficient, then every outperforming fund manager is a necessary product of chance. The successful ones get book deals. The unsuccessful ones close quietly and disappear from the data — which is called survivorship bias, and it's one of the reasons the past performance of funds looks better than reality." },
+
+    { "type": "heading", "content": "Alpha and Beta" },
+    { "type": "text", "content": "Finance has two measurements that attempt to separate luck from skill." },
+    { "type": "text", "content": "Beta measures how correlated a stock or fund is with the overall market. A beta of 1 means it moves with the market. Higher than 1 means it's more volatile — bigger swings in both directions. A fund with high beta might outperform in good years and underperform in bad years, but the outperformance isn't skill. It's just exposure to more risk." },
+    { "type": "text", "content": "Alpha measures the return generated above what you'd expect given the level of risk taken. Positive alpha means the fund did better than its risk profile would predict. This is the measurement that's supposed to capture skill — the extra return that can't be explained by simply taking on more market risk." },
+    { "type": "text", "content": "Here's what the data shows: the upper tail of alpha across all funds is slightly bigger than chance would predict. There are a few more high-alpha funds than random coin-flipping would produce. But the left tail — the funds with negative alpha — is far too large. There are many more terrible funds than chance alone would create." },
+    { "type": "text", "content": "Translation: a small number of fund managers probably have real skill. A large number of fund managers are deploying strategies that actively destroy value. And the majority are indistinguishable from chance." },
+
+    { "type": "heading", "content": "The Compounding Trap" },
+    { "type": "text", "content": "Even if you could identify a skilled fund manager, the structure of active management works against you." },
+    { "type": "text", "content": "Every trade the fund makes is a potential taxable event. Every sale of a winning position triggers a capital gain. Every rebalance, every reallocation, every strategic shift — each one shaves a small percentage off the top through transaction costs and tax drag. Over a year, these frictions are small. Over twenty years, they compound into a substantial handicap." },
+    { "type": "text", "content": "A buy-and-hold investor pays tax once — when they eventually sell. Everything in between grows untouched. The active trader pays tax continuously, and each payment removes money from the compounding pool permanently. The active trader doesn't just need to be right more often than the index — they need to be right by enough to overcome the accumulated cost of being active." },
+    { "type": "text", "content": "Most aren't. Most can't be. The math is unforgiving." },
+
+    { "type": "heading", "content": "So Why Do People Try?" },
+    { "type": "text", "content": "Because the handful who succeed become very, very rich, and very, very famous. Warren Buffett. Peter Lynch. Ray Dalio. Their names become synonymous with investing itself. Nobody writes books about the millions of fund managers who charged fees for decades and delivered less than an index fund would have provided for free." },
+    { "type": "text", "content": "Survivorship bias is not just a statistical concept. It's a narrative engine. It produces heroes, and heroes produce imitators, and imitators produce management fees. The entire active management industry runs on the existence of a few extraordinary performers whose success may or may not be replicable." },
+    { "type": "text", "content": "The next article examines what those extraordinary performers actually have in common — and it's not what most people think." }
+  ]
+}
