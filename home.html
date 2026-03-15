@@ -474,10 +474,242 @@
       );
     }
 
+    function CompoundSimViz() {
+      const [weekly, setWeekly] = useState(0);
+      const [years, setYears] = useState(5);
+      const rate = 0.07;
+
+      const calculate = (w, y) => {
+        if (w === 0) return Array(y + 1).fill(0);
+        const pts = [0];
+        let total = 0;
+        for (let yr = 1; yr <= y; yr++) {
+          for (let wk = 0; wk < 52; wk++) {
+            total += w;
+            total *= 1 + rate / 52;
+          }
+          pts.push(Math.round(total));
+        }
+        return pts;
+      };
+
+      const data = calculate(weekly, years);
+      const maxVal = Math.max(...data, 1);
+      const totalSaved = weekly * 52 * years;
+      const interest = data[years] - totalSaved;
+
+      const presets = [
+        { label: "$0", value: 0 },
+        { label: "$10", value: 10 },
+        { label: "$25", value: 25 },
+        { label: "$50", value: 50 }
+      ];
+
+      return (
+        <div style={{ border: "2px solid #333366", background: "#0a0a18", padding: "24px", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px", textAlign: "center" }}>The Compound Curve</div>
+
+          <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginBottom: "16px", flexWrap: "wrap" }}>
+            {presets.map(p => (
+              <button key={p.value} onClick={() => setWeekly(p.value)} style={{
+                background: weekly === p.value ? "#4a9aea" : "#12122a", border: "1px solid " + (weekly === p.value ? "#4a9aea" : "#333366"),
+                color: weekly === p.value ? "#fff" : "#888880", fontFamily: "'VT323', monospace", fontSize: "16px", padding: "6px 16px", cursor: "pointer", transition: "all 0.2s"
+              }}>{p.label}/week</button>
+            ))}
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginBottom: "20px", flexWrap: "wrap" }}>
+            {[5, 10, 20, 30].map(y => (
+              <button key={y} onClick={() => setYears(y)} style={{
+                background: years === y ? "#e67e22" : "#12122a", border: "1px solid " + (years === y ? "#e67e22" : "#333366"),
+                color: years === y ? "#fff" : "#888880", fontFamily: "'VT323', monospace", fontSize: "14px", padding: "4px 12px", cursor: "pointer", transition: "all 0.2s"
+              }}>{y} years</button>
+            ))}
+          </div>
+
+          <div style={{ height: "160px", display: "flex", alignItems: "flex-end", gap: "2px", padding: "0 4px", marginBottom: "4px" }}>
+            {data.map((val, i) => {
+              const h = maxVal > 0 ? (val / maxVal) * 100 : 0;
+              return (
+                <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", height: "100%" }}>
+                  <div style={{
+                    width: "100%", maxWidth: "28px", height: h + "%", minHeight: i === 0 && weekly === 0 ? "0px" : i === 0 ? "2px" : "0px",
+                    background: weekly === 0 ? "#333366" : "linear-gradient(180deg, #4a9aea, #2a6aaa)",
+                    border: h > 0 ? "1px solid " + (weekly === 0 ? "#444466" : "#5ab0ff") : "none", borderBottom: "none",
+                    transition: "height 0.5s ease"
+                  }} />
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ height: "2px", background: "#333366", marginBottom: "8px" }} />
+          <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "'VT323', monospace", fontSize: "11px", color: "#555560" }}>
+            <span>Year 0</span><span>Year {years}</span>
+          </div>
+
+          <div style={{ marginTop: "16px", display: "flex", justifyContent: "space-around", flexWrap: "wrap", gap: "12px" }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680" }}>TOTAL SAVED</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "22px", color: "#e8e8d0" }}>${totalSaved.toLocaleString()}</div>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680" }}>COMPOUND INTEREST</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "22px", color: interest > 0 ? "#4a9a4a" : "#555560" }}>${interest > 0 ? interest.toLocaleString() : "0"}</div>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680" }}>TOTAL VALUE</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "22px", color: data[years] > 0 ? "#e67e22" : "#555560" }}>${data[years] > 0 ? data[years].toLocaleString() : "0"}</div>
+            </div>
+          </div>
+
+          {weekly === 0 && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #aa3333", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              This is zero. Zero for one year and zero for thirty years look exactly the same. Nothing compounds from nothing. Click any amount to start.
+            </div>
+          )}
+          {weekly === 10 && years >= 20 && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              Ten dollars a week. A coffee and a sandwich. Look at what the curve does with that over {years} years. This is why zero and ten are different universes.
+            </div>
+          )}
+          {weekly === 50 && years >= 20 && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #4a9a4a", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              The interest alone is now larger than what you put in. The curve is doing the work. This is what compound growth looks like when you give it time. All it needed was a start.
+            </div>
+          )}
+          {weekly > 0 && years === 30 && (
+            <div style={{ marginTop: "16px", padding: "12px", background: "#1a1520", border: "1px dashed #e67e22", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic" }}>
+              Thirty years ago someone started putting ${weekly} a week aside. They probably felt silly at the time. They don't feel silly now.
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function RippleSimViz() {
+      const canvasRef = React.useRef(null);
+      const [activeRing, setActiveRing] = useState(-1);
+      const frameRef = React.useRef(0);
+      const ringLabels = ["Source", "Inner Circle", "Early Adopters", "Mainstream", "Last to Know"];
+      const ringColors = ["#ffd700", "#4a9aea", "#4a9a4a", "#c0a060", "#aa3333"];
+      const ringDescs = [
+        "The lab. The boardroom. The group chat. You made it or you were in the room when it was made.",
+        "Journalists, analysts, the person who follows the right accounts. Still early. Best positions still available.",
+        "The trend piece. The conference talk. Information is public now. Acting on it still helps, but the advantage is shrinking.",
+        "The headline. The evening news. The thing everyone's talking about. It's priced in. You're not early.",
+        "The dinner party, six months later. \"Did you know that...\" Yes. Everyone knew."
+      ];
+
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 280;
+        let anim;
+
+        function render() {
+          frameRef.current++;
+          const f = frameRef.current;
+          ctx.fillStyle = '#0a0a18';
+          ctx.fillRect(0, 0, W, H);
+
+          const cx = W / 2, cy = H / 2;
+          const maxR = 120;
+
+          // Draw rings from outside in
+          for (let i = 4; i >= 0; i--) {
+            const r = maxR * ((i + 1) / 5);
+            const isActive = activeRing === i;
+            const pulseAmt = isActive ? 4 + Math.sin(f * 0.05) * 3 : 0;
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, r + pulseAmt, 0, Math.PI * 2);
+            ctx.fillStyle = ringColors[i] + (isActive ? "33" : "11");
+            ctx.fill();
+            ctx.strokeStyle = ringColors[i] + (isActive ? "aa" : "44");
+            ctx.lineWidth = isActive ? 2 : 1;
+            ctx.stroke();
+          }
+
+          // Animated ripple wave
+          const waveR = ((f * 0.8) % (maxR + 40));
+          if (activeRing === -1) {
+            ctx.beginPath();
+            ctx.arc(cx, cy, waveR, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255,215,0,' + Math.max(0, 1 - waveR / (maxR + 40)) * 0.5 + ')';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          }
+
+          // Center dot
+          ctx.beginPath();
+          ctx.arc(cx, cy, 5 + Math.sin(f * 0.04) * 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffd700';
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          // Little figures at each ring
+          for (let i = 0; i < 5; i++) {
+            const ringR = maxR * ((i + 1) / 5) * 0.75;
+            const count = i === 0 ? 1 : (i + 1) * 2;
+            for (let j = 0; j < count; j++) {
+              const angle = (j / count) * Math.PI * 2 + i * 0.5;
+              const fx = cx + Math.cos(angle) * ringR;
+              const fy = cy + Math.sin(angle) * ringR;
+              ctx.fillStyle = ringColors[i] + (activeRing === i ? "cc" : "66");
+              ctx.fillRect(fx - 2, fy - 4, 4, 6);
+              ctx.fillRect(fx - 1, fy - 6, 2, 3);
+            }
+          }
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, [activeRing]);
+
+      return (
+        <div style={{ border: "2px solid #333366", background: "#0a0a18", padding: "24px", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px", textAlign: "center" }}>The Cantillon Ripple</div>
+
+          <canvas ref={canvasRef} width={570} height={280}
+            style={{ width: "100%", height: "auto", display: "block", marginBottom: "16px" }} />
+
+          <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginBottom: "16px", flexWrap: "wrap" }}>
+            {ringLabels.map((label, i) => (
+              <button key={i}
+                onClick={() => setActiveRing(activeRing === i ? -1 : i)}
+                style={{
+                  background: activeRing === i ? ringColors[i] + "33" : "#12122a",
+                  border: "1px solid " + (activeRing === i ? ringColors[i] : "#333366"),
+                  color: activeRing === i ? ringColors[i] : "#888880",
+                  fontFamily: "'VT323', monospace", fontSize: "13px", padding: "6px 12px", cursor: "pointer", transition: "all 0.2s"
+                }}
+              >{label}</button>
+            ))}
+          </div>
+
+          {activeRing >= 0 && (
+            <div style={{ padding: "12px", background: "#1a1520", border: "1px dashed " + ringColors[activeRing], fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic", transition: "all 0.3s" }}>
+              {ringDescs[activeRing]}
+            </div>
+          )}
+
+          {activeRing === -1 && (
+            <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "12px", color: "#555560", textAlign: "center" }}>
+              Click a ring to see where you might be standing.
+            </div>
+          )}
+        </div>
+      );
+    }
+
     const ARTICLE_VIZ_MODULES = {
       "pizza-slider": () => <PizzaSliderViz />,
       "oven-sim": () => <OvenSimViz />,
-      "hegemonica-system": () => <HegemmonicaSystemViz />
+      "hegemonica-system": () => <HegemmonicaSystemViz />,
+      "compound-sim": () => <CompoundSimViz />,
+      "ripple-sim": () => <RippleSimViz />
     };
 
     function RenderArticleSection({ section }) {
