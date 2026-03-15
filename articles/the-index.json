@@ -1,0 +1,40 @@
+{
+  "title": "The Index",
+  "subtitle": "Why doing nothing beats almost everyone",
+  "date": "2026-03-16",
+  "category": "Finance",
+  "readTime": "5 min",
+  "sections": [
+    { "type": "text", "content": "Here is a fact that should embarrass the entire financial industry: a strategy that requires no skill, no research, no timing, no intuition, and no effort outperforms the majority of professionally managed investment funds over any meaningful time horizon." },
+    { "type": "text", "content": "The strategy is this: buy an index fund. Hold it. Do nothing else." },
+    { "type": "text", "content": "An index fund attempts to replicate the overall return of the stock market. In Australia, that's the All Ords. Globally, that's something like the FTSE All-World or the MSCI World. The returns of these indexes tend to be positive over time — not every year, not every month, but over decades, reliably and substantially positive. Positive enough to compound into serious wealth for anyone patient enough to sit still." },
+
+    { "type": "heading", "content": "The Scoreboard" },
+    { "type": "text", "content": "Metanalysis has consistently shown that the average actively managed fund underperforms the index. Not by a little. Not in edge cases. On average, across decades, across markets, across every analysis anyone has bothered to run, paying a professional to pick stocks produces worse results than buying the whole market and going for a walk." },
+    { "type": "text", "content": "A simple analysis of 80 randomly selected ETFs on the ASX over five years shows most of them distributed to the left of the All Ords return. Only about a quarter outperformed. Factor in dividends and management fees and the picture gets worse. Run the same analysis across a different five-year window and the numbers shift slightly but the conclusion doesn't." },
+    { "type": "text", "content": "This is not controversial. This is the single most replicated finding in finance. The majority of people paid to beat the market fail to beat the market. The majority of strategies designed to beat the market fail to beat the market. The market, on average, beats the people trying to beat it." },
+
+    { "type": "heading", "content": "What You're Actually Buying" },
+    { "type": "text", "content": "People think of index funds as passive — you buy them and nothing happens. This is mostly true, but there's a subtlety worth understanding." },
+    { "type": "text", "content": "An index fund tracks a weighted average. Companies in the index are weighted by market capitalisation — bigger companies make up a larger share of the index. When a company's stock price rises, its weight in the index increases. When it falls, its weight decreases. When a company grows large enough, it enters the index. When it shrinks below the threshold, it drops out." },
+    { "type": "text", "content": "This means the index fund is constantly, quietly, making adjustments. It's selling a little of what's declining and buying a little of what's growing. It's removing companies that have failed and adding companies that have succeeded. It is, in a very real sense, trading — just slowly, systematically, and with fees so low they're almost invisible." },
+    { "type": "text", "content": "You get the benefit of rebalancing without the cost of a fund manager. The market itself is doing the stock picking, and it charges you almost nothing for the service." },
+
+    { "type": "heading", "content": "The Tax Problem Nobody Talks About" },
+    { "type": "text", "content": "Even if a fund manager could consistently pick winners — and most can't — they face a structural disadvantage that has nothing to do with skill: every time they sell a stock at a profit, they trigger a taxable event." },
+    { "type": "text", "content": "Active trading means active tax bills. Every profitable sale is a capital gain. Short-term gains are taxed at your marginal rate. Transaction costs compound. Brokerage fees add up. The fund manager doesn't just need to beat the market — they need to beat the market by enough to cover their management fee, their transaction costs, AND the tax drag created by their trading activity." },
+    { "type": "text", "content": "An index fund holder who buys and holds triggers almost none of this. The shares sit there, compounding, untaxed, year after year. The tax on the gain is deferred until you sell, which could be decades from now. In the meantime, the money that would have gone to tax is still invested, still compounding, still growing." },
+    { "type": "text", "content": "This is not a small advantage. Over twenty or thirty years, the difference between a strategy that trades frequently and one that holds quietly can be enormous — not because of returns, but because of what you keep." },
+
+    { "type": "heading", "content": "The Global Version" },
+    { "type": "text", "content": "If the logic of index investing is sound — and the evidence overwhelmingly says it is — then the question becomes: which index?" },
+    { "type": "text", "content": "An Australian index gives you exposure to the Australian market, which is heavily weighted toward banks and mining companies. It's fine. It's also a small fraction of the global economy." },
+    { "type": "text", "content": "A global index fund gives you exposure to the largest companies on earth, across every major economy, weighted by market cap. You own a slice of American tech, European pharmaceuticals, Japanese manufacturing, and everything in between. When one economy struggles, another picks up the slack. When one sector declines, others rise. The diversification isn't just across companies — it's across countries, currencies, and economic cycles." },
+    { "type": "text", "content": "This is economies of scale applied to investing. The bigger and more diversified the basket, the more resilient the return. The same principle that makes a large furniture store cheaper per unit makes a global index fund safer per dollar. You're spreading your risk across the entire productive capacity of the developed world." },
+
+    { "type": "heading", "content": "The Uncomfortable Conclusion" },
+    { "type": "text", "content": "The best investment strategy available to most people is the least interesting one. Buy a broad, low-fee global index fund. Hold it for decades. Reinvest the dividends. Don't check it every day. Don't sell when it drops. Don't buy more when it spikes. Just hold." },
+    { "type": "text", "content": "This will outperform the majority of professional fund managers, the majority of trading strategies, and the majority of financial advice you will ever receive. Not because the strategy is clever — because the strategy is patient, cheap, and tax-efficient, and those three things matter more than cleverness over long time horizons." },
+    { "type": "text", "content": "Everything that follows in this series is about the exceptions — the rare cases where skill, information, or behavioral insight might justify doing something other than this. But before you read any of that, understand the baseline: doing nothing, done well, is very hard to beat." }
+  ]
+}
