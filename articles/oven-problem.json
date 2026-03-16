@@ -1,9 +1,9 @@
 {
   "title": "The Oven Problem",
-  "subtitle": "Why the 6th dinner guest ruins everything",
+  "subtitle": "Why the 7th dinner guest ruins everything",
   "date": "2026-03-15",
   "category": "Economics",
-  "readTime": "6 min",
+  "readTime": "9 min",
   "sections": [
     { "type": "text", "content": "You're cooking dinner for four people. You've got a lasagna in the oven, a salad on the counter, and garlic bread warming on the top rack. Someone calls and asks if they can bring a friend. Sure. One more portion of lasagna is nothing — you already made the sauce, already grated the cheese, already heated the oven. The additional cost of feeding a fifth person is close to zero. This is the best deal in economics and you don't even know you're getting it." },
     { "type": "text", "content": "Then someone else calls. Can they bring two friends? You look at the lasagna dish. You look at the oven. You do the math that isn't really math — it's spatial reasoning and mild panic — and you realise that the dish you've made feeds six at a push. Seven is a new dish. Seven means a second round of prep, a second bake, another forty-five minutes, and a kitchen that now has two timelines running simultaneously." },
@@ -34,6 +34,18 @@
     { "type": "text", "content": "But scaling up means crossing a capital threshold, and crossing a capital threshold means your costs spike before your revenue catches up. Many businesses have gone bankrupt not because they failed, but because they succeeded too fast and expanded before the economics supported it." },
     { "type": "text", "content": "The alternative — which is less exciting and therefore less popular — is to ask whether you've fully exploited the economies of scale you already have. Is your current oven actually full, or is it full of things that don't need to be in there? Are you batch-cooking efficiently, or are you making three separate dishes when one big one would feed everyone? Are you doing seven tasks when four of them could be combined?" },
     { "type": "text", "content": "Before you buy the second oven, make sure you've used all the space in the first one." },
+
+    { "type": "heading", "content": "The Colony Solution" },
+    { "type": "text", "content": "Nature solved this problem millions of years ago, and it didn't design a bigger oven. It built a second identical one." },
+    { "type": "text", "content": "An ant colony doesn't scale by making bigger ants. It scales by making more ants of the same size, organised into specialised groups that run in parallel. Fire ants survive floods not because any individual ant is waterproof but because thousands of identical ants link together to form a raft. The resilience comes from redundancy, not from size." },
+    { "type": "text", "content": "An ant with one antenna can smell. An ant with two antennas can navigate — it can sense the direction a smell is coming from. That's a capital threshold crossed not by building a better antenna but by duplicating a working one. The second antenna doesn't do anything new. It does the same thing as the first, from a slightly different position, and the combination produces a capability that neither could achieve alone." },
+    { "type": "text", "content": "The lesson for scaling is this: when a module hits its limit, the answer is often not a bigger module. It's a second identical module running in parallel." },
+    { "type": "text", "content": "Consider a workstation that performs at 30% capacity with one worker, 70% with two, 85% with three, 100% with four, and 90% with five — that fifth worker is getting in the way, and the station has hit diseconomies of scale. The instinct is to redesign the station to accommodate ten people. But redesigning a station is expensive, slow, and introduces unknown risks. The station works. Don't redesign it. Duplicate it." },
+    { "type": "text", "content": "Two identical stations with three workers on one and two on the other gives you more total output than one overloaded station with five. And you've gained something beyond throughput — you've gained redundancy." },
+    { "type": "text", "content": "When one station goes down for maintenance or part failure, the other keeps running. The system limps instead of stopping. In a single-station setup, any failure is a total failure. In a parallel setup, any failure is a partial failure. That's the difference between a bad day and a catastrophe." },
+    { "type": "text", "content": "You can also run one station as a training station. New workers build experience on the second station without reducing the output of the primary one. They make their mistakes, learn the process, and develop competence in an environment where their learning curve doesn't cost you production. When they're ready, they move to the primary station or the two stations balance their loads." },
+    { "type": "text", "content": "And here's the practical truth that makes this work: it is far easier to replicate a station that's already working than to design a new one that efficiently accommodates twice as many people. The working station is a proven system. You know its costs, its output, its quirks, its failure modes. Copying it is a known operation. Redesigning it is a gamble." },
+    { "type": "text", "content": "Nature doesn't build bigger ants. It builds more ants and lets the colony figure out the rest. When you hit the wall, consider doing the same." },
 
     { "type": "heading", "content": "The Dinner Party" },
     { "type": "text", "content": "Back to dinner. Your lasagna feeds six. Guest seven needs a whole new batch. But here's the question you should be asking: does guest seven actually need lasagna?" },
