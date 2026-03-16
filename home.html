@@ -795,7 +795,7 @@
               {topHalf > bottomHalf && counts.Serendipity > counts.Fruition && "Your results are clustering in Serendipity. You're working with good people and the system is rewarding you for listening to them."}
               {topHalf > bottomHalf && counts.Fruition >= counts.Serendipity && "Clustering in the top half. Your model of the system is sound and your interventions are landing where you expect them to."}
               {bottomHalf > topHalf && counts.Mistake > counts.Sabotage && "Clustering in Mistake. Your interventions are well-intentioned but your model of the system is incomplete. Slow down. Observe more. Talk to practitioners."}
-              {bottomHalf > topHalf && counts.Sabotage >= counts.Mistake && "Clustering in Sabotage. Either you are surrounded by saboteurs, or you should read the next section very carefully."}
+              {bottomHalf > topHalf && counts.Sabotage >= counts.Mistake && "Clustering in Sabotage. You haven't gained the trust of the untrustworthy people in the system. They are feeding you incorrect information."}
               {topHalf === bottomHalf && "Evenly split. You're learning. Keep plotting. The pattern will emerge."}
             </div>
           )}
