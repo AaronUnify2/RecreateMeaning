@@ -704,12 +704,118 @@
       );
     }
 
+    function InterventionQuadrantViz() {
+      const [points, setPoints] = useState([]);
+      const [hoveredQ, setHoveredQ] = useState(null);
+      const boxSize = 280;
+      const half = boxSize / 2;
+
+      const addPoint = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * boxSize;
+        const y = ((e.clientY - rect.top) / rect.height) * boxSize;
+        const qx = x >= half ? "expected" : "unexpected";
+        const qy = y <= half ? "success" : "failure";
+        const label = qy === "success" && qx === "expected" ? "Fruition" : qy === "success" && qx === "unexpected" ? "Serendipity" : qy === "failure" && qx === "unexpected" ? "Mistake" : "Sabotage";
+        setPoints(p => [...p, { x, y, label, id: Date.now() }]);
+      };
+
+      const quadrants = [
+        { name: "Serendipity", sub: "Success, Unexpected", color: "#4a9aea", x: 0, y: 0 },
+        { name: "Fruition", sub: "Success, Expected", color: "#4a9a4a", x: half, y: 0 },
+        { name: "Mistake", sub: "Failure, Unexpected", color: "#e6a030", x: 0, y: half },
+        { name: "Sabotage", sub: "Failure, Expected", color: "#aa3333", x: half, y: half }
+      ];
+
+      const counts = { Fruition: 0, Serendipity: 0, Mistake: 0, Sabotage: 0 };
+      points.forEach(p => counts[p.label]++);
+      const total = points.length;
+      const topHalf = counts.Fruition + counts.Serendipity;
+      const bottomHalf = counts.Mistake + counts.Sabotage;
+
+      return (
+        <div style={{ border: "2px solid #333366", background: "#0a0a18", padding: "24px", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px", textAlign: "center" }}>Feedback Quadrant</div>
+          <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "12px", color: "#666680", textAlign: "center", marginBottom: "16px" }}>Click to plot your interventions. Where do they cluster?</div>
+
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px" }}>
+            <div onClick={addPoint} style={{ width: boxSize + "px", height: boxSize + "px", position: "relative", cursor: "crosshair", border: "1px solid #444466" }}>
+              {quadrants.map((q, i) => (
+                <div key={i}
+                  onMouseEnter={() => setHoveredQ(q.name)}
+                  onMouseLeave={() => setHoveredQ(null)}
+                  style={{
+                    position: "absolute", left: q.x, top: q.y, width: half, height: half,
+                    background: q.color + (hoveredQ === q.name ? "33" : "15"),
+                    borderRight: q.x === 0 ? "1px solid #444466" : "none",
+                    borderBottom: q.y === 0 ? "1px solid #444466" : "none",
+                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                    transition: "background 0.2s"
+                  }}>
+                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: q.color, letterSpacing: "1px", opacity: 0.8 }}>{q.name}</div>
+                  <div style={{ fontFamily: "'VT323', monospace", fontSize: "10px", color: q.color, opacity: 0.5 }}>{q.sub}</div>
+                </div>
+              ))}
+
+              {/* Axis labels */}
+              <div style={{ position: "absolute", top: "-18px", left: half - 20, fontFamily: "'VT323', monospace", fontSize: "12px", color: "#4a9a4a", letterSpacing: "1px" }}>SUCCESS</div>
+              <div style={{ position: "absolute", bottom: "-18px", left: half - 16, fontFamily: "'VT323', monospace", fontSize: "12px", color: "#aa3333", letterSpacing: "1px" }}>FAILURE</div>
+              <div style={{ position: "absolute", left: "-60px", top: half - 8, fontFamily: "'VT323', monospace", fontSize: "11px", color: "#e6a030", letterSpacing: "1px" }}>UNEXPECTED</div>
+              <div style={{ position: "absolute", right: "-52px", top: half - 8, fontFamily: "'VT323', monospace", fontSize: "11px", color: "#4a9a4a", letterSpacing: "1px" }}>EXPECTED</div>
+
+              {/* Diagonal line */}
+              <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
+                <line x1="0" y1={boxSize} x2={boxSize} y2="0" stroke="#ffffff15" strokeWidth="1" strokeDasharray="4,4" />
+              </svg>
+
+              {/* Points */}
+              {points.map(p => (
+                <div key={p.id} style={{
+                  position: "absolute", left: p.x - 4, top: p.y - 4, width: 8, height: 8, borderRadius: "50%",
+                  background: quadrants.find(q => q.name === p.label)?.color || "#fff",
+                  border: "1px solid rgba(255,255,255,0.5)", pointerEvents: "none",
+                  boxShadow: "0 0 6px " + (quadrants.find(q => q.name === p.label)?.color || "#fff") + "66"
+                }} />
+              ))}
+            </div>
+          </div>
+
+          {total > 0 && (
+            <div style={{ display: "flex", justifyContent: "center", gap: "16px", flexWrap: "wrap", marginBottom: "12px" }}>
+              {Object.entries(counts).filter(([,v]) => v > 0).map(([k,v]) => (
+                <div key={k} style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: quadrants.find(q => q.name === k)?.color }}>
+                  {k}: {v}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {total >= 3 && (
+            <div style={{ padding: "12px", background: "#1a1520", border: "1px dashed " + (topHalf > bottomHalf ? "#4a9a4a" : bottomHalf > topHalf ? "#aa3333" : "#e67e22"), fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#c0a060", textAlign: "center", fontStyle: "italic", marginBottom: "12px" }}>
+              {topHalf > bottomHalf && counts.Serendipity > counts.Fruition && "Your results are clustering in Serendipity. You're working with good people and the system is rewarding you for listening to them."}
+              {topHalf > bottomHalf && counts.Fruition >= counts.Serendipity && "Clustering in the top half. Your model of the system is sound and your interventions are landing where you expect them to."}
+              {bottomHalf > topHalf && counts.Mistake > counts.Sabotage && "Clustering in Mistake. Your interventions are well-intentioned but your model of the system is incomplete. Slow down. Observe more. Talk to practitioners."}
+              {bottomHalf > topHalf && counts.Sabotage >= counts.Mistake && "Clustering in Sabotage. Either you are surrounded by saboteurs, or you should read the next section very carefully."}
+              {topHalf === bottomHalf && "Evenly split. You're learning. Keep plotting. The pattern will emerge."}
+            </div>
+          )}
+
+          {total > 0 && (
+            <div style={{ textAlign: "center" }}>
+              <button onClick={() => setPoints([])} style={{ background: "none", border: "1px solid #333366", color: "#666680", fontFamily: "'VT323', monospace", fontSize: "13px", padding: "4px 16px", cursor: "pointer" }}>Clear</button>
+            </div>
+          )}
+        </div>
+      );
+    }
+
     const ARTICLE_VIZ_MODULES = {
       "pizza-slider": () => <PizzaSliderViz />,
       "oven-sim": () => <OvenSimViz />,
       "hegemonica-system": () => <HegemmonicaSystemViz />,
       "compound-sim": () => <CompoundSimViz />,
-      "ripple-sim": () => <RippleSimViz />
+      "ripple-sim": () => <RippleSimViz />,
+      "intervention-quadrant": () => <InterventionQuadrantViz />
     };
 
     function RenderArticleSection({ section }) {
