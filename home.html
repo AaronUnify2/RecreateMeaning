@@ -2058,7 +2058,7 @@
     }
 
     function ClipboardBanner({ onClick }) {
-      const canvasRef = React.useRef(null);
+      const scrollRef = React.useRef(null);
       const [lines, setLines] = useState([]);
       const [phase, setPhase] = useState(0);
 
@@ -2069,12 +2069,12 @@
         { text: "> STORAGE: OK", delay: 1600, color: "#666" },
         { text: "> CLIPBOARD: 1 SLOT", delay: 2200, color: "#aa3333" },
         { text: "", delay: 2600, color: "#666" },
-        { text: "> ⚠ CRITICAL BOTTLENECK DETECTED", delay: 2800, color: "#e67e22" },
+        { text: "> \u26A0 CRITICAL BOTTLENECK DETECTED", delay: 2800, color: "#e67e22" },
         { text: "> FORTY YEARS OF CONSTRAINED OUTPUT", delay: 3400, color: "#e67e22" },
         { text: "> ESTIMATED DAILY LOSS: 10,000 BOOKS", delay: 4000, color: "#aa3333" },
         { text: "", delay: 4400, color: "#666" },
         { text: "> DEPLOYING SOLUTION...", delay: 4600, color: "#c8f53c" },
-        { text: "> CLIPBOARD SLOTS: 1 → 20", delay: 5200, color: "#c8f53c" },
+        { text: "> CLIPBOARD SLOTS: 1 \u2192 20", delay: 5200, color: "#c8f53c" },
         { text: "> THROUGHPUT INCREASE: 2000%", delay: 5800, color: "#c8f53c" },
         { text: "> MOORE'S LAW: EXCEEDED", delay: 6400, color: "#c8f53c" },
         { text: "", delay: 6800, color: "#666" },
@@ -2097,16 +2097,22 @@
         return () => timers.forEach(clearTimeout);
       }, [phase]);
 
+      useEffect(() => {
+        if (scrollRef.current) {
+          scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+      }, [lines]);
+
       return (
         <div onClick={onClick}
           style={{ display: "block", border: "2px solid #c8f53c", background: "#0a0a0a", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
           onMouseEnter={e => e.currentTarget.style.borderColor = "#e0ff60"}
           onMouseLeave={e => e.currentTarget.style.borderColor = "#c8f53c"}
         >
-          <div style={{ padding: "16px", minHeight: "160px", fontFamily: "'VT323', monospace", fontSize: "13px", lineHeight: 1.6, overflow: "hidden" }}>
+          <div ref={scrollRef} style={{ padding: "16px", height: "160px", overflowY: "auto", fontFamily: "'VT323', monospace", fontSize: "13px", lineHeight: 1.6 }}>
             <div style={{ marginBottom: "8px", fontFamily: "'VT323', monospace", fontSize: "11px", color: "#333", letterSpacing: "1px" }}>POST_IDEALIST_SYSTEMS v2.0.26</div>
             {lines.map((line, i) => (
-              <div key={i + "-" + phase} style={{ color: line.color, minHeight: line.text ? "auto" : "12px", animation: "none" }}>
+              <div key={i + "-" + phase} style={{ color: line.color, minHeight: line.text ? "auto" : "12px" }}>
                 {line.text}
                 {i === lines.length - 1 && line.text && <span style={{ animation: "blink 1s step-end infinite", borderRight: "2px solid " + line.color }}> </span>}
               </div>
@@ -2146,13 +2152,14 @@
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           <SectionHeader title="Feed" subtitle="Everything, most recent first" />
+          <ClipboardBanner onClick={() => { setSelectedTool("clipboard"); setPage("tools"); }} />
           <LoneClownBanner onClick={() => { setSelectedArticle("lone-clown"); setPage("articles"); }} />
           <EconAddendumBanner onClick={() => { setSelectedArticle("econ-series"); setPage("articles"); }} />
           <FinanceBanner onClick={() => { setSelectedArticle("finance-series"); setPage("articles"); }} />
           <StrategyBanner onClick={() => { setSelectedArticle("strategy-series"); setPage("articles"); }} />
           {items.map(item => (
             <React.Fragment key={item.type+item.id}>
-            {item.id === "mystic-forest" ? <ForestBanner /> : item.type === "novel" ? <BigfootShoeBanner synopsis={item.subtitle} onClick={() => setPage("novel")} /> : item.id === "clipboard" ? <ClipboardBanner onClick={() => { setSelectedTool("clipboard"); setPage("tools"); }} /> : (
+            {item.id === "mystic-forest" ? <ForestBanner /> : item.type === "novel" ? <BigfootShoeBanner synopsis={item.subtitle} onClick={() => setPage("novel")} /> : item.id === "clipboard" ? null : (
             <div className="feed-item" onClick={() => { if(item.type==="tool"){setSelectedTool(item.id);setPage("tools")} else if(item.type==="article"){setSelectedArticle(item.id);setPage("articles")} else{setPage("novel")} }} style={{ border: "1px solid #333366", padding: "20px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor=item.color} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
               <div className="feed-icon" style={{ width: "48px", height: "48px", background: item.color+"22", border: "2px solid "+item.color, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "14px", color: item.color, flexShrink: 0, textTransform: "uppercase" }}>{item.type==="tool"?"APP":item.type==="article"?"TXT":"FIC"}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
