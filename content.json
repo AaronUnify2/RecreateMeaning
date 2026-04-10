@@ -14,7 +14,7 @@
     { "id": "novelPlanner", "title": "Novel Planner", "tagline": "Software for novel planning", "date": "2025-11-01", "color": "#e67e22", "file": "tools/novelPlanner.json" },
     { "id": "tommyspace", "title": "TommySpace", "tagline": "Explore the solar system to learn the names of the planets", "date": "2025-10-01", "color": "#8e44ad", "file": "tools/tommyspace.json" },
     { "id": "mystic-forest", "title": "Mystic Forest Walker", "tagline": "A pixel-art RPG adventure in your browser", "date": "2026-02-01", "color": "#2e7d32", "file": "tools/mystic-forest.json", "hideFeed": true },
-    { "id": "clipboard", "title": "The Clipboard", "tagline": "A 20x increase in computational power", "date": "2026-04-08", "color": "#c8f53c", "file": "tools/clipboard.json" }
+    { "id": "clipboard", "title": "The Clipboard", "tagline": "A 20x increase in computational power", "date": "2026-04-08", "color": "#8aac1e", "file": "tools/clipboard.json" }
   ],
   "articles": [
     { "id": "origin-of-ideas", "title": "On the Origin of Ideas...", "subtitle": "A normal article", "date": "2022-01-04", "category": "Essay", "file": "articles/origin-of-ideas.json" },
