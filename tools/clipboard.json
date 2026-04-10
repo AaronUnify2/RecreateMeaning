@@ -11,16 +11,16 @@
   "sections": [
     { "type": "heading", "content": "The Bottleneck" },
     { "type": "text", "content": "For the entire history of personal computing, one limitation has been hiding in plain sight. Every machine you have ever used — from the earliest desktop to the most advanced laptop — has had access to exactly one clipboard slot." },
-    { "type": "text", "content": "One. The computer can remember one thing at a time. You copy something. Then you copy something else. The first thing is gone. It has been overwritten by the second thing, which will shortly be overwritten by the third thing, and the cycle continues until the heat death of the universe or until you close the tab, whichever comes first." },
-    { "type": "text", "content": "This is a hardware-level constraint that has quietly crippled knowledge work for forty years. It is the reason you Alt-Tab between windows six times to complete a task that should take one. It is the reason you paste something into a temporary notepad document so you won't lose it. It is the reason you mutter \"wait, what was that thing I just copied\" at least once a day, every day, for the rest of your working life." },
+    { "type": "text", "content": "One. The computer can only remember one thing at a time. You copy something. Then you copy something else. The first thing is gone. It has been overwritten by the second thing, which will shortly be overwritten by the third thing, and the cycle continues. Scientists have estimated that every day the equivalent of 10,000 books is lost due to this technological shortfall. That's the burning of the Library of Alexandria and it happens every day." },
+    { "type": "text", "content": "This is a hardware-level constraint that has quietly crippled knowledge work, and perhaps society itself, for forty years. It is the reason you Alt-Tab between windows six times to complete a task that should take one. It is the reason you are forced to paste something into a temporary notepad document so you won't suffer the humiliation of losing it. It is the reason you mutter \"wait, what was that thing I just copied\" at least once a day, every day, for the rest of your working life." },
     { "type": "text", "content": "We have been computing under the yoke of a single clipboard for so long that we have stopped noticing the yoke. We have built our workflows around the limitation and called the workarounds \"productivity.\" We have accepted mediocrity as the natural order." },
     { "type": "text", "content": "I am here to tell you that the natural order has changed." },
 
     { "type": "heading", "content": "The Breakthrough" },
     { "type": "text", "content": "After months of research, countless late nights, and a modest amount of interpersonal conflict with people who did not share my vision, I am proud to unveil a solution so elegant in its simplicity that the industry will struggle to explain why nobody built it sooner." },
     { "type": "text", "content": "The Clipboard. Twenty slots. Each one persistent. Each one independent. Each one a place where you can keep something — a name, a link, a phone number, a code snippet, a phrase you keep having to retype — without fear that your next copy operation will destroy it." },
-    { "type": "text", "content": "Twenty slots. Compared to one. The math is not difficult. This is a twentyfold increase in clipboard capacity, which, if we define computational power as \"things the computer can remember for you,\" represents a 2000% improvement in raw throughput. Moore's Law suggested this kind of gain should take approximately fifteen years. We have achieved it in an afternoon." },
-    { "type": "text", "content": "I invite peer review from the academic community. I welcome skepticism from the incumbents. I expect pushback from vendors whose business models depend on the artificial scarcity of clipboard real estate. Let them come. The data speaks for itself." },
+    { "type": "text", "content": "Twenty slots. Compared to one. The math is not difficult but it is compelling. This is a twentyfold increase in clipboard capacity, which, if we define computational power as \"things the computer can remember for you,\" represents a 2000% improvement in raw throughput. Moore's Law suggested this kind of gain should take approximately fifteen years. We have achieved it in an afternoon." },
+    { "type": "text", "content": "I invite peer review from the academic community. I welcome skepticism from the incumbents. I expect pushback from vendors whose business models depend on the artificial scarcity of clipboard real estate. Let them come. The data speaks for itself. I am ready for this fight." },
 
     { "type": "heading", "content": "How It Works" },
     { "type": "features", "content": [
@@ -33,12 +33,7 @@
 
     { "type": "heading", "content": "Who This Is For" },
     { "type": "text", "content": "The Clipboard is a tool for the specific kind of person who, in the course of their daily work, finds themselves repeatedly copying and pasting the same small set of items. Customer service agents typing the same handful of canned responses. Data entry professionals shuffling between forms. Developers juggling API keys, test credentials, and code fragments. Writers keeping character names and reference snippets at hand. Anyone whose job involves the phrase \"let me just grab that from somewhere\" more than twice a day." },
-    { "type": "text", "content": "If that's you, the Clipboard will change your life in a small but measurable way, roughly once every fourteen minutes, for the rest of your career." },
-    { "type": "text", "content": "If that's not you, the Clipboard will still be available, sitting quietly in a tab, waiting for the day you need it. And that day will come. It always does." },
-
-    { "type": "heading", "content": "A Note on Expectations" },
-    { "type": "text", "content": "Some readers, having reached this point in the article, may be experiencing a mild sense of disappointment. They expected, based on the framing, something more dramatic. A neural interface. A quantum breakthrough. A device that reads minds." },
-    { "type": "text", "content": "To those readers: consider the possibility that most real productivity gains in your life will come not from revolutionary breakthroughs but from small, stubborn improvements to the tools you already use. Consider the possibility that the 20x improvement you have been waiting for has been available this whole time, in the form of slightly better versions of things you already have." },
-    { "type": "text", "content": "Consider, finally, that a man who builds a twenty-slot clipboard and writes a manifesto about it may be one of the most honest people you will meet on the internet." }
+    { "type": "text", "content": "If that's you, the Clipboard will change your life." },
+    { "type": "text", "content": "If that's not you, the Clipboard will still be available, sitting quietly in a tab, waiting for the day you need it. And that day will come. It always does." }
   ]
 }
