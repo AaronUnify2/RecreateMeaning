@@ -2057,6 +2057,76 @@
       );
     }
 
+    function ClipboardBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      const [lines, setLines] = useState([]);
+      const [phase, setPhase] = useState(0);
+
+      const allLines = [
+        { text: "> SCANNING SYSTEM...", delay: 0, color: "#4a9a4a" },
+        { text: "> CPU: OK", delay: 800, color: "#666" },
+        { text: "> RAM: OK", delay: 1200, color: "#666" },
+        { text: "> STORAGE: OK", delay: 1600, color: "#666" },
+        { text: "> CLIPBOARD: 1 SLOT", delay: 2200, color: "#aa3333" },
+        { text: "", delay: 2600, color: "#666" },
+        { text: "> ⚠ CRITICAL BOTTLENECK DETECTED", delay: 2800, color: "#e67e22" },
+        { text: "> FORTY YEARS OF CONSTRAINED OUTPUT", delay: 3400, color: "#e67e22" },
+        { text: "> ESTIMATED DAILY LOSS: 10,000 BOOKS", delay: 4000, color: "#aa3333" },
+        { text: "", delay: 4400, color: "#666" },
+        { text: "> DEPLOYING SOLUTION...", delay: 4600, color: "#c8f53c" },
+        { text: "> CLIPBOARD SLOTS: 1 → 20", delay: 5200, color: "#c8f53c" },
+        { text: "> THROUGHPUT INCREASE: 2000%", delay: 5800, color: "#c8f53c" },
+        { text: "> MOORE'S LAW: EXCEEDED", delay: 6400, color: "#c8f53c" },
+        { text: "", delay: 6800, color: "#666" },
+        { text: "> ALERTING ACADEMIC COMMUNITY...", delay: 7000, color: "#4a9aea" },
+        { text: "> PREPARING FOR PUSHBACK...", delay: 7600, color: "#4a9aea" },
+        { text: "> STATUS: READY FOR THIS FIGHT", delay: 8200, color: "#c8f53c" }
+      ];
+
+      useEffect(() => {
+        const timers = [];
+        allLines.forEach((line, i) => {
+          timers.push(setTimeout(() => {
+            setLines(prev => [...prev, line]);
+          }, line.delay));
+        });
+        timers.push(setTimeout(() => {
+          setLines([]);
+          setPhase(p => p + 1);
+        }, 11000));
+        return () => timers.forEach(clearTimeout);
+      }, [phase]);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #c8f53c", background: "#0a0a0a", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#e0ff60"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#c8f53c"}
+        >
+          <div style={{ padding: "16px", minHeight: "160px", fontFamily: "'VT323', monospace", fontSize: "13px", lineHeight: 1.6, overflow: "hidden" }}>
+            <div style={{ marginBottom: "8px", fontFamily: "'VT323', monospace", fontSize: "11px", color: "#333", letterSpacing: "1px" }}>POST_IDEALIST_SYSTEMS v2.0.26</div>
+            {lines.map((line, i) => (
+              <div key={i + "-" + phase} style={{ color: line.color, minHeight: line.text ? "auto" : "12px", animation: "none" }}>
+                {line.text}
+                {i === lines.length - 1 && line.text && <span style={{ animation: "blink 1s step-end infinite", borderRight: "2px solid " + line.color }}> </span>}
+              </div>
+            ))}
+            {lines.length === 0 && (
+              <div style={{ color: "#4a9a4a" }}>{">"} SCANNING SYSTEM...<span style={{ animation: "blink 1s step-end infinite", borderRight: "2px solid #4a9a4a" }}> </span></div>
+            )}
+          </div>
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #1a1a10" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>The Clipboard</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#c8f53c", marginTop: "2px" }}>A 20x increase in computational power.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#c8f53c", background: "#c8f53c22", padding: "4px 12px", border: "1px solid #c8f53c55", letterSpacing: "1px" }}>LAUNCH</div>
+          </div>
+          <style>{`@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }`}</style>
+        </div>
+      );
+    }
+
     function HomePage({ content, setPage, setSelectedTool, setSelectedArticle }) {
       const items = [];
       const novel = content.novel;
@@ -2082,7 +2152,7 @@
           <StrategyBanner onClick={() => { setSelectedArticle("strategy-series"); setPage("articles"); }} />
           {items.map(item => (
             <React.Fragment key={item.type+item.id}>
-            {item.id === "mystic-forest" ? <ForestBanner /> : item.type === "novel" ? <BigfootShoeBanner synopsis={item.subtitle} onClick={() => setPage("novel")} /> : (
+            {item.id === "mystic-forest" ? <ForestBanner /> : item.type === "novel" ? <BigfootShoeBanner synopsis={item.subtitle} onClick={() => setPage("novel")} /> : item.id === "clipboard" ? <ClipboardBanner onClick={() => { setSelectedTool("clipboard"); setPage("tools"); }} /> : (
             <div className="feed-item" onClick={() => { if(item.type==="tool"){setSelectedTool(item.id);setPage("tools")} else if(item.type==="article"){setSelectedArticle(item.id);setPage("articles")} else{setPage("novel")} }} style={{ border: "1px solid #333366", padding: "20px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor=item.color} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
               <div className="feed-icon" style={{ width: "48px", height: "48px", background: item.color+"22", border: "2px solid "+item.color, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "14px", color: item.color, flexShrink: 0, textTransform: "uppercase" }}>{item.type==="tool"?"APP":item.type==="article"?"TXT":"FIC"}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
