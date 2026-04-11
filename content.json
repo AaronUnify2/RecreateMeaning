@@ -17,8 +17,21 @@
     { "id": "clipboard", "title": "The Clipboard", "tagline": "A 20x increase in computational power", "date": "2026-04-08", "color": "#8aac1e", "file": "tools/clipboard.json" }
   ],
   "articles": [
-    { "id": "origin-of-ideas", "title": "On the Origin of Ideas...", "subtitle": "A normal article", "date": "2022-01-04", "category": "Essay", "file": "articles/origin-of-ideas.json" },
-    { "id": "lone-clown", "title": "The Lone Clown", "subtitle": "A Choose Your Own Adventure", "date": "2026-03-11", "category": "Interactive Fiction", "file": "articles/lone-clown.json", "hideFeed": true }
+    { "id": "lone-clown", "title": "The Lone Clown", "subtitle": "A Choose Your Own Adventure", "date": "2026-03-11", "category": "Interactive Fiction", "file": "articles/lone-clown.json", "hideFeed": true },
+    { "id": "fifth-slice", "title": "The Fifth Slice", "subtitle": "A short article about knowing when to stop", "date": "2026-03-15", "category": "Economics", "file": "articles/fifth-slice.json", "hideFeed": true },
+    { "id": "oven-problem", "title": "The Oven Problem", "subtitle": "Why the 6th dinner guest ruins everything", "date": "2026-03-15", "category": "Economics", "file": "articles/oven-problem.json", "hideFeed": true },
+    { "id": "good-enough", "title": "Good Enough", "subtitle": "The most dangerous words in business are \"we could improve this\"[I]... by involving a bear[/I]", "date": "2026-03-16", "category": "Economics", "file": "articles/good-enough.json", "hideFeed": true },
+    { "id": "the-intervention", "title": "The Intervention", "subtitle": "How to fix a system without breaking it, and what to do when someone else is breaking it on purpose", "date": "2026-03-16", "category": "Economics", "file": "articles/the-intervention.json", "hideFeed": true },
+    { "id": "zero-to-something", "title": "Zero to Something", "subtitle": "The most important threshold in economics and life", "date": "2026-03-20", "category": "Economics", "file": "articles/zero-to-something.json", "hideFeed": true },
+    { "id": "furniture-store", "title": "The Furniture Store", "subtitle": "A short story about watching your advantages disappear", "date": "2026-03-25", "category": "Economics", "file": "articles/furniture-store.json", "hideFeed": true },
+    { "id": "who-hears-it-first", "title": "Who Hears It First", "subtitle": "Change radiates from centers in predictable waves", "date": "2026-03-30", "category": "Economics", "file": "articles/who-hears-it-first.json", "hideFeed": true },
+    { "id": "the-index", "title": "The Index", "subtitle": "Why doing nothing beats almost everyone", "date": "2026-03-16", "category": "Finance", "file": "articles/the-index.json", "hideFeed": true },
+    { "id": "beating-the-market", "title": "Beating the Market", "subtitle": "What it actually means and why most people can't", "date": "2026-03-17", "category": "Finance", "file": "articles/beating-the-market.json", "hideFeed": true },
+    { "id": "private-information", "title": "Private Information", "subtitle": "The legal edge that actually works", "date": "2026-03-18", "category": "Finance", "file": "articles/private-information.json", "hideFeed": true },
+    { "id": "the-bubble", "title": "The Bubble", "subtitle": "Two Nobel laureates disagree about whether markets can go insane", "date": "2026-03-19", "category": "Finance", "file": "articles/the-bubble.json", "hideFeed": true },
+    { "id": "the-barbell", "title": "The Barbell", "subtitle": "A roof over your head and owning your very own piece of the globalist agenda", "date": "2026-04-01", "category": "Strategy", "file": "articles/the-barbell.json", "hideFeed": true },
+    { "id": "the-snowball", "title": "The Snowball", "subtitle": "How $500 a week builds a self-funding investment engine", "date": "2026-04-02", "category": "Strategy", "file": "articles/the-snowball.json", "hideFeed": true },
+    { "id": "seller-finance", "title": "The Acquisition", "subtitle": "How to buy a business with someone else's confidence", "date": "2026-04-03", "category": "Strategy", "file": "articles/seller-finance.json", "hideFeed": true }
   ],
   "novel": {
     "title": "BIGFOOT'S SHOE",
