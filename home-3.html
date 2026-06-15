@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Post Idealist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=VT323&family=Special+Elite&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #1a1a2e; color: #d4d4c1; font-family: 'Lora', Georgia, serif; min-height: 100vh; }
+    ::selection { background: #e67e22; color: #1a1a2e; }
+    a { color: #4a9aea; text-decoration: none; }
+    a:hover { color: #e67e22; text-decoration: underline; }
+    ::-webkit-scrollbar { width: 12px; }
+    ::-webkit-scrollbar-track { background: #0f0f23; }
+    ::-webkit-scrollbar-thumb { background: #333366; border-radius: 0; }
+    ::-webkit-scrollbar-thumb:hover { background: #4a4a8a; }
+    button { font-family: inherit; }
+    input, select, textarea { font-family: 'Courier Prime', monospace; background: #12122a; color: #d4d4c1; border: 1px solid #333366; padding: 8px 12px; font-size: 14px; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: #4a9aea; }
+    @media (max-width: 768px) {
+      .site-layout { flex-direction: column !important; }
+      .site-sidebar { width: 100% !important; order: 2; }
+      .site-main { order: 1; }
+      .nav-bar { gap: 0 !important; }
+      .nav-bar button { padding: 8px 14px !important; font-size: 12px !important; letter-spacing: 1px !important; }
+      .feed-item { flex-direction: column !important; gap: 10px !important; }
+      .feed-icon { width: 40px !important; height: 40px !important; font-size: 12px !important; }
+      .feed-meta { flex-direction: column !important; gap: 2px !important; }
+      .top-bar { flex-direction: column !important; gap: 2px !important; text-align: center !important; font-size: 11px !important; }
+      .tool-header { flex-direction: column !important; }
+      .algo-row { font-size: 11px !important; }
+      .algo-row > div:nth-child(2) { width: 60px !important; }
+    }
+    @media (max-width: 480px) {
+      .site-title { font-size: 28px !important; letter-spacing: 3px !important; }
+      .article-body { padding: 20px !important; }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <script type="text/babel" src="viz.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useCallback } = React;
+    const VISITOR_COUNT = Math.floor(Math.random() * 1000001).toLocaleString('en-US').padStart(7, '0');
+
+    // ==========================================
+    // DATA FETCHING
+    // ==========================================
+    function useContent() {
+      const [content, setContent] = useState(null);
+      const [loading, setLoading] = useState(true);
+      useEffect(() => {
+        fetch('content.json?v=' + Date.now()).then(r => r.json())
+          .then(data => { setContent(data); setLoading(false); })
+          .catch(() => setLoading(false));
+      }, []);
+      return { content, loading };
+    }
+
+    function useJsonFile(filePath) {
+      const [data, setData] = useState(null);
+      const [loading, setLoading] = useState(false);
+      useEffect(() => {
+        if (!filePath) { setData(null); return; }
+        setLoading(true);
+        fetch(filePath + '?v=' + Date.now()).then(r => r.json())
+          .then(d => { setData(d); setLoading(false); })
+          .catch(() => setLoading(false));
+      }, [filePath]);
+      return { data, loading };
+    }
+
+    // ==========================================
+    // ARTICLE SECTION RENDERERS
+    // ==========================================
+    function ScreenshotBox({ number, title, children }) {
+      return (
+        <div style={{ margin: "28px 0", border: "2px solid #333366", background: "#0a0a18", overflow: "hidden" }}>
+          <div style={{ background: "#222244", padding: "6px 14px", fontFamily: "'VT323', monospace", fontSize: "13px", color: "#666680", borderBottom: "1px solid #333366", display: "flex", justifyContent: "space-between" }}>
+            <span>Screenshot #{number}{title ? ": " + title : ""}</span>
+            <span style={{ color: "#444460" }}>{"\u2715"}</span>
+          </div>
+          <div style={{ padding: "20px" }}>{children}</div>
+        </div>
+      );
+    }
+
+    function redact(text) {
+      if (!text || typeof text !== 'string') return text;
+      if (!text.includes('[R]') && !text.includes('[I]')) return text;
+      const parts = [];
+      let remaining = text;
+      let key = 0;
+      while (remaining.includes('[R]') || remaining.includes('[I]')) {
+        const rIdx = remaining.indexOf('[R]');
+        const iIdx = remaining.indexOf('[I]');
+        const useR = rIdx !== -1 && (iIdx === -1 || rIdx < iIdx);
+        const tag = useR ? '[R]' : '[I]';
+        const closeTag = useR ? '[/R]' : '[/I]';
+        const start = useR ? rIdx : iIdx;
+        const end = remaining.indexOf(closeTag);
+        if (end === -1) break;
+        if (start > 0) parts.push(remaining.slice(0, start));
+        const inner = remaining.slice(start + tag.length, end);
+        if (useR) {
+          parts.push(
+            React.createElement('span', { key: key++, style: { background: '#111', color: '#111', padding: '1px 2px', borderRadius: '2px', userSelect: 'none', cursor: 'default', border: '1px solid #222', letterSpacing: '0px' }, title: 'REDACTED' }, inner)
+          );
+        } else {
+          parts.push(
+            React.createElement('span', { key: key++, style: { color: 'transparent', transition: 'color 0.3s', cursor: 'default' }, onMouseEnter: e => { e.target.style.color = '#666680'; }, onMouseLeave: e => { e.target.style.color = 'transparent'; } }, inner)
+          );
+        }
+        remaining = remaining.slice(end + closeTag.length);
+      }
+      if (remaining) parts.push(remaining);
+      return parts.length ? parts : text;
+    }
+
+    function ChatMessage({ speaker, text }) {
+      const isU = speaker === "Unconscious";
+      return (
+        <div style={{ marginBottom: "8px", fontFamily: "'Courier Prime', monospace", fontSize: "14px", lineHeight: 1.8, color: "#b0b0a0" }}>
+          <span style={{ color: isU ? "#e67e22" : "#4a9aea", fontWeight: "bold" }}>{isU ? "The Unconscious" : "Person " + speaker}:</span> <span>{redact(text)}</span>
+        </div>
+      );
+    }
+
+    function AlgorithmTable({ rows }) {
+      return (
+        <div>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#666680", textAlign: "center", marginBottom: "12px", letterSpacing: "1px" }}>THE ALGORITHM'S THOUGHTS WHILE CHASING WATCHTIME</div>
+          <div className="algo-row" style={{ display: "flex", borderBottom: "2px solid #333366", fontSize: "12px", fontFamily: "'VT323', monospace", color: "#4a4a8a", letterSpacing: "1px" }}>
+            <div style={{ flex: 2, padding: "6px 10px" }}>VIDEO</div>
+            <div style={{ width: "90px", padding: "6px 10px", textAlign: "center", borderLeft: "1px solid #222244" }}>WATCH TIME</div>
+            <div style={{ flex: 3, padding: "6px 10px", borderLeft: "1px solid #222244" }}>ALGORITHM THINKS...</div>
+          </div>
+          {rows.map((row, i) => (
+            <div key={i} className="algo-row" style={{ display: "flex", borderBottom: "1px solid #222244", fontSize: "13px" }}>
+              <div style={{ flex: 2, padding: "8px 10px", color: "#c0c0b0" }}>{redact(row.title)}</div>
+              <div style={{ width: "90px", padding: "8px 10px", color: "#666680", textAlign: "center", borderLeft: "1px solid #222244" }}>{row.time}</div>
+              <div style={{ flex: 3, padding: "8px 10px", color: "#4a90d9", fontStyle: "italic", borderLeft: "1px solid #222244" }}>{redact(row.thought)}</div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+
+    function RenderArticleSection({ section }) {
+      switch (section.type) {
+        case "text": return <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>{redact(section.content)}</p>;
+        case "heading": return <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>{section.content}</h3>;
+        case "note": return <p style={{ fontSize: "14px", color: "#666680", fontStyle: "italic", marginBottom: "20px" }}>{redact(section.content)}</p>;
+        case "viz": {
+          const registry = window.ARTICLE_VIZ_MODULES || {};
+          const mod = registry[section.module];
+          return mod ? mod() : null;
+        }
+        case "screenshot": {
+          const s = section;
+          return (
+            <ScreenshotBox number={s.number} title={s.title}>
+              {s.style === "text" && <p style={{ textAlign: "center", color: s.dimmed ? "#555560" : "#888880", fontStyle: s.dimmed ? "italic" : "normal", fontFamily: "'Courier Prime', monospace", fontSize: "14px", lineHeight: 1.8, whiteSpace: "pre-line" }}>{redact(s.content)}</p>}
+              {s.style === "lines" && <div style={{ textAlign: "center", lineHeight: 2.2, fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#b0b0a0" }}>{s.content.map((l, i) => <div key={i} style={l.highlight ? { color: "#e67e22", fontWeight: "bold" } : {}}>{redact(l.text)}</div>)}</div>}
+              {s.style === "chat" && <div style={{ padding: "12px 0" }}>{s.content.map((m, i) => <ChatMessage key={i} speaker={m.speaker} text={m.text} />)}</div>}
+              {s.style === "algorithm" && <AlgorithmTable rows={s.content} />}
+            </ScreenshotBox>
+          );
+        }
+        default: return null;
+      }
+    }
+
+    function ArticleRenderer({ data, goBack }) {
+      if (!data) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center" }}>Loading...</div>;
+      if (data.interactive) return <InteractiveArticleRenderer data={data} goBack={goBack} />;
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
+          <article className="article-body" style={{ border: "1px solid #333366", background: "#0f0f23", padding: "40px", maxWidth: "720px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>{data.category} {"\u00b7"} {data.readTime || "5 min"} {"\u00b7"} {new Date(data.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "34px", color: "#e8e8d0", lineHeight: 1.2, marginBottom: "6px" }}>{data.title}</h2>
+            <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>{redact(data.subtitle)}</p>
+            <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
+            {data.sections.map((s, i) => <RenderArticleSection key={i} section={s} />)}
+          </article>
+        </div>
+      );
+    }
+
+    function InteractiveArticleRenderer({ data, goBack }) {
+      const [scene, setScene] = useState(data.start || "opening");
+      const [history, setHistory] = useState([]);
+      const sceneRef = React.useRef(null);
+      const sc = data.scenes[scene];
+
+      const goToScene = useCallback((id) => {
+        setHistory(h => [...h, scene]);
+        setScene(id);
+        setTimeout(() => { if (sceneRef.current) sceneRef.current.scrollIntoView({ behavior: "smooth", block: "start" }); }, 50);
+      }, [scene]);
+
+      const handleGoBack = useCallback(() => {
+        if (sc.goBack) {
+          setScene(sc.goBack);
+          setHistory(h => h.slice(0, -1));
+          setTimeout(() => { if (sceneRef.current) sceneRef.current.scrollIntoView({ behavior: "smooth", block: "start" }); }, 50);
+        }
+      }, [sc]);
+
+      const isScolding = !!sc.goBack;
+
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
+          <article ref={sceneRef} className="article-body" style={{ border: "1px solid " + (isScolding ? "#aa3333" : "#333366"), background: "#0f0f23", padding: "40px", maxWidth: "720px", transition: "border-color 0.3s" }}>
+            {scene === data.start && <>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>{data.category} {"\u00b7"} {data.readTime || "10 min"} {"\u00b7"} {new Date(data.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+              <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "34px", color: "#e8e8d0", lineHeight: 1.2, marginBottom: "6px" }}>{data.title}</h2>
+              <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>{redact(data.subtitle)}</p>
+              <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
+            </>}
+            {sc.content.map((para, i) => {
+              if (para === "\u2026" || para === "\u2022 \u2022 \u2022") return <div key={i} style={{ textAlign: "center", color: "#555560", fontSize: "20px", margin: "20px 0", letterSpacing: "8px" }}>{para}</div>;
+              if (para === "THE END") return <div key={i} style={{ textAlign: "center", fontFamily: "'Special Elite', monospace", fontSize: "28px", color: "#e67e22", letterSpacing: "6px", margin: "32px 0" }}>{para}</div>;
+              const isDialogue = para.startsWith('"') || para.startsWith('\u201c');
+              return <p key={i} style={{ fontSize: "16px", lineHeight: 1.9, color: isScolding && i >= sc.content.indexOf("\u2026") + 1 ? "#c0a060" : "#c8c8b8", marginBottom: "16px", fontStyle: isDialogue ? "normal" : "italic" }}>{redact(para)}</p>;
+            })}
+            {sc.choices && (
+              <div style={{ marginTop: "32px", paddingTop: "24px", borderTop: "2px solid #333366", display: "flex", flexDirection: "column", gap: "12px" }}>
+                <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#666680", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "4px" }}>What does Claire do?</div>
+                {sc.choices.map((c, i) => (
+                  <button key={i} onClick={() => goToScene(c.goto)} style={{ background: "#12122a", border: "1px solid #4a4a8a", padding: "14px 20px", color: "#e8e8d0", fontFamily: "'Courier Prime', monospace", fontSize: "15px", cursor: "pointer", textAlign: "left", transition: "all 0.2s" }}
+                    onMouseEnter={e => { e.target.style.borderColor = "#e67e22"; e.target.style.background = "#1a1530"; }}
+                    onMouseLeave={e => { e.target.style.borderColor = "#4a4a8a"; e.target.style.background = "#12122a"; }}
+                  >{"\u2192 " + c.label}</button>
+                ))}
+              </div>
+            )}
+            {sc.goBack && (
+              <div style={{ marginTop: "32px", paddingTop: "24px", borderTop: "2px solid #aa3333", textAlign: "center" }}>
+                <button onClick={handleGoBack} style={{ background: "none", border: "2px solid #4a9aea", padding: "12px 32px", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", letterSpacing: "1px", transition: "all 0.2s" }}
+                  onMouseEnter={e => { e.target.style.background = "#4a9aea"; e.target.style.color = "#fff"; }}
+                  onMouseLeave={e => { e.target.style.background = "none"; e.target.style.color = "#4a9aea"; }}
+                >{"\u2190 Go back and choose differently"}</button>
+              </div>
+            )}
+          </article>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // INTERACTIVE TOOL MODULES
+    // ==========================================
+    function CognitiveContainerModule() {
+      const [v, setV] = useState(""); const [saved, setSaved] = useState(false);
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1"} Interactive: The Cognitive Container</div>
+          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "12px", fontStyle: "italic" }}>What is one issue occupying your mind right now?</p>
+          <input type="text" placeholder="e.g., Taxes are late" value={v} onChange={e => { setV(e.target.value); setSaved(false); }} style={{ width: "100%", maxWidth: "400px", display: "block" }} />
+          {v && !saved && <div style={{ marginTop: "12px" }}><p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic" }}>Notice how the anxiety shrinks when it fits into a box? You are taking control.</p><button onClick={() => setSaved(true)} style={{ marginTop: "10px", background: "#4a90d9", color: "#fff", border: "none", padding: "8px 20px", fontFamily: "'Courier Prime', monospace", fontSize: "13px", cursor: "pointer" }}>Capture It</button></div>}
+          {saved && <div style={{ marginTop: "12px", padding: "10px 14px", background: "#1a2a4a", border: "1px solid #4a90d9" }}><span style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#4a9a4a" }}>{"\u2713"} Captured: </span><span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#c0c0b0" }}>{v}</span></div>}
+        </div>
+      );
+    }
+
+    function PerspectiveSliderModule() {
+      const [r, setR] = useState(0);
+      const labels = ["","Level 1: Background Noise","Level 2: Minor Friction","Level 3: Real Problem","Level 4: Major Crisis","Level 5: Everything Is On Fire"];
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1"} Interactive: The Perspective Slider</div>
+          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "16px", fontStyle: "italic" }}>Rate the problem you entered above.</p>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>{[1,2,3,4,5].map(n => <span key={n} onClick={() => setR(n)} style={{ fontSize: "32px", cursor: "pointer", color: n <= r ? "#e67e22" : "#333366", transition: "color 0.15s" }}>{"\u2605"}</span>)}</div>
+          {r > 0 && <div><p style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: "#e67e22", marginBottom: "8px" }}>{labels[r]}</p><p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic" }}>You just sized up your enemy. A Level {r} problem cannot hurt you if you see it for what it is.</p></div>}
+        </div>
+      );
+    }
+
+    function StackModule() {
+      const [items, setItems] = useState([]); const [input, setInput] = useState("");
+      const add = () => { if (input.trim()) { setItems(p => [input.trim(), ...p]); setInput(""); } };
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1"} Interactive: The Stack</div>
+          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "12px", fontStyle: "italic" }}>Capture a thought. Watch it stack.</p>
+          <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}><input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && add()} placeholder="Type a thought..." style={{ flex: 1 }} /><button onClick={add} style={{ background: "#4a90d9", color: "#fff", border: "none", padding: "8px 16px", fontFamily: "'Courier Prime', monospace", fontSize: "13px", cursor: "pointer" }}>Save</button></div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>{items.map((it, i) => <div key={i} style={{ padding: "8px 14px", background: "#1a2a4a", border: "1px solid #333366", fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#b0b0a0", transform: "translateX(" + (i*4) + "px)", opacity: Math.max(0.4, 1-i*0.15) }}>{it}</div>)}</div>
+          {items.length > 0 && <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic", marginTop: "12px" }}>Captured. Now you can relax, knowing this data is waiting for you when you're ready to solve it.</p>}
+        </div>
+      );
+    }
+
+    function HaradaGridModule() {
+      const [center, setCenter] = useState(""); const [cells, setCells] = useState(Array(8).fill(""));
+      const labels = ["Health","Finance","Relationships","Career","Learning","Creative","Community","Spiritual"];
+      const lit = center.length > 0;
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"\u26A1"} Interactive: The Grid</div>
+          <p style={{ fontSize: "14px", color: "#888880", marginBottom: "16px", fontStyle: "italic" }}>Type your 5-year vision in the center. Watch the grid awaken.</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "6px", maxWidth: "420px" }}>
+            {[0,1,2,3,-1,4,5,6,7].map(idx => {
+              if (idx === -1) return <div key="c" style={{ border: "2px solid #e67e22", background: "#1a1520", padding: "8px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80px" }}><div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: "#e67e22", marginBottom: "4px" }}>5-YEAR VISION</div><input type="text" value={center} onChange={e => setCenter(e.target.value)} placeholder="Your vision..." style={{ width: "100%", fontSize: "12px", padding: "4px 6px", textAlign: "center", background: "#0a0a18", border: "1px solid #e67e22" }} /></div>;
+              return <div key={idx} style={{ border: "1px solid " + (lit ? "#4a90d9" : "#282848"), background: lit ? "#12183a" : "#0f0f20", padding: "8px", minHeight: "80px", transition: "all 0.3s", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}><div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: lit ? "#4a90d9" : "#333355", marginBottom: "4px" }}>{labels[idx]}</div><input type="text" value={cells[idx]} onChange={e => { const n=[...cells]; n[idx]=e.target.value; setCells(n); }} placeholder="..." style={{ width: "100%", fontSize: "11px", padding: "3px 5px", textAlign: "center", background: "#0a0a18" }} /></div>;
+            })}
+          </div>
+          {lit && <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic", marginTop: "16px" }}>A goal without a structure is a wish. A goal with a structure is a plan.</p>}
+        </div>
+      );
+    }
+
+    function LocalLockModule({ url }) {
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "16px" }}>{"\u26A1"} Interactive: The Local Lock</div>
+          <div style={{ display: "flex", gap: "24px", alignItems: "center", marginBottom: "20px", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ width: "14px", height: "14px", borderRadius: "50%", background: "#555560" }} /><span style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#555560" }}>Server Connection: OFF</span></div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ width: "14px", height: "14px", borderRadius: "50%", background: "#4a9a4a", boxShadow: "0 0 8px #4a9a4a80" }} /><span style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a9a4a" }}>Local Storage: ON</span></div>
+          </div>
+          <p style={{ fontSize: "15px", color: "#b0b0a0", lineHeight: 1.7 }}>No accounts. No emails. No cloud. Your data lives on your device, not our servers.</p>
+          <p style={{ fontFamily: "'Lora', serif", fontSize: "14px", color: "#4a90d9", fontStyle: "italic", marginTop: "8px" }}>This is a private conversation between you and your potential.</p>
+          <a href={url} target="_blank" rel="noopener" style={{ display: "inline-block", marginTop: "16px", background: "#4a90d9", color: "#fff", padding: "12px 32px", fontFamily: "'Courier Prime', monospace", fontSize: "14px", fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none" }}>{"Enter Unify \u2192"}</a>
+        </div>
+      );
+    }
+
+    const INTERACTIVE_MODULES = {
+      "cognitive-container": () => <CognitiveContainerModule />,
+      "perspective-slider": () => <PerspectiveSliderModule />,
+      "stack": () => <StackModule />,
+      "harada-grid": () => <HaradaGridModule />,
+      "local-lock": (props) => <LocalLockModule url={props.toolUrl} />,
+    };
+
+    // ==========================================
+    // TOOL SECTION RENDERER
+    // ==========================================
+    function RenderToolSection({ section, toolData }) {
+      switch (section.type) {
+        case "heading": return <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>{section.content}</h3>;
+        case "text": return <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "16px" }}>{section.content}</p>;
+        case "features": return <div style={{ marginBottom: "24px" }}>{section.content.map((f, i) => <p key={i} style={{ fontSize: "15px", lineHeight: 1.7, color: "#b0b0a0", marginBottom: "8px", paddingLeft: "16px", borderLeft: "2px solid " + (toolData.color || "#4a90d9") }}>{f}</p>)}</div>;
+        case "steps": return <div>{section.content.map((step, i) => <div key={i} style={{ display: "flex", gap: "16px", marginBottom: "16px", alignItems: "flex-start" }}><div style={{ fontFamily: "'VT323', monospace", fontSize: "24px", color: toolData.color || "#e67e22", width: "30px", textAlign: "center", flexShrink: 0 }}>{i+1}</div><div><div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "15px", color: "#e8e8d0", fontWeight: "bold", marginBottom: "4px" }}>{step.title}</div><p style={{ fontSize: "15px", lineHeight: 1.7, color: "#b0b0a0" }}>{step.text}</p></div></div>)}</div>;
+        case "callout": return <div style={{ marginTop: "24px", padding: "16px", background: "#1a2010", border: "1px solid #3a5a2a" }}><p style={{ fontSize: "15px", lineHeight: 1.7, color: "#b0b0a0" }}>{section.content}</p></div>;
+        case "interactive": {
+          const mod = INTERACTIVE_MODULES[section.module];
+          return mod ? mod({ toolUrl: toolData.url }) : null;
+        }
+        default: return null;
+      }
+    }
+
+    function ToolRenderer({ data, goBack }) {
+      if (!data) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center" }}>Loading...</div>;
+      const hasSections = data.sections && data.sections.length > 0;
+      const hasUrl = data.url && data.url !== "#";
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to all tools"}</button>
+          <div style={{ border: "2px solid " + (data.color || "#4a90d9"), background: "#0f0f23", padding: "32px" }}>
+            <div className="tool-header" style={{ display: "flex", gap: "20px", alignItems: "flex-start", marginBottom: "24px" }}>
+              <div style={{ width: "80px", height: "80px", background: (data.color||"#4a90d9") + "22", border: "3px solid " + (data.color||"#4a90d9"), display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "42px", color: data.color||"#4a90d9", flexShrink: 0 }}>{(data.title||"?")[0]}</div>
+              <div style={{ flex: 1 }}>
+                <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "32px", color: "#e8e8d0" }}>{data.title}</h2>
+                <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: data.color||"#4a90d9", fontStyle: "italic" }}>{data.tagline}</p>
+                <div style={{ display: "flex", gap: "12px", alignItems: "center", marginTop: "12px", flexWrap: "wrap" }}>
+                  {hasUrl && <a href={data.url} target="_blank" rel="noopener" style={{ display: "inline-block", background: data.color||"#4a90d9", color: "#fff", padding: "8px 24px", fontFamily: "'Courier Prime', monospace", fontSize: "13px", fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none" }}>{"Launch App \u2192"}</a>}
+                  {data.tech && data.tech.map(t => <span key={t} style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#888880", background: "#1a1a2e", padding: "2px 10px", border: "1px solid #333366" }}>{t}</span>)}
+                </div>
+              </div>
+            </div>
+            {hasSections ? (
+              data.sections.map((s, i) => <RenderToolSection key={i} section={s} toolData={data} />)
+            ) : (
+              <p style={{ fontSize: "16px", lineHeight: 1.8, color: "#c0c0b0" }}>{data.description}</p>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // CHAPTER RENDERER
+    // ==========================================
+    function ChapterRenderer({ data, chapterMeta, allChapters, goBack, onNav }) {
+      if (!data) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center" }}>Loading...</div>;
+      const idx = allChapters.findIndex(c => c.id === chapterMeta.id);
+      const prev = idx > 0 ? allChapters[idx-1] : null;
+      const next = idx < allChapters.length-1 ? allChapters[idx+1] : null;
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to chapters"}</button>
+          <article className="article-body" style={{ border: "1px solid #333366", background: "#0f0f23", padding: "40px", maxWidth: "720px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "8px" }}>Chapter {(idx+1)}</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "34px", color: "#e8e8d0", lineHeight: 1.2, marginBottom: "24px" }}>{data.title || chapterMeta.title}</h2>
+            <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
+            {(data.sections || []).map((s, i) => <RenderArticleSection key={i} section={s} />)}
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "32px", paddingTop: "20px", borderTop: "1px dashed #333366" }}>
+              {prev ? <button onClick={() => onNav(prev.id)} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", padding: 0 }}>{"\u2190 " + prev.title}</button> : <span />}
+              {next ? <button onClick={() => onNav(next.id)} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", padding: 0 }}>{next.title + " \u2192"}</button> : <span />}
+            </div>
+          </article>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // SHARED UI
+    // ==========================================
+    function SectionHeader({ title, subtitle }) {
+      return (
+        <div style={{ marginBottom: "24px" }}>
+          <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "28px", color: "#e8e8d0", letterSpacing: "3px", textTransform: "uppercase" }}>{title}</h2>
+          {subtitle && <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#666680", marginTop: "4px", fontStyle: "italic" }}>{subtitle}</p>}
+          <div style={{ width: "60px", height: "2px", background: "#e67e22", marginTop: "12px" }} />
+        </div>
+      );
+    }
+
+    function UsersOnlineCounter() {
+      const [c, setC] = useState(() => Math.floor(Math.random() * 487) - 86);
+      useEffect(() => { const t = setInterval(() => setC(Math.floor(Math.random() * 487) - 86), 4000); return () => clearInterval(t); }, []);
+      return (
+        <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontFamily: "'VT323', monospace", fontSize: "14px" }}>
+          <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: c > 0 ? "#4a9a4a" : "#aa3333", boxShadow: "0 0 6px " + (c > 0 ? "#4a9a4a80" : "#aa333380") }} />
+          <span style={{ color: "#666680" }}>Users online: <span style={{ color: c > 0 ? "#4a9a4a" : "#aa3333" }}>{c}</span></span>
+        </div>
+      );
+    }
+
+    function Header({ currentPage, setPage, site }) {
+      const [time, setTime] = useState(new Date());
+      useEffect(() => { const t = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(t); }, []);
+      const nav = [{id:"home",label:"Home"},{id:"tools",label:"Tools"},{id:"articles",label:"Articles"},{id:"novel",label:"Novel"},{id:"about",label:"About"}];
+      return (
+        <header style={{ background: "linear-gradient(180deg, #0f0f23 0%, #1a1a2e 100%)", borderBottom: "2px solid #333366", position: "sticky", top: 0, zIndex: 100 }}>
+          <div className="top-bar" style={{ background: "#0a0a1a", padding: "4px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", fontFamily: "'VT323', monospace", color: "#666680", borderBottom: "1px solid #222244", letterSpacing: "1px" }}>
+            <span>{"EST. " + (site?.established||2026) + " \u2014 ISSUE #" + (site?.issue||"001")}</span>
+            <span>{time.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} {"\u2014"} {time.toLocaleTimeString()}</span>
+          </div>
+          <div style={{ padding: "20px 20px 0", textAlign: "center" }}>
+            <div onClick={() => setPage("home")} style={{ cursor: "pointer", display: "inline-block" }}>
+              <h1 className="site-title" style={{ fontFamily: "'Special Elite', 'Courier Prime', monospace", fontSize: "clamp(28px, 5vw, 52px)", color: "#e8e8d0", letterSpacing: "6px", textTransform: "uppercase", lineHeight: 1.1, textShadow: "2px 2px 0 #333366" }}>{site?.name||"THE POST IDEALIST"}</h1>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#888880", letterSpacing: "8px", textTransform: "uppercase", marginTop: "4px" }}>{site?.tagline||""}</div>
+            </div>
+            <div style={{ margin: "16px auto 0", maxWidth: "600px", display: "flex", alignItems: "center", gap: "12px" }}><div style={{ flex: 1, height: "1px", background: "#333366" }} /><div style={{ color: "#4a4a8a", fontFamily: "'VT323', monospace", fontSize: "18px" }}>{"\u25C6 \u25C7 \u25C6"}</div><div style={{ flex: 1, height: "1px", background: "#333366" }} /></div>
+          </div>
+          <nav className="nav-bar" style={{ display: "flex", justifyContent: "center", padding: "12px 20px 0", flexWrap: "wrap" }}>
+            {nav.map(item => <button key={item.id} onClick={() => setPage(item.id)} style={{ background: currentPage===item.id?"#333366":"transparent", color: currentPage===item.id?"#e8e8d0":"#888880", border: "1px solid #333366", borderBottom: currentPage===item.id?"1px solid #333366":"1px solid transparent", padding: "8px 24px", fontFamily: "'Courier Prime', monospace", fontSize: "13px", letterSpacing: "2px", textTransform: "uppercase", cursor: "pointer", transition: "all 0.15s", marginBottom: "-1px" }} onMouseEnter={e => { if(currentPage!==item.id){e.target.style.color="#e8e8d0";e.target.style.background="#222244"}}} onMouseLeave={e => { if(currentPage!==item.id){e.target.style.color="#888880";e.target.style.background="transparent"}}}>{item.label}</button>)}
+          </nav>
+        </header>
+      );
+    }
+
+    function Sidebar({ site }) {
+      return (
+        <aside className="site-sidebar" style={{ width: "240px", flexShrink: 0, display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div style={{ border: "1px solid #333366", padding: "16px", textAlign: "center", background: "#0f0f23" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#666680", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px" }}>Visitors</div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "32px", color: "#4a9aea", background: "#000010", padding: "8px", border: "1px inset #222244", letterSpacing: "4px" }}>{VISITOR_COUNT}</div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "11px", color: "#555560", marginTop: "6px" }}>since feb 2026</div>
+          </div>
+          <div style={{ border: "1px solid #333366", padding: "16px", background: "#0f0f23", textAlign: "center" }}>
+            <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "14px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px", paddingBottom: "8px", borderBottom: "1px dashed #333366" }}>Links</h3>
+            {site?.twitter && <a href={site.twitter} target="_blank" rel="noopener" style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a9aea", display: "block" }}>[Twitter/X]</a>}
+            <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+              <div style={{ background: "#222244", border: "1px solid #4a4a8a", padding: "4px 12px", fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9aea" }}>{"MADE WITH \u2665 & COFFEE"}</div>
+              <div style={{ background: "#1a3a1a", border: "1px solid #2a5a2a", padding: "4px 12px", fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9a4a" }}>BEST VIEWED IN ANY BROWSER</div>
+              <div style={{ background: "#3a2a1a", border: "1px solid #5a4a2a", padding: "4px 12px", fontFamily: "'VT323', monospace", fontSize: "13px", color: "#e67e22" }}>{"NO TRACKING \u00b7 NO ADS"}</div>
+            </div>
+          </div>
+        </aside>
+      );
+    }
+
+    function Footer({ site }) {
+      return (
+        <footer style={{ borderTop: "2px solid #333366", padding: "24px 20px", textAlign: "center", background: "#0a0a1a", marginTop: "40px" }}>
+          <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "16px", color: "#555560", marginBottom: "8px" }}>{site?.name||"THE POST IDEALIST"}</div>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#3a3a5a", letterSpacing: "1px" }}>{"\u00A9 " + (site?.established||2026) + " \u00b7 " + (site?.author||"") + " \u00b7 No tracking \u00b7 No ads"}</div>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#2a2a4a", marginTop: "8px" }}>{"You are visitor #" + VISITOR_COUNT}</div>
+        </footer>
+      );
+    }
+
+    // ==========================================
+    // PAGES
+    // ==========================================
+    function ForestBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      const frameRef = React.useRef(0);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+        const W = canvas.width, H = canvas.height;
+        const PX = 3; // pixel scale
+
+        function drawPixelRect(x, y, w, h, color) {
+          ctx.fillStyle = color;
+          ctx.fillRect(x*PX, y*PX, w*PX, h*PX);
+        }
+
+        function drawTree(ox, oy, type) {
+          const colors = [
+            { trunk: '#5d4037', leaves: ['#2e7d32','#388e3c','#43a047'] },
+            { trunk: '#4e342e', leaves: ['#1b5e20','#2e7d32','#388e3c'] },
+            { trunk: '#6d4c41', leaves: ['#558b2f','#689f38','#7cb342'] },
+            { trunk: '#3e2723', leaves: ['#4a148c','#6a1b9a','#7b1fa2'] }
+          ];
+          const c = colors[type % 4];
+          drawPixelRect(ox+4, oy+15, 3, 17, c.trunk);
+          drawPixelRect(ox+5, oy+15, 1, 17, '#3e2723');
+          drawPixelRect(ox, oy+3, 11, 7, c.leaves[0]);
+          drawPixelRect(ox-1, oy+8, 13, 6, c.leaves[1]);
+          drawPixelRect(ox+1, oy+12, 10, 5, c.leaves[2]);
+          drawPixelRect(ox+2, oy, 5, 4, c.leaves[0]);
+        }
+
+        function drawPlayer(ox, oy, bob) {
+          const by = Math.round(bob);
+          // Cloak
+          drawPixelRect(ox+3, oy+8+by, 8, 12, '#2980b9');
+          drawPixelRect(ox+2, oy+20+by, 10, 4, '#2980b9');
+          // Head
+          drawPixelRect(ox+4, oy+3+by, 6, 6, '#fad7a0');
+          // Hair
+          drawPixelRect(ox+4, oy+2+by, 6, 3, '#8b4513');
+          drawPixelRect(ox+3, oy+3+by, 2, 2, '#8b4513');
+          // Eyes
+          drawPixelRect(ox+5, oy+5+by, 2, 2, '#3498db');
+          drawPixelRect(ox+8, oy+5+by, 2, 2, '#3498db');
+          // Hood
+          drawPixelRect(ox+2, oy+1+by, 10, 3, '#1a5276');
+          drawPixelRect(ox+1, oy+3+by, 2, 6, '#1a5276');
+          drawPixelRect(ox+11, oy+3+by, 2, 6, '#1a5276');
+        }
+
+        let anim;
+        function render() {
+          frameRef.current++;
+          const f = frameRef.current;
+          ctx.fillStyle = '#0a1a0a';
+          ctx.fillRect(0, 0, W, H);
+          // Ground
+          ctx.fillStyle = '#1a472a';
+          ctx.fillRect(0, 32*PX, W, H);
+          // Grass spots
+          const grassColors = ['#2d5a3f','#1e5631','#174023'];
+          for (let i = 0; i < 20; i++) {
+            ctx.fillStyle = grassColors[i%3];
+            ctx.fillRect(((i*37+11)%180)*PX, (33+(i%4))*PX, 3*PX, 1*PX);
+          }
+          // Trees
+          drawTree(4, 5, 0);
+          drawTree(28, 2, 1);
+          drawTree(120, 3, 3); // purple mystic tree
+          drawTree(148, 6, 2);
+          drawTree(170, 1, 0);
+          // Player walking
+          const px = 65 + Math.sin(f * 0.02) * 15;
+          const bob = Math.sin(f * 0.08) * 0.6;
+          drawPlayer(px, 12, bob);
+          // Stars / particles
+          ctx.fillStyle = '#9b59b6';
+          for (let i = 0; i < 5; i++) {
+            const sx = (f * 0.7 + i * 40) % 190;
+            const sy = 4 + Math.sin(f * 0.03 + i * 2) * 3;
+            const size = (Math.sin(f * 0.05 + i) > 0.3) ? 1 : 0;
+            if (size) ctx.fillRect(sx*PX, sy*PX, PX, PX);
+          }
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <a href="https://aaronunify2.github.io/UnifyVersion1/Forest.html" target="_blank" rel="noopener"
+          onClick={e => { if (onClick) { e.preventDefault(); onClick(); } }}
+          style={{ display: "block", border: "2px solid #2e7d32", background: "#0a1a0a", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#4a9a4a"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#2e7d32"}
+        >
+          <canvas ref={canvasRef} width={570} height={150}
+            style={{ width: "100%", height: "auto", display: "block", imageRendering: "pixelated" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #1a3a1a" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>Mystic Forest Walker</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9a4a", marginTop: "2px" }}>He's been walking since you opened this page. He will never stop. You might as well click him.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#2e7d32", background: "#2e7d3222", padding: "4px 12px", border: "1px solid #2e7d3255", letterSpacing: "1px" }}>PLAY</div>
+          </div>
+        </a>
+      );
+    }
+
+    function BrickBreakerBanner() {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 180;
+        const S = 2;
+        const colors = ['#e040fb','#ff1744','#ff9100','#ffea00','#00e676','#00e5ff','#2979ff','#d500f9'];
+        const COLS = 19, ROWS = 4, BW = 14, BH = 5, BPAD = 1, BOFFX = 3, BOFFY = 3;
+        let bricks, ball, paddle, state, stateTimer, level, anim;
+
+        function initBricks(rows) {
+          const b = [];
+          for (let r = 0; r < rows; r++) for (let c = 0; c < COLS; c++) {
+            b.push({ x: BOFFX + c * (BW + BPAD), y: BOFFY + r * (BH + BPAD), w: BW, h: BH, alive: true, color: colors[(r + c) % colors.length] });
+          }
+          return b;
+        }
+        function reset(lvl) {
+          level = lvl || 1;
+          const rows = Math.min(ROWS + (level - 1) * 2, Math.floor((H/S - 30) / (BH + BPAD)));
+          bricks = initBricks(rows);
+          ball = { x: W/S/2, y: H/S - 18, dx: 1.2, dy: -1.2, r: 2 };
+          paddle = { x: W/S/2 - 12, y: H/S - 12, w: 24, h: 3, dir: 1 };
+          state = 'play';
+          stateTimer = 0;
+        }
+        reset(1);
+
+        function render() {
+          ctx.fillStyle = '#0a0a20';
+          ctx.fillRect(0, 0, W, H);
+
+          if (state === 'play') {
+            paddle.x += paddle.dir * 0.8;
+            if (paddle.x + paddle.w > W/S - 2) paddle.dir = -1;
+            if (paddle.x < 2) paddle.dir = 1;
+            const targetX = ball.x - paddle.w / 2;
+            paddle.x += (targetX - paddle.x) * 0.06;
+
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+            if (ball.x - ball.r < 0 || ball.x + ball.r > W/S) ball.dx = -ball.dx;
+            if (ball.y - ball.r < 0) ball.dy = -ball.dy;
+
+            if (ball.y + ball.r >= paddle.y && ball.y + ball.r <= paddle.y + paddle.h + 2 && ball.x >= paddle.x && ball.x <= paddle.x + paddle.w) {
+              ball.dy = -Math.abs(ball.dy);
+              ball.dx += (ball.x - (paddle.x + paddle.w/2)) * 0.08;
+            }
+            if (ball.y > H/S) { ball.y = H/S - 18; ball.dy = -Math.abs(ball.dy); }
+
+            let hitCount = 0;
+            bricks.forEach(b => {
+              if (!b.alive) return;
+              if (ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w && ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h) {
+                b.alive = false; ball.dy = -ball.dy; hitCount++;
+              }
+            });
+
+            const alive = bricks.filter(b => b.alive).length;
+            if (alive === 0) {
+              state = 'win'; stateTimer = 0;
+            }
+          }
+
+          // Draw bricks
+          bricks.forEach(b => {
+            if (!b.alive) return;
+            ctx.fillStyle = b.color;
+            ctx.fillRect(b.x * S, b.y * S, b.w * S, b.h * S);
+            ctx.fillStyle = 'rgba(255,255,255,0.25)';
+            ctx.fillRect(b.x * S, b.y * S, b.w * S, 1 * S);
+          });
+          // Paddle
+          ctx.fillStyle = '#00e676';
+          ctx.fillRect(paddle.x * S, paddle.y * S, paddle.w * S, paddle.h * S);
+          ctx.fillStyle = 'rgba(255,255,255,0.4)';
+          ctx.fillRect(paddle.x * S, paddle.y * S, paddle.w * S, 1 * S);
+          // Ball
+          ctx.fillStyle = '#fff';
+          ctx.fillRect((ball.x - ball.r) * S, (ball.y - ball.r) * S, ball.r * 2 * S, ball.r * 2 * S);
+          // Ball trail
+          ctx.fillStyle = 'rgba(224,64,251,0.3)';
+          ctx.fillRect((ball.x - ball.dx * 2 - ball.r) * S, (ball.y - ball.dy * 2 - ball.r) * S, ball.r * 2 * S, ball.r * 2 * S);
+
+          if (state === 'win') {
+            stateTimer++;
+            ctx.fillStyle = '#0a0a20';
+            ctx.fillRect(0, 0, W, H);
+            // Paddle still visible
+            ctx.fillStyle = '#00e676';
+            ctx.fillRect(paddle.x * S, paddle.y * S, paddle.w * S, paddle.h * S);
+
+            if (stateTimer < 60) {
+              ctx.font = 'bold 28px "Courier Prime", monospace';
+              ctx.textAlign = 'center';
+              ctx.fillStyle = '#ffea00';
+              ctx.fillText('YOU WIN!', W/2, H/2 - 10);
+              ctx.font = '14px "VT323", monospace';
+              ctx.fillStyle = '#666680';
+              ctx.fillText('Level ' + level + ' cleared', W/2, H/2 + 14);
+            } else if (stateTimer < 70) {
+              ctx.font = 'bold 20px "Courier Prime", monospace';
+              ctx.textAlign = 'center';
+              ctx.fillStyle = '#e040fb';
+              ctx.fillText('LEVEL ' + (level + 1), W/2, H/2);
+            } else {
+              reset(level + 1);
+            }
+          }
+
+          if (level > 3 && state === 'play' && bricks.filter(b => b.alive).length > bricks.length * 0.9) {
+            stateTimer++;
+            if (stateTimer > 180) reset(1);
+          }
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <a href="https://aaronunify2.github.io/UnifyVersion1/3d194.html" target="_blank" rel="noopener"
+          style={{ display: "block", border: "2px solid #e040fb", background: "#0a0a20", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#ff80ff"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#e040fb"}
+        >
+          <canvas ref={canvasRef} width={570} height={180}
+            style={{ width: "100%", height: "auto", display: "block", imageRendering: "pixelated" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #3a1040" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>3D194 Brick Breaker</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#e040fb", marginTop: "2px" }}>This ball has been breaking bricks for eternity and it has learned nothing. Sound familiar?</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#e040fb", background: "#e040fb22", padding: "4px 12px", border: "1px solid #e040fb55", letterSpacing: "1px" }}>PLAY</div>
+          </div>
+        </a>
+      );
+    }
+
+    function LoneClownBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 170, S = 2;
+        let anim, f = 0;
+        const vanX = { v: W/S * 0.4 };
+        let vanDX = 0.6, vanWobble = 0;
+
+        function px(x,y,w,h,c) { ctx.fillStyle=c; ctx.fillRect(x*S,y*S,w*S,h*S); }
+
+        function drawMoon(x, y) {
+          ctx.fillStyle = '#e8e8b0';
+          ctx.beginPath(); ctx.arc(x*S, y*S, 14*S, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = '#d8d8a0';
+          ctx.beginPath(); ctx.arc((x+2)*S, (y-1)*S, 12*S, 0, Math.PI*2); ctx.fill();
+        }
+
+        function drawTree(ox, oy, h, dark) {
+          const tc = dark ? '#1a2a1a' : '#0f1f0f';
+          const lc = dark ? ['#0a1a0a','#0f220f','#122812'] : ['#0a140a','#0d1a0d','#101e10'];
+          px(ox+3, oy+h-16, 3, 16, tc);
+          px(ox-2, oy, 13, h-16, lc[0]);
+          px(ox-1, oy+2, 11, h-18, lc[1]);
+          px(ox+1, oy+4, 7, h-20, lc[2]);
+          px(ox+3, oy-3, 3, 5, lc[0]);
+        }
+
+        function drawVan(x, y, wobble) {
+          const wy = Math.sin(wobble) * 0.8;
+          const vy = y + wy;
+          px(x, vy-12, 20, 10, '#d8d8d0');
+          px(x+1, vy-11, 7, 4, '#4a6a8a');
+          px(x+12, vy-11, 7, 4, '#4a6a8a');
+          px(x-1, vy-2, 22, 4, '#c0c0b8');
+          px(x+2, vy+2, 4, 2, '#222');
+          px(x+15, vy+2, 4, 2, '#222');
+          // headlights
+          ctx.fillStyle = 'rgba(255,255,180,0.15)';
+          ctx.beginPath();
+          ctx.moveTo((x+20)*S, (vy-6)*S);
+          ctx.lineTo((x+45)*S, (vy-14)*S);
+          ctx.lineTo((x+45)*S, (vy+4)*S);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        function render() {
+          f++;
+          ctx.fillStyle = '#060812';
+          ctx.fillRect(0, 0, W, H);
+
+          // Stars
+          ctx.fillStyle = '#ffffff';
+          for (let i = 0; i < 30; i++) {
+            const sx = (i * 73 + 11) % (W/S), sy = (i * 37 + 7) % 50;
+            const twinkle = Math.sin(f * 0.02 + i) > 0.5 ? 1 : 0;
+            if (twinkle) ctx.fillRect(sx*S, sy*S, S, S);
+          }
+
+          drawMoon(W/S * 0.72, 20);
+
+          // Fog
+          ctx.fillStyle = 'rgba(100,120,140,0.04)';
+          for (let i = 0; i < 5; i++) {
+            const fx = ((f * 0.15 + i * 60) % (W/S + 40)) - 20;
+            ctx.fillRect(fx*S, (55+i*3)*S, 50*S, 6*S);
+          }
+
+          // Back trees
+          for (let i = 0; i < 12; i++) drawTree(i * 25 - 5, 20 + (i%3)*4, 40 + (i%2)*8, true);
+
+          // Dirt road
+          px(0, 70, W/S, 16, '#2a1f14');
+          px(0, 71, W/S, 14, '#33261a');
+          // Road texture
+          for (let i = 0; i < 15; i++) px(((i*19+f*0.3)%(W/S)), 76, 6, 1, '#3d2e20');
+
+          // Van
+          vanWobble += 0.12;
+          vanX.v += vanDX + Math.sin(f * 0.03) * 0.3;
+          if (vanX.v > W/S + 10) { vanX.v = -30; vanDX = 0.4 + Math.random() * 0.4; }
+          drawVan(vanX.v, 68, vanWobble);
+
+          // Front trees (silhouettes)
+          drawTree(10, 10, 65, false);
+          drawTree(50, 15, 55, false);
+          drawTree(W/S-20, 8, 68, false);
+          drawTree(W/S-55, 18, 52, false);
+
+          // Moon occluded by tree
+          ctx.fillStyle = '#060812';
+          ctx.fillRect((W/S-20)*S, 0, 15*S, 75*S);
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #aa3333", background: "#060812", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#dd4444"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#aa3333"}
+        >
+          <canvas ref={canvasRef} width={570} height={170}
+            style={{ width: "100%", height: "auto", display: "block", imageRendering: "pixelated" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #2a1015" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>The Lone Clown</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#aa3333", marginTop: "2px" }}>A choose your own adventure. Nothing bad happens. Probably.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#aa3333", background: "#aa333322", padding: "4px 12px", border: "1px solid #aa333355", letterSpacing: "1px" }}>READ</div>
+          </div>
+        </div>
+      );
+    }
+
+    function BigfootShoeBanner({ synopsis, onClick }) {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 180, S = 2;
+        let anim, f = 0;
+
+        const eyes = [];
+        for (let i = 0; i < 18; i++) {
+          eyes.push({
+            x: 105 + Math.random() * 85,
+            y: 28 + Math.random() * 38,
+            blinkOffset: Math.random() * 600,
+            blinkRate: 200 + Math.random() * 300,
+            size: 1 + Math.random() * 1.5,
+            pupilDrift: Math.random() * Math.PI * 2
+          });
+        }
+
+        function drawFigure(x, y, armOut) {
+          ctx.fillStyle = '#b0a080';
+          ctx.fillRect((x-1)*S, (y-5)*S, 2*S, 4*S);
+          ctx.fillStyle = '#6a6050';
+          ctx.fillRect((x-2)*S, (y-1)*S, 4*S, 6*S);
+          if (armOut) {
+            ctx.fillRect((x+2)*S, (y-1)*S, 6*S, 1*S);
+            ctx.fillRect((x-8)*S, (y)*S, 6*S, 1*S);
+          }
+          ctx.fillRect((x-1)*S, (y+5)*S, 1*S, 3*S);
+          ctx.fillRect((x+1)*S, (y+5)*S, 1*S, 3*S);
+        }
+
+        function render() {
+          f++;
+          ctx.fillStyle = '#08060f';
+          ctx.fillRect(0, 0, W, H);
+
+          // Stars
+          for (let i = 0; i < 50; i++) {
+            const sx = (i * 73 + 17) % (W/S), sy = (i * 41 + 3) % 45;
+            const twinkle = Math.sin(f * 0.015 + i * 1.3) > 0.3;
+            if (twinkle) {
+              ctx.fillStyle = 'rgba(255,255,255,' + (0.3 + Math.sin(f * 0.02 + i) * 0.2) + ')';
+              ctx.fillRect(sx*S, sy*S, S, S);
+            }
+          }
+
+          // The bright star - pulses
+          const starBright = 0.4 + Math.sin(f * 0.008) * 0.3 + Math.max(0, Math.sin(f * 0.003) * 0.3);
+          const starX = 148, starY = 12;
+          ctx.fillStyle = 'rgba(255,240,200,' + starBright + ')';
+          ctx.beginPath(); ctx.arc(starX*S, starY*S, (3 + Math.sin(f*0.01)*1.5)*S, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = 'rgba(255,240,200,' + starBright*0.3 + ')';
+          ctx.beginPath(); ctx.arc(starX*S, starY*S, (8 + Math.sin(f*0.008)*3)*S, 0, Math.PI*2); ctx.fill();
+
+          // Desert ground
+          const groundY = 72;
+          ctx.fillStyle = '#1a1510';
+          ctx.fillRect(0, groundY*S, W, H);
+          ctx.fillStyle = '#211c14';
+          for (let i = 0; i < 30; i++) {
+            const dx = (i * 43 + 7) % (W/S);
+            ctx.fillRect(dx*S, (groundY + 1 + (i%3))*S, (4+i%3)*S, S);
+          }
+
+          // Shoe - phase in based on time
+          const shoePhase = Math.min(1, (f % 800) / 300);
+          const shoeAlpha = f % 800 < 100 ? (f % 800) / 100 : (f % 800 > 700 ? 1 - (f%800-700)/100 : 1);
+
+          if (shoePhase > 0) {
+            // Stone shoe silhouette
+            ctx.globalAlpha = shoeAlpha * 0.7;
+            ctx.fillStyle = '#2a2520';
+            ctx.beginPath();
+            ctx.moveTo(88*S, 70*S);
+            ctx.lineTo(92*S, 25*S);
+            ctx.lineTo(100*S, 18*S);
+            ctx.lineTo(115*S, 15*S);
+            ctx.lineTo(135*S, 15*S);
+            ctx.lineTo(150*S, 18*S);
+            ctx.lineTo(200*S, 35*S);
+            ctx.lineTo(210*S, 50*S);
+            ctx.lineTo(208*S, 65*S);
+            ctx.lineTo(200*S, 72*S);
+            ctx.lineTo(88*S, 72*S);
+            ctx.fill();
+
+            // Stone texture
+            ctx.fillStyle = '#332e25';
+            for (let i = 0; i < 20; i++) {
+              const tx = 95 + (i*7)%110, ty = 22 + (i*11)%45;
+              ctx.fillRect(tx*S, ty*S, (3+i%2)*S, (2+i%2)*S);
+            }
+
+            // Eyes - blink open progressively
+            const eyeProgress = Math.min(1, Math.max(0, (shoePhase - 0.3) / 0.5));
+            eyes.forEach((eye, i) => {
+              if (i / eyes.length > eyeProgress) return;
+              const blinkCycle = (f + eye.blinkOffset) % eye.blinkRate;
+              const isOpen = blinkCycle > 20;
+              const pupilX = Math.sin(f * 0.01 + eye.pupilDrift) * 0.7;
+
+              ctx.globalAlpha = shoeAlpha * 0.9;
+              ctx.fillStyle = '#f0e8c0';
+              ctx.beginPath();
+              ctx.ellipse(eye.x*S, eye.y*S, eye.size*S, (isOpen ? eye.size*0.8 : 0.3)*S, 0, 0, Math.PI*2);
+              ctx.fill();
+
+              if (isOpen) {
+                ctx.fillStyle = '#1a3a1a';
+                ctx.beginPath();
+                ctx.arc((eye.x + pupilX)*S, eye.y*S, eye.size*0.4*S, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc((eye.x + pupilX)*S, eye.y*S, eye.size*0.2*S, 0, Math.PI*2);
+                ctx.fill();
+              }
+            });
+
+            ctx.globalAlpha = 1;
+          }
+
+          // Two figures searching
+          const fig1X = 55 + Math.sin(f * 0.008) * 15;
+          const fig2X = 72 + Math.sin(f * 0.008 + 1) * 12;
+          const searching = f % 800 < 200;
+          drawFigure(fig1X, groundY - 3, searching);
+          drawFigure(fig2X, groundY - 3, searching);
+
+          // Pickaxe sparks when shoe is visible
+          if (shoePhase > 0.5 && f % 30 < 5) {
+            const sparkX = 90 + Math.random() * 80;
+            const sparkY = 40 + Math.random() * 25;
+            ctx.fillStyle = '#ffd700';
+            ctx.globalAlpha = shoeAlpha;
+            ctx.fillRect(sparkX*S, sparkY*S, S, S);
+            ctx.fillRect((sparkX+1)*S, (sparkY-1)*S, S, S);
+            ctx.fillRect((sparkX-1)*S, (sparkY+1)*S, S, S);
+            ctx.globalAlpha = 1;
+          }
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #e67e22", background: "#08060f", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#ffa040"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#e67e22"}
+        >
+          <canvas ref={canvasRef} width={570} height={180}
+            style={{ width: "100%", height: "auto", display: "block" }} />
+          <div style={{ padding: "12px 16px", borderTop: "1px solid #1a1510" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "8px" }}>
+              <div>
+                <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "20px", color: "#e8e8d0", letterSpacing: "2px" }}>BIGFOOT'S SHOE</div>
+                <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#888880", fontStyle: "italic", marginTop: "4px" }}>{synopsis}</div>
+              </div>
+              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                <span style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#e67e22", background: "#e67e2215", padding: "2px 8px", border: "1px solid #e67e2240" }}>NOVEL</span>
+                <span style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#e67e22", background: "#e67e2222", padding: "4px 12px", border: "1px solid #e67e2255", letterSpacing: "1px" }}>READ</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function EconAddendumBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 150, S = 2;
+        let anim, f = 0;
+
+        const icons = [
+          { x: 38, sym: "pizza", color: "#e67e22" },
+          { x: 90, sym: "oven", color: "#aa3333" },
+          { x: 142, sym: "gear", color: "#4a9a4a" },
+          { x: 194, sym: "coin", color: "#ffd700" },
+          { x: 232, sym: "store", color: "#c0a060" },
+          { x: 262, sym: "ripple", color: "#4a9aea" }
+        ];
+
+        function drawIcon(x, y, sym, color, alpha) {
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = color;
+          if (sym === "pizza") {
+            ctx.beginPath(); ctx.moveTo(x*S, (y-6)*S); ctx.lineTo((x+5)*S, (y+4)*S); ctx.lineTo((x-5)*S, (y+4)*S); ctx.fill();
+            ctx.fillStyle = "#ffd700"; ctx.fillRect((x-1)*S, (y-2)*S, 2*S, 2*S);
+          } else if (sym === "oven") {
+            ctx.fillRect((x-4)*S, (y-4)*S, 8*S, 8*S);
+            ctx.fillStyle = "#1a1a2e"; ctx.fillRect((x-2)*S, (y-2)*S, 4*S, 3*S);
+            ctx.fillStyle = "#e67e22"; ctx.fillRect((x-1)*S, (y+2)*S, 1*S, 1*S); ctx.fillRect((x+1)*S, (y+2)*S, 1*S, 1*S);
+          } else if (sym === "gear") {
+            for (let i = 0; i < 4; i++) {
+              const a = (i/4)*Math.PI*2; ctx.fillRect((x+Math.cos(a)*4-1)*S,(y+Math.sin(a)*4-1)*S,2*S,2*S);
+            }
+            ctx.beginPath(); ctx.arc(x*S,y*S,3*S,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle="#1a1a2e"; ctx.beginPath(); ctx.arc(x*S,y*S,1.5*S,0,Math.PI*2); ctx.fill();
+          } else if (sym === "coin") {
+            ctx.beginPath(); ctx.arc(x*S,y*S,4*S,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle="#1a1a2e"; ctx.fillRect((x-1)*S,(y-2)*S,2*S,4*S);
+          } else if (sym === "store") {
+            ctx.fillRect((x-5)*S,(y-2)*S,10*S,6*S);
+            ctx.fillStyle="#1a1a2e"; ctx.fillRect((x-1)*S,(y)*S,2*S,4*S);
+            ctx.beginPath(); ctx.moveTo((x-6)*S,(y-2)*S); ctx.lineTo(x*S,(y-6)*S); ctx.lineTo((x+6)*S,(y-2)*S); ctx.fill();
+            ctx.fillStyle = color;
+          } else if (sym === "ripple") {
+            for (let r = 2; r <= 5; r++) { ctx.beginPath(); ctx.arc(x*S,y*S,r*S,0,Math.PI*2); ctx.strokeStyle=color; ctx.globalAlpha=alpha*(1-r/6); ctx.lineWidth=S; ctx.stroke(); }
+          }
+          ctx.globalAlpha = 1;
+        }
+
+        function render() {
+          f++;
+          ctx.fillStyle = '#080810';
+          ctx.fillRect(0, 0, W, H);
+
+          // Background grid
+          ctx.strokeStyle = '#111122';
+          ctx.lineWidth = 1;
+          for (let gx = 0; gx < W/S; gx += 10) { ctx.beginPath(); ctx.moveTo(gx*S,0); ctx.lineTo(gx*S,H); ctx.stroke(); }
+          for (let gy = 0; gy < H/S; gy += 10) { ctx.beginPath(); ctx.moveTo(0,gy*S); ctx.lineTo(W,gy*S); ctx.stroke(); }
+
+          // Animated curve
+          const baseY = H/S - 15;
+          const curvePoints = [];
+          const drawProgress = Math.min(1, (f % 300) / 200);
+          const totalPts = Math.floor(W/S * drawProgress);
+
+          ctx.beginPath();
+          for (let i = 0; i <= totalPts; i++) {
+            const t = i / (W/S);
+            const y = baseY - Math.pow(t, 2.2) * (baseY - 12);
+            if (i === 0) ctx.moveTo(i*S, y*S); else ctx.lineTo(i*S, y*S);
+            curvePoints.push({ x: i, y });
+          }
+
+          // Gradient stroke
+          const grad = ctx.createLinearGradient(0, H, W * drawProgress, 0);
+          grad.addColorStop(0, '#aa3333');
+          grad.addColorStop(0.3, '#e67e22');
+          grad.addColorStop(0.6, '#ffd700');
+          grad.addColorStop(1, '#4a9aea');
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = S * 1.5;
+          ctx.stroke();
+
+          // Glow under curve
+          if (curvePoints.length > 2) {
+            ctx.beginPath();
+            ctx.moveTo(0, baseY*S);
+            curvePoints.forEach(p => ctx.lineTo(p.x*S, p.y*S));
+            ctx.lineTo(curvePoints[curvePoints.length-1].x*S, baseY*S);
+            ctx.closePath();
+            const fillGrad = ctx.createLinearGradient(0, 0, W * drawProgress, 0);
+            fillGrad.addColorStop(0, 'rgba(170,51,51,0.08)');
+            fillGrad.addColorStop(0.5, 'rgba(230,126,34,0.06)');
+            fillGrad.addColorStop(1, 'rgba(74,154,234,0.04)');
+            ctx.fillStyle = fillGrad;
+            ctx.fill();
+          }
+
+          // Icons along curve
+          icons.forEach((icon, i) => {
+            if (icon.x > totalPts) return;
+            const t = icon.x / (W/S);
+            const y = baseY - Math.pow(t, 2.2) * (baseY - 12);
+            const bob = Math.sin(f * 0.03 + i * 1.5) * 1.5;
+            drawIcon(icon.x, y - 8 + bob, icon.sym, icon.color, 0.8);
+          });
+
+          // Axis labels
+          ctx.fillStyle = '#333355';
+          ctx.font = (7*S) + 'px "VT323", monospace';
+          ctx.fillText('ZERO', 4, (baseY+7)*S);
+          if (drawProgress > 0.9) ctx.fillText('SOMETHING', (W/S - 45)*S, 18*S);
+
+          // Reset animation
+          if (f % 300 > 280) {
+            ctx.fillStyle = 'rgba(8,8,16,' + ((f%300-280)/20) + ')';
+            ctx.fillRect(0,0,W,H);
+          }
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #4a9aea", background: "#080810", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#6ab0ff"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#4a9aea"}
+        >
+          <canvas ref={canvasRef} width={570} height={150}
+            style={{ width: "100%", height: "auto", display: "block", imageRendering: "auto" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #1a2040" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>Econ Addendum</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9aea", marginTop: "2px" }}>Six articles about money, time, and knowing when to stop eating pizza.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#4a9aea", background: "#4a9aea22", padding: "4px 12px", border: "1px solid #4a9aea55", letterSpacing: "1px" }}>READ</div>
+          </div>
+        </div>
+      );
+    }
+
+    function FinanceBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 130, S = 2;
+        let anim, f = 0;
+
+        // Generate a long-term upward stock chart with volatility
+        const pts = [];
+        let val = 40;
+        for (let i = 0; i < W/S; i++) {
+          val += (Math.random() - 0.46) * 2.5;
+          if (i > 200) val += 0.05;
+          if (i > 50 && i < 70) val -= 0.6; // crash
+          if (i > 70 && i < 100) val += 0.3; // recovery
+          val = Math.max(10, Math.min(H/S - 10, val));
+          pts.push(val);
+        }
+
+        function render() {
+          f++;
+          ctx.fillStyle = '#060a10';
+          ctx.fillRect(0, 0, W, H);
+
+          // Grid
+          ctx.strokeStyle = '#0d1520';
+          ctx.lineWidth = 1;
+          for (let gy = 20; gy < H; gy += 20) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+          for (let gx = 40; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+
+          // Draw progress
+          const drawPts = Math.min(pts.length, Math.floor((f * 0.8) % (pts.length + 80)));
+
+          // Filled area
+          if (drawPts > 1) {
+            ctx.beginPath();
+            ctx.moveTo(0, H);
+            for (let i = 0; i < drawPts; i++) ctx.lineTo(i*S, (H/S - pts[i])*S);
+            ctx.lineTo((drawPts-1)*S, H);
+            ctx.closePath();
+            const fillGrad = ctx.createLinearGradient(0, 0, 0, H);
+            fillGrad.addColorStop(0, 'rgba(74,154,74,0.15)');
+            fillGrad.addColorStop(1, 'rgba(74,154,74,0)');
+            ctx.fillStyle = fillGrad;
+            ctx.fill();
+          }
+
+          // Line
+          if (drawPts > 1) {
+            ctx.beginPath();
+            for (let i = 0; i < drawPts; i++) {
+              const x = i*S, y = (H/S - pts[i])*S;
+              if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = '#4a9a4a';
+            ctx.lineWidth = S;
+            ctx.stroke();
+
+            // Dot at tip
+            const tipX = (drawPts-1)*S, tipY = (H/S - pts[drawPts-1])*S;
+            ctx.fillStyle = '#4a9a4a';
+            ctx.beginPath(); ctx.arc(tipX, tipY, 3*S, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(74,154,74,0.3)';
+            ctx.beginPath(); ctx.arc(tipX, tipY, 6*S, 0, Math.PI*2); ctx.fill();
+          }
+
+          // Ticker text scrolling
+          const tickers = ["VGS +1.2%", "AAPL +0.8%", "MSFT +0.4%", "ALL ORDS +0.6%", "BRK.A +1.1%", "INDEX \u25B2"];
+          ctx.font = (5*S) + 'px "VT323", monospace';
+          const tickerWidth = tickers.join("    ").length * 5 * S;
+          const scrollX = -(f * 1.2) % (tickerWidth + W);
+          ctx.fillStyle = '#4a9a4a88';
+          let tx = scrollX;
+          tickers.forEach(t => {
+            ctx.fillText(t, tx, 12*S);
+            tx += (t.length + 4) * 5 * S;
+          });
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #4a9a4a", background: "#060a10", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#6aba6a"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#4a9a4a"}
+        >
+          <canvas ref={canvasRef} width={570} height={130}
+            style={{ width: "100%", height: "auto", display: "block" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #0d2010" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>Exploring Finance</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a9a4a", marginTop: "2px" }}>Four articles on why doing nothing is the hardest strategy to beat.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#4a9a4a", background: "#4a9a4a22", padding: "4px 12px", border: "1px solid #4a9a4a55", letterSpacing: "1px" }}>READ</div>
+          </div>
+        </div>
+      );
+    }
+
+    function StrategyBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = 570, H = 130, S = 2;
+        let anim, f = 0;
+
+        function render() {
+          f++;
+          ctx.fillStyle = '#0a0808';
+          ctx.fillRect(0, 0, W, H);
+
+          const midY = H/S/2;
+          const barL = 40, barR = W/S - 40;
+          const barMid = (barL + barR) / 2;
+
+          // Bar
+          ctx.fillStyle = '#333340';
+          ctx.fillRect(barL*S, (midY-1)*S, (barR-barL)*S, 2*S);
+
+          // Left weight (property) - solid, heavy
+          const lBob = Math.sin(f * 0.015) * 2;
+          ctx.fillStyle = '#e67e22';
+          ctx.fillRect((barL-12)*S, (midY-18+lBob)*S, 24*S, 14*S);
+          ctx.fillStyle = '#c06018';
+          ctx.fillRect((barL-8)*S, (midY-4+lBob)*S, 16*S, 4*S);
+          // House icon
+          ctx.fillStyle = '#1a1210';
+          ctx.fillRect((barL-4)*S, (midY-14+lBob)*S, 8*S, 6*S);
+          ctx.beginPath();
+          ctx.moveTo((barL-6)*S, (midY-14+lBob)*S);
+          ctx.lineTo(barL*S, (midY-18+lBob)*S);
+          ctx.lineTo((barL+6)*S, (midY-14+lBob)*S);
+          ctx.fill();
+
+          // Right weight (VGS) - dynamic, glowing
+          const rBob = Math.sin(f * 0.015 + Math.PI) * 2;
+          const glow = 0.4 + Math.sin(f * 0.03) * 0.2;
+          ctx.fillStyle = 'rgba(74,154,74,' + glow + ')';
+          ctx.beginPath(); ctx.arc(barR*S, (midY-8+rBob)*S, 16*S, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = '#4a9a4a';
+          ctx.beginPath(); ctx.arc(barR*S, (midY-8+rBob)*S, 12*S, 0, Math.PI*2); ctx.fill();
+          // $ symbol
+          ctx.fillStyle = '#1a3a1a';
+          ctx.font = 'bold ' + (10*S) + 'px "VT323", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText('VGS', barR*S, (midY-4+rBob)*S);
+
+          // Fulcrum
+          ctx.fillStyle = '#555570';
+          ctx.beginPath();
+          ctx.moveTo((barMid-8)*S, (midY+20)*S);
+          ctx.lineTo(barMid*S, midY*S);
+          ctx.lineTo((barMid+8)*S, (midY+20)*S);
+          ctx.fill();
+
+          // Snowball particles floating from left to right
+          for (let i = 0; i < 8; i++) {
+            const t = ((f * 0.5 + i * 40) % (barR - barL)) / (barR - barL);
+            const px = barL + t * (barR - barL);
+            const py = midY - 6 + Math.sin(t * Math.PI * 3 + i) * 4;
+            const sz = 1 + t * 1.5;
+            ctx.fillStyle = 'rgba(230,126,34,' + (0.2 + t * 0.6) + ')';
+            ctx.beginPath(); ctx.arc(px*S, py*S, sz*S, 0, Math.PI*2); ctx.fill();
+          }
+
+          // Labels
+          ctx.fillStyle = '#e67e2288';
+          ctx.font = (5*S) + 'px "VT323", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText('PROPERTY', barL*S, (midY+30)*S);
+          ctx.fillStyle = '#4a9a4a88';
+          ctx.fillText('GLOBAL INDEX', barR*S, (midY+30)*S);
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #e67e22", background: "#0a0808", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#ffa040"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#e67e22"}
+        >
+          <canvas ref={canvasRef} width={570} height={130}
+            style={{ width: "100%", height: "auto", display: "block" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #1a1210" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>Investment Strategy</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#e67e22", marginTop: "2px" }}>Property as defense. Global equities as offense. Inflation as fuel.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#e67e22", background: "#e67e2222", padding: "4px 12px", border: "1px solid #e67e2255", letterSpacing: "1px" }}>READ</div>
+          </div>
+        </div>
+      );
+    }
+
+    function ClipboardBanner({ onClick }) {
+      const scrollRef = React.useRef(null);
+      const [lines, setLines] = useState([]);
+      const [phase, setPhase] = useState(0);
+
+      const allLines = [
+        { text: "> SCANNING SYSTEM...", delay: 0, color: "#4a9a4a" },
+        { text: "> CPU: OK", delay: 800, color: "#666" },
+        { text: "> RAM: OK", delay: 1200, color: "#666" },
+        { text: "> STORAGE: OK", delay: 1600, color: "#666" },
+        { text: "> CLIPBOARD: 1 SLOT", delay: 2200, color: "#aa3333" },
+        { text: "", delay: 2600, color: "#666" },
+        { text: "> \u26A0 CRITICAL BOTTLENECK DETECTED", delay: 2800, color: "#e67e22" },
+        { text: "> FORTY YEARS OF CONSTRAINED OUTPUT", delay: 3400, color: "#e67e22" },
+        { text: "> ESTIMATED DAILY LOSS: 10,000 BOOKS", delay: 4000, color: "#aa3333" },
+        { text: "", delay: 4400, color: "#666" },
+        { text: "> DEPLOYING SOLUTION...", delay: 4600, color: "#c8f53c" },
+        { text: "> CLIPBOARD SLOTS: 1 \u2192 20", delay: 5200, color: "#c8f53c" },
+        { text: "> THROUGHPUT INCREASE: 2000%", delay: 5800, color: "#c8f53c" },
+        { text: "> MOORE'S LAW: EXCEEDED", delay: 6400, color: "#c8f53c" },
+        { text: "", delay: 6800, color: "#666" },
+        { text: "> ALERTING ACADEMIC COMMUNITY...", delay: 7000, color: "#4a9aea" },
+        { text: "> PREPARING FOR PUSHBACK...", delay: 7600, color: "#4a9aea" },
+        { text: "> STATUS: READY FOR THIS FIGHT", delay: 8200, color: "#c8f53c" }
+      ];
+
+      useEffect(() => {
+        const timers = [];
+        allLines.forEach((line, i) => {
+          timers.push(setTimeout(() => {
+            setLines(prev => [...prev, line]);
+          }, line.delay));
+        });
+        timers.push(setTimeout(() => {
+          setLines([]);
+          setPhase(p => p + 1);
+        }, 11000));
+        return () => timers.forEach(clearTimeout);
+      }, [phase]);
+
+      useEffect(() => {
+        if (scrollRef.current) {
+          scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+      }, [lines]);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #c8f53c", background: "#0a0a0a", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#e0ff60"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#c8f53c"}
+        >
+          <div ref={scrollRef} style={{ padding: "16px", height: "160px", overflowY: "auto", fontFamily: "'VT323', monospace", fontSize: "13px", lineHeight: 1.6 }}>
+            <div style={{ marginBottom: "8px", fontFamily: "'VT323', monospace", fontSize: "11px", color: "#333", letterSpacing: "1px" }}>POST_IDEALIST_SYSTEMS v2.0.26</div>
+            {lines.map((line, i) => (
+              <div key={i + "-" + phase} style={{ color: line.color, minHeight: line.text ? "auto" : "12px" }}>
+                {line.text}
+                {i === lines.length - 1 && line.text && <span style={{ animation: "blink 1s step-end infinite", borderRight: "2px solid " + line.color }}> </span>}
+              </div>
+            ))}
+            {lines.length === 0 && (
+              <div style={{ color: "#4a9a4a" }}>{">"} SCANNING SYSTEM...<span style={{ animation: "blink 1s step-end infinite", borderRight: "2px solid #4a9a4a" }}> </span></div>
+            )}
+          </div>
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #1a1a10" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>The Clipboard</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#c8f53c", marginTop: "2px" }}>A 20x increase in computational power.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#c8f53c", background: "#c8f53c22", padding: "4px 12px", border: "1px solid #c8f53c55", letterSpacing: "1px" }}>LAUNCH</div>
+          </div>
+          <style>{`@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }`}</style>
+        </div>
+      );
+    }
+
+    function TommySpaceBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      const frameRef = React.useRef(0);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        const stars = [];
+        for (let i = 0; i < 60; i++) stars.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.5+0.3, tw: Math.random()*Math.PI*2 });
+        const planets = [
+          { name: "Mercury", c: "#9c8a7a", r: 5,  d: 70,  spd: 0.020, a: 0 },
+          { name: "Venus",   c: "#d9a066", r: 8,  d: 105, spd: 0.015, a: 1.2 },
+          { name: "Earth",   c: "#4a90d9", r: 9,  d: 145, spd: 0.012, a: 2.6 },
+          { name: "Mars",    c: "#c1440e", r: 7,  d: 185, spd: 0.010, a: 4.0 },
+          { name: "Jupiter", c: "#c99039", r: 18, d: 250, spd: 0.006, a: 5.2 },
+          { name: "Saturn",  c: "#d8c27a", r: 15, d: 330, spd: 0.004, a: 0.5, ring: true },
+          { name: "Uranus",  c: "#7fd8d8", r: 11, d: 400, spd: 0.003, a: 3.3 },
+          { name: "Neptune", c: "#3d5fd9", r: 11, d: 460, spd: 0.0025, a: 1.8 }
+        ];
+        let anim;
+        function render() {
+          frameRef.current++;
+          const f = frameRef.current;
+          ctx.fillStyle = '#05030f';
+          ctx.fillRect(0, 0, W, H);
+          for (const s of stars) {
+            const tw = 0.4 + 0.6*Math.abs(Math.sin(f*0.03 + s.tw));
+            ctx.fillStyle = `rgba(255,255,255,${tw})`;
+            ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill();
+          }
+          const cx = 60, cy = H/2;
+          // Sun
+          const sunGlow = ctx.createRadialGradient(cx, cy, 4, cx, cy, 34);
+          sunGlow.addColorStop(0, '#fff3b0'); sunGlow.addColorStop(0.4, '#ffb300'); sunGlow.addColorStop(1, 'rgba(255,120,0,0)');
+          ctx.fillStyle = sunGlow;
+          ctx.beginPath(); ctx.arc(cx, cy, 34, 0, Math.PI*2); ctx.fill();
+          ctx.fillStyle = '#ffd54a';
+          ctx.beginPath(); ctx.arc(cx, cy, 16 + Math.sin(f*0.05)*1.2, 0, Math.PI*2); ctx.fill();
+          for (const p of planets) {
+            const ang = p.a + f*p.spd;
+            const px = cx + Math.cos(ang)*p.d;
+            const py = cy + Math.sin(ang)*p.d*0.42;
+            // faint orbit
+            ctx.strokeStyle = 'rgba(140,68,173,0.12)';
+            ctx.beginPath(); ctx.ellipse(cx, cy, p.d, p.d*0.42, 0, 0, Math.PI*2); ctx.stroke();
+            if (px < -30 || px > W+30) continue;
+            if (p.ring) {
+              ctx.strokeStyle = 'rgba(216,194,122,0.8)'; ctx.lineWidth = 3;
+              ctx.beginPath(); ctx.ellipse(px, py, p.r+9, (p.r+9)*0.34, -0.5, 0, Math.PI*2); ctx.stroke();
+              ctx.lineWidth = 1;
+            }
+            ctx.fillStyle = p.c;
+            ctx.beginPath(); ctx.arc(px, py, p.r, 0, Math.PI*2); ctx.fill();
+            // little shadow crescent
+            ctx.fillStyle = 'rgba(0,0,0,0.28)';
+            ctx.beginPath(); ctx.arc(px + p.r*0.35, py, p.r, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = p.c;
+            ctx.beginPath(); ctx.arc(px - p.r*0.15, py, p.r*0.92, 0, Math.PI*2); ctx.fill();
+          }
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+      return (
+        <a href="https://aaronunify2.github.io/UnifyVersion1/TommySpace.html" target="_blank" rel="noopener"
+          onClick={e => { if (onClick) { e.preventDefault(); onClick(); } }}
+          style={{ display: "block", border: "2px solid #8e44ad", background: "#05030f", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#b06fd0"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#8e44ad"}
+        >
+          <canvas ref={canvasRef} width={570} height={150}
+            style={{ width: "100%", height: "auto", display: "block" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #1a1030" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>TommySpace</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#b06fd0", marginTop: "2px" }}>Eight planets, eight tiny adventures. Pluto is still mad about it.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#8e44ad", background: "#8e44ad22", padding: "4px 12px", border: "1px solid #8e44ad55", letterSpacing: "1px" }}>PLAY</div>
+          </div>
+        </a>
+      );
+    }
+
+    function ProcessMapperBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      const frameRef = React.useRef(0);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        const ACCENT = '#3a7ca5', LIGHT = '#7fc4e8', INK = '#cfe6f2';
+
+        // node layout (in canvas px). type: rect | diamond | end
+        const cy = H/2;
+        const nodes = [
+          { id:0, x:60,  y:cy,    w:64, h:34, type:'rect',    label:'START',    appear:0   },
+          { id:1, x:170, y:cy,    w:72, h:34, type:'rect',    label:'INTAKE',   appear:55  },
+          { id:2, x:285, y:cy,    w:46, h:46, type:'diamond', label:'CHECK',    appear:110 },
+          { id:3, x:410, y:cy-44, w:78, h:30, type:'rect',    label:'APPROVE',  appear:175 },
+          { id:4, x:410, y:cy+44, w:78, h:30, type:'rect',    label:'REJECT',   appear:210 },
+          { id:5, x:520, y:cy,    w:54, h:34, type:'end',     label:'DONE',     appear:255 }
+        ];
+        const edges = [
+          { from:0, to:1, appear:30,  label:'' },
+          { from:1, to:2, appear:90,  label:'' },
+          { from:2, to:3, appear:150, label:'yes' },
+          { from:2, to:4, appear:185, label:'no'  },
+          { from:3, to:5, appear:235, label:'' },
+          { from:4, to:5, appear:235, label:'' }
+        ];
+        const STAMP_AT = 300, RESET_AT = 430;
+
+        function nodeCenter(n){ return { x:n.x, y:n.y }; }
+        function nodeEdgePoint(n, towardX, towardY){
+          // returns a point on the node boundary toward target (approx)
+          const c = nodeCenter(n);
+          const dx = towardX - c.x, dy = towardY - c.y;
+          if (n.type === 'diamond'){
+            const hw = n.w/2, hh = n.h/2;
+            const t = 1 / (Math.abs(dx)/hw + Math.abs(dy)/hh || 1);
+            return { x:c.x + dx*t, y:c.y + dy*t };
+          }
+          const hw = n.w/2, hh = n.h/2;
+          const sx = dx === 0 ? Infinity : hw/Math.abs(dx);
+          const sy = dy === 0 ? Infinity : hh/Math.abs(dy);
+          const s = Math.min(sx, sy);
+          return { x:c.x + dx*s, y:c.y + dy*s };
+        }
+
+        function roundRect(x,y,w,h,r){
+          ctx.beginPath();
+          ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+          ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+        }
+        function drawNode(n, prog){
+          ctx.save();
+          ctx.globalAlpha = Math.min(1, prog);
+          const grow = 0.7 + 0.3*Math.min(1, prog);
+          const w = n.w*grow, h = n.h*grow;
+          const x = n.x - w/2, y = n.y - h/2;
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = ACCENT;
+          ctx.fillStyle = n.type==='end' ? 'rgba(58,124,165,0.30)' : 'rgba(58,124,165,0.12)';
+          if (n.type === 'diamond'){
+            ctx.beginPath();
+            ctx.moveTo(n.x, y); ctx.lineTo(x+w, n.y); ctx.lineTo(n.x, y+h); ctx.lineTo(x, n.y); ctx.closePath();
+            ctx.fill(); ctx.stroke();
+          } else {
+            roundRect(x, y, w, h, n.type==='end'?16:6); ctx.fill(); ctx.stroke();
+          }
+          if (prog > 0.5){
+            ctx.globalAlpha = Math.min(1, (prog-0.5)*2);
+            ctx.fillStyle = INK;
+            ctx.font = '11px "VT323", monospace';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(n.label, n.x, n.y+1);
+          }
+          ctx.restore();
+        }
+        function drawEdge(e, f){
+          const a = nodes[e.from], b = nodes[e.to];
+          const ca = nodeCenter(a), cb = nodeCenter(b);
+          const p1 = nodeEdgePoint(a, cb.x, cb.y);
+          const p2 = nodeEdgePoint(b, ca.x, ca.y);
+          const t = Math.max(0, Math.min(1, (f - e.appear)/30));
+          if (t <= 0) return;
+          const ex = p1.x + (p2.x-p1.x)*t, ey = p1.y + (p2.y-p1.y)*t;
+          ctx.strokeStyle = ACCENT; ctx.lineWidth = 2; ctx.globalAlpha = 0.85;
+          ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(ex,ey); ctx.stroke();
+          ctx.globalAlpha = 1;
+          if (t >= 1){
+            // arrowhead
+            const ang = Math.atan2(p2.y-p1.y, p2.x-p1.x);
+            ctx.fillStyle = ACCENT;
+            ctx.beginPath();
+            ctx.moveTo(p2.x, p2.y);
+            ctx.lineTo(p2.x - 7*Math.cos(ang-0.4), p2.y - 7*Math.sin(ang-0.4));
+            ctx.lineTo(p2.x - 7*Math.cos(ang+0.4), p2.y - 7*Math.sin(ang+0.4));
+            ctx.closePath(); ctx.fill();
+            // label
+            if (e.label){
+              ctx.fillStyle = LIGHT; ctx.font = '10px "VT323", monospace';
+              ctx.textAlign='center'; ctx.textBaseline='middle';
+              ctx.fillText(e.label, (p1.x+p2.x)/2, (p1.y+p2.y)/2 - 7);
+            }
+            // traveling pulse
+            const pulseT = ((frameRef.current*0.02 + e.from*0.3) % 1);
+            const gx = p1.x + (p2.x-p1.x)*pulseT, gy = p1.y + (p2.y-p1.y)*pulseT;
+            const g = ctx.createRadialGradient(gx,gy,0,gx,gy,5);
+            g.addColorStop(0, LIGHT); g.addColorStop(1, 'rgba(127,196,232,0)');
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(gx,gy,5,0,Math.PI*2); ctx.fill();
+          }
+        }
+
+        let anim;
+        function render(){
+          frameRef.current++;
+          let f = frameRef.current % RESET_AT;
+          // background
+          ctx.fillStyle = '#0a141c';
+          ctx.fillRect(0,0,W,H);
+          // blueprint grid
+          ctx.strokeStyle = 'rgba(58,124,165,0.10)'; ctx.lineWidth = 1;
+          for (let gx=0; gx<W; gx+=22){ ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+          for (let gy=0; gy<H; gy+=22){ ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+          // edges first, then nodes on top
+          for (const e of edges) drawEdge(e, f);
+          for (const n of nodes){
+            const prog = Math.max(0, Math.min(1, (f - n.appear)/22));
+            if (prog > 0) drawNode(n, prog);
+          }
+          // MAPPED stamp
+          if (f > STAMP_AT){
+            const sa = Math.min(1, (f - STAMP_AT)/25);
+            ctx.save();
+            ctx.globalAlpha = sa;
+            ctx.translate(W-92, 26); ctx.rotate(-0.12);
+            ctx.strokeStyle = '#5fae6a'; ctx.lineWidth = 2;
+            roundRect(-6,-13,84,26,4); ctx.stroke();
+            ctx.fillStyle = '#5fae6a'; ctx.font = '15px "VT323", monospace';
+            ctx.textAlign='center'; ctx.textBaseline='middle';
+            ctx.fillText('\u2713 MAPPED', 36, 1);
+            ctx.restore();
+          }
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+      return (
+        <a href="https://aaronunify2.github.io/UnifyVersion1/WorkAdministration.html" target="_blank" rel="noopener"
+          onClick={e => { if (onClick) { e.preventDefault(); onClick(); } }}
+          style={{ display: "block", border: "2px solid #3a7ca5", background: "#0a141c", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#5fa8d0"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#3a7ca5"}
+        >
+          <canvas ref={canvasRef} width={570} height={150}
+            style={{ width: "100%", height: "auto", display: "block" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #14222e" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>The Process Mapper</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#7fc4e8", marginTop: "2px" }}>Most evil is just incompetence with a bad process map.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#3a7ca5", background: "#3a7ca522", padding: "4px 12px", border: "1px solid #3a7ca555", letterSpacing: "1px" }}>OPEN</div>
+          </div>
+        </a>
+      );
+    }
+
+    function HomePage({ content, setPage, setSelectedTool, setSelectedArticle }) {
+      const items = [];
+      const novel = content.novel;
+      if (novel) {
+        if (novel.chapters?.length) {
+          const lastCh = novel.chapters[novel.chapters.length-1];
+          items.push({ type: "novel", id: "novel", title: novel.title, subtitle: "New chapter: " + lastCh.title, date: lastCh.date, color: "#e67e22" });
+        } else {
+          const synArr = novel.synopsis;
+          const homeSyn = Array.isArray(synArr) ? synArr[Math.floor(Math.random() * synArr.length)] : (synArr || novel.genre);
+          items.push({ type: "novel", id: "novel", title: novel.title, subtitle: homeSyn, date: "2026-02-15", color: "#e67e22" });
+        }
+      }
+      (content.tools||[]).filter(t => !t.hideFeed).forEach(t => items.push({ type: "tool", id: t.id, title: t.title, subtitle: t.tagline, date: t.date, color: t.color||"#4a90d9" }));
+      (content.articles||[]).filter(a => !a.hideFeed && !a.comingSoon).forEach(a => items.push({ type: "article", id: a.id, title: a.title, subtitle: a.subtitle, date: a.date, color: "#4a9aea" }));
+      items.sort((a,b) => new Date(b.date)-new Date(a.date));
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          <SectionHeader title="Feed" subtitle="Everything, most recent first" />
+          <ClipboardBanner onClick={() => { setSelectedTool("clipboard"); setPage("tools"); }} />
+          <ProcessMapperBanner onClick={() => { setSelectedTool("process-mapper"); setPage("tools"); }} />
+          <ForestBanner onClick={() => { setSelectedTool("mystic-forest"); setPage("tools"); }} />
+          <TommySpaceBanner onClick={() => { setSelectedTool("tommyspace"); setPage("tools"); }} />
+          <LoneClownBanner onClick={() => { setSelectedArticle("lone-clown"); setPage("articles"); }} />
+          <EconAddendumBanner onClick={() => { setSelectedArticle("econ-series"); setPage("articles"); }} />
+          <FinanceBanner onClick={() => { setSelectedArticle("finance-series"); setPage("articles"); }} />
+          <StrategyBanner onClick={() => { setSelectedArticle("strategy-series"); setPage("articles"); }} />
+          {items.map(item => (
+            <React.Fragment key={item.type+item.id}>
+            {item.id === "mystic-forest" ? null : item.id === "tommyspace" ? null : item.id === "process-mapper" ? null : item.type === "novel" ? <BigfootShoeBanner synopsis={item.subtitle} onClick={() => setPage("novel")} /> : item.id === "clipboard" ? null : (
+            <div className="feed-item" onClick={() => { if(item.type==="tool"){setSelectedTool(item.id);setPage("tools")} else if(item.type==="article"){setSelectedArticle(item.id);setPage("articles")} else{setPage("novel")} }} style={{ border: "1px solid #333366", padding: "20px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor=item.color} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
+              <div className="feed-icon" style={{ width: "48px", height: "48px", background: item.color+"22", border: "2px solid "+item.color, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "14px", color: item.color, flexShrink: 0, textTransform: "uppercase" }}>{item.type==="tool"?"APP":item.type==="article"?"TXT":"FIC"}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="feed-meta" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "4px" }}>
+                  <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "20px", color: "#e8e8d0" }}>{item.title}</h3>
+                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(item.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+                </div>
+                <p style={{ fontSize: "14px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>{redact(item.subtitle)}</p>
+                <span style={{ display: "inline-block", marginTop: "8px", fontFamily: "'VT323', monospace", fontSize: "12px", letterSpacing: "1px", color: item.color, background: item.color+"15", padding: "2px 8px", border: "1px solid "+item.color+"40", textTransform: "uppercase" }}>{item.type}</span>
+              </div>
+            </div>
+            )}
+            {item.id === "tommypop" && <BrickBreakerBanner />}
+            </React.Fragment>
+          ))}
+          <div style={{ border: "2px solid #e67e22", padding: "16px 20px", fontFamily: "'VT323', monospace", fontSize: "18px", color: "#e67e22", textAlign: "center", letterSpacing: "2px", background: "#1a1520" }}>{"\u2726 \u2726 \u2726 GRAND OPENING \u2014 Welcome to The Post Idealist \u2726 \u2726 \u2726"}</div>
+        </div>
+      );
+    }
+
+    function ToolsPage({ content, selectedTool, setSelectedTool }) {
+      const tools = content.tools || [];
+      const selected = selectedTool ? tools.find(t => t.id === selectedTool) : null;
+      const { data: toolData, loading } = useJsonFile(selected?.file || null);
+      if (selected && toolData) return <ToolRenderer data={toolData} goBack={() => setSelectedTool(null)} />;
+      if (selected && loading) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center", fontSize: "18px" }}>Loading...</div>;
+      return (
+        <div>
+          <SectionHeader title="Tools" subtitle={"Things I\u2019ve built \u2014 click any for details"} />
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            {tools.map(t => (
+              <div key={t.id} onClick={() => setSelectedTool(t.id)} style={{ border: "1px solid #333366", padding: "24px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "20px", alignItems: "flex-start", transition: "all 0.2s" }} onMouseEnter={e => { e.currentTarget.style.borderColor=t.color; e.currentTarget.style.transform="translateX(4px)"; }} onMouseLeave={e => { e.currentTarget.style.borderColor="#333366"; e.currentTarget.style.transform="translateX(0)"; }}>
+                <div style={{ width: "64px", height: "64px", background: (t.color||"#4a90d9")+"22", border: "2px solid "+(t.color||"#4a90d9"), display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "34px", color: t.color||"#4a90d9", flexShrink: 0 }}>{t.title[0]}</div>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e8e8d0" }}>{t.title} <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#666680", fontStyle: "italic", fontWeight: "normal" }}>{"\u2014 "+t.tagline}</span></h3>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function EconSeriesPage({ articles, onSelect, goBack }) {
+      const econArticles = articles.filter(a => a.category === "Economics" && !a.comingSoon);
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
+          <div style={{ border: "2px solid #4a9aea", background: "linear-gradient(180deg, #0a0f1a 0%, #0f0f23 100%)", padding: "32px", textAlign: "center", marginBottom: "28px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "12px" }}>Article Series</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "36px", color: "#e8e8d0", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "8px" }}>Econ Addendum</h2>
+            <div style={{ maxWidth: "500px", margin: "0 auto", padding: "16px 0" }}>
+              <p style={{ fontFamily: "'Lora', serif", fontSize: "15px", fontStyle: "italic", color: "#a0a090", lineHeight: 1.7 }}>Economics gives you a small number of genuinely powerful mental tools. Most education either buries them under math or oversimplifies them into platitudes. These articles do neither.</p>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {econArticles.map((a, i) => (
+              <div key={a.id} onClick={() => onSelect(a.id)}
+                style={{ border: "1px solid #333366", padding: "16px 20px", cursor: "pointer", background: "#0f0f23", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "border-color 0.2s", gap: "12px" }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = "#4a9aea"}
+                onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
+              >
+                <div style={{ display: "flex", gap: "16px", alignItems: "baseline", flex: 1, minWidth: 0 }}>
+                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: "#4a9aea", flexShrink: 0 }}>{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <span style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>{a.title}</span>
+                    <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>{redact(a.subtitle)}</p>
+                  </div>
+                </div>
+                <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function FinanceSeriesPage({ articles, onSelect, goBack }) {
+      const finArticles = articles.filter(a => a.category === "Finance" && !a.comingSoon);
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
+          <div style={{ border: "2px solid #4a9a4a", background: "linear-gradient(180deg, #0a1a0f 0%, #0f0f23 100%)", padding: "32px", textAlign: "center", marginBottom: "28px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#3a6a4a", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "12px" }}>Article Series</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "36px", color: "#e8e8d0", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "8px" }}>Exploring Finance</h2>
+            <div style={{ maxWidth: "500px", margin: "0 auto", padding: "16px 0" }}>
+              <p style={{ fontFamily: "'Lora', serif", fontSize: "15px", fontStyle: "italic", color: "#a0a090", lineHeight: 1.7 }}>Can you beat the market? Four articles on index funds, manager skill, private information, and why two Nobel laureates can't agree on whether prices are real.</p>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {finArticles.map((a, i) => (
+              <div key={a.id} onClick={() => onSelect(a.id)}
+                style={{ border: "1px solid #333366", padding: "16px 20px", cursor: "pointer", background: "#0f0f23", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "border-color 0.2s", gap: "12px" }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = "#4a9a4a"}
+                onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
+              >
+                <div style={{ display: "flex", gap: "16px", alignItems: "baseline", flex: 1, minWidth: 0 }}>
+                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: "#4a9a4a", flexShrink: 0 }}>{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <span style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>{a.title}</span>
+                    <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>{redact(a.subtitle)}</p>
+                  </div>
+                </div>
+                <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function StrategySeriesPage({ articles, onSelect, goBack }) {
+      const stratArticles = articles.filter(a => a.category === "Strategy" && !a.comingSoon);
+      return (
+        <div>
+          <button onClick={goBack} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", marginBottom: "20px", padding: 0 }}>{"\u2190 Back to articles"}</button>
+          <div style={{ border: "2px solid #e67e22", background: "linear-gradient(180deg, #1a120a 0%, #0f0f23 100%)", padding: "32px", textAlign: "center", marginBottom: "28px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#8a5a2a", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "12px" }}>Article Series</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "36px", color: "#e8e8d0", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "8px" }}>Investment Strategy</h2>
+            <div style={{ maxWidth: "500px", margin: "0 auto", padding: "16px 0" }}>
+              <p style={{ fontFamily: "'Lora', serif", fontSize: "15px", fontStyle: "italic", color: "#a0a090", lineHeight: 1.7 }}>Property as defense. Global equities as offense. Inflation as fuel. A practical framework for building wealth over decades using borrowed money, compound growth, and patience.</p>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {stratArticles.map((a, i) => (
+              <div key={a.id} onClick={() => onSelect(a.id)}
+                style={{ border: "1px solid #333366", padding: "16px 20px", cursor: "pointer", background: "#0f0f23", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "border-color 0.2s", gap: "12px" }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = "#e67e22"}
+                onMouseLeave={e => e.currentTarget.style.borderColor = "#333366"}
+              >
+                <div style={{ display: "flex", gap: "16px", alignItems: "baseline", flex: 1, minWidth: 0 }}>
+                  <span style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: "#e67e22", flexShrink: 0 }}>{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <span style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>{a.title}</span>
+                    <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "13px", color: "#888880", fontStyle: "italic", marginTop: "2px" }}>{redact(a.subtitle)}</p>
+                  </div>
+                </div>
+                <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function ArticlesPage({ content, selectedArticle, setSelectedArticle }) {
+      const articles = content.articles || [];
+      const econArticles = articles.filter(a => a.category === "Economics" && !a.comingSoon);
+      const finArticles = articles.filter(a => a.category === "Finance" && !a.comingSoon);
+      const stratArticles = articles.filter(a => a.category === "Strategy" && !a.comingSoon);
+      const seriesIds = ["econ-series", "finance-series", "strategy-series"];
+      const selected = seriesIds.includes(selectedArticle) ? null : (selectedArticle ? articles.find(a => a.id === selectedArticle) : null);
+      const showEconSeries = selectedArticle === "econ-series";
+      const showFinSeries = selectedArticle === "finance-series";
+      const showStratSeries = selectedArticle === "strategy-series";
+      const { data: articleData, loading } = useJsonFile(selected && !selected.comingSoon ? selected.file : null);
+
+      const isEcon = selected ? econArticles.findIndex(a => a.id === selected.id) >= 0 : false;
+      const isFin = selected ? finArticles.findIndex(a => a.id === selected.id) >= 0 : false;
+      const isStrat = selected ? stratArticles.findIndex(a => a.id === selected.id) >= 0 : false;
+      const seriesArticles = isEcon ? econArticles : isFin ? finArticles : isStrat ? stratArticles : [];
+      const seriesIdx = seriesArticles.findIndex(a => a.id === (selected?.id));
+      const prevSeries = seriesIdx > 0 ? seriesArticles[seriesIdx - 1] : null;
+      const nextSeries = seriesIdx >= 0 && seriesIdx < seriesArticles.length - 1 ? seriesArticles[seriesIdx + 1] : null;
+      const seriesId = isEcon ? "econ-series" : isFin ? "finance-series" : isStrat ? "strategy-series" : null;
+
+      if (selected && !selected.comingSoon && articleData) return (
+        <div>
+          <ArticleRenderer data={articleData} goBack={() => setSelectedArticle(seriesId)} />
+          {seriesId && (
+            <div style={{ maxWidth: "720px", display: "flex", justifyContent: "space-between", marginTop: "20px", paddingTop: "16px", borderTop: "1px dashed #333366", gap: "12px", flexWrap: "wrap" }}>
+              {prevSeries ? <button onClick={() => { setSelectedArticle(prevSeries.id); window.scrollTo({top:0,behavior:"smooth"}); }} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", padding: 0, textAlign: "left" }}>{"\u2190 " + prevSeries.title}</button> : <span />}
+              <button onClick={() => { setSelectedArticle(seriesId); window.scrollTo({top:0,behavior:"smooth"}); }} style={{ background: "none", border: "1px solid #333366", color: "#666680", fontFamily: "'VT323', monospace", fontSize: "13px", padding: "4px 12px", cursor: "pointer" }}>All Articles</button>
+              {nextSeries ? <button onClick={() => { setSelectedArticle(nextSeries.id); window.scrollTo({top:0,behavior:"smooth"}); }} style={{ background: "none", border: "none", color: "#4a9aea", fontFamily: "'Courier Prime', monospace", fontSize: "14px", cursor: "pointer", padding: 0, textAlign: "right" }}>{nextSeries.title + " \u2192"}</button> : <span />}
+            </div>
+          )}
+        </div>
+      );
+      if (selected && !selected.comingSoon && loading) return <div style={{ fontFamily: "'VT323', monospace", color: "#666680", padding: "40px", textAlign: "center", fontSize: "18px" }}>Loading...</div>;
+      if (showEconSeries) return <EconSeriesPage articles={articles} onSelect={id => { setSelectedArticle(id); window.scrollTo({top:0,behavior:"smooth"}); }} goBack={() => setSelectedArticle(null)} />;
+      if (showFinSeries) return <FinanceSeriesPage articles={articles} onSelect={id => { setSelectedArticle(id); window.scrollTo({top:0,behavior:"smooth"}); }} goBack={() => setSelectedArticle(null)} />;
+      if (showStratSeries) return <StrategySeriesPage articles={articles} onSelect={id => { setSelectedArticle(id); window.scrollTo({top:0,behavior:"smooth"}); }} goBack={() => setSelectedArticle(null)} />;
+      return (
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
+            <SectionHeader title="Articles" subtitle="Essays and ideas" />
+            <UsersOnlineCounter />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            {articles.map(a => (
+              <div key={a.id} onClick={() => !a.comingSoon && setSelectedArticle(a.id)}
+                style={{ border: "1px solid " + (a.comingSoon ? "#222244" : "#333366"), padding: "24px", cursor: a.comingSoon ? "default" : "pointer", background: "#0f0f23", transition: "border-color 0.2s", opacity: a.comingSoon ? 0.5 : 1 }}
+                onMouseEnter={e => { if (!a.comingSoon) e.currentTarget.style.borderColor="#4a9aea"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = a.comingSoon ? "#222244" : "#333366"; }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "8px" }}>
+                  <div>
+                    <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#4a4a8a", letterSpacing: "2px", marginBottom: "6px" }}>{a.category}{a.comingSoon ? " \u00b7 COMING SOON" : ""}</div>
+                    <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: a.comingSoon ? "#666680" : "#e8e8d0", marginBottom: "4px" }}>{a.title}</h3>
+                    <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#888880", fontStyle: "italic" }}>{redact(a.subtitle)}</p>
+                  </div>
+                  {!a.comingSoon && <span style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#555560", whiteSpace: "nowrap" }}>{new Date(a.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>}
+                </div>
+              </div>
+            ))}
+            {articles.length===0 && <p style={{ color: "#555560", fontStyle: "italic" }}>No articles yet. Check back soon.</p>}
+          </div>
+        </div>
+      );
+    }
+
+    function NovelPage({ content }) {
+      const novel = content.novel || {};
+      const chapters = novel.chapters || [];
+      const [selectedId, setSelectedId] = useState(null);
+      const selected = selectedId ? chapters.find(c => c.id === selectedId) : null;
+      const { data: chapterData } = useJsonFile(selected?.file || null);
+      const [synopsis] = useState(() => {
+        const s = novel.synopsis;
+        if (Array.isArray(s)) return s[Math.floor(Math.random() * s.length)];
+        return s || "";
+      });
+
+      if (selected && chapterData) {
+        return <ChapterRenderer data={chapterData} chapterMeta={selected} allChapters={chapters} goBack={() => setSelectedId(null)} onNav={id => { setSelectedId(id); window.scrollTo({top:0,behavior:"smooth"}); }} />;
+      }
+
+      return (
+        <div>
+          <div style={{ border: "2px solid #333366", background: "linear-gradient(180deg, #12122a 0%, #0f0f23 100%)", padding: "40px", textAlign: "center", marginBottom: "28px" }}>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#4a4a8a", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "12px" }}>{novel.genre}</div>
+            <h2 style={{ fontFamily: "'Special Elite', monospace", fontSize: "42px", color: "#e8e8d0", letterSpacing: "4px", textTransform: "uppercase", marginBottom: "8px" }}>{novel.title}</h2>
+            <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#666680", marginBottom: "20px" }}>by {content.site?.author}</div>
+            <div style={{ maxWidth: "500px", margin: "0 auto", padding: "20px", borderTop: "1px solid #333366", borderBottom: "1px solid #333366" }}>
+              <p style={{ fontFamily: "'Lora', serif", fontSize: "15px", fontStyle: "italic", color: "#a0a090", lineHeight: 1.7 }}>{synopsis}</p>
+            </div>
+          </div>
+          {novel.comingSoon && chapters.length === 0 ? (
+            <div style={{ border: "1px dashed #333366", padding: "40px", textAlign: "center" }}>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "24px", color: "#e67e22", letterSpacing: "3px", marginBottom: "16px" }}>COMING SOON</div>
+              <p style={{ fontSize: "16px", lineHeight: 1.8, color: "#888880", maxWidth: "500px", margin: "0 auto" }}>{novel.message}</p>
+              {content.site?.twitter && <div style={{ marginTop: "24px" }}><a href={content.site.twitter} target="_blank" rel="noopener" style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#4a9aea" }}>{"Follow on X for updates \u2192"}</a></div>}
+              {novel.plugMessage && <div style={{ marginTop: "24px", paddingTop: "20px", borderTop: "1px dashed #333366" }}><p style={{ fontSize: "15px", color: "#888880", lineHeight: 1.7 }}>{novel.plugMessage}</p>{novel.plugUrl && <a href={novel.plugUrl} target="_blank" rel="noopener" style={{ display: "inline-block", marginTop: "12px", background: "#e67e22", color: "#fff", padding: "8px 24px", fontFamily: "'Courier Prime', monospace", fontSize: "13px", fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none" }}>{(novel.plugLabel || "Try it") + " \u2192"}</a>}</div>}
+            </div>
+          ) : (
+            <div>
+              <SectionHeader title="Chapters" />
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                {chapters.map((ch, i) => (
+                  <div key={ch.id} onClick={() => setSelectedId(ch.id)} style={{ border: "1px solid #333366", padding: "16px 20px", cursor: "pointer", background: "#0f0f23", display: "flex", justifyContent: "space-between", alignItems: "center", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor="#e67e22"} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
+                    <div style={{ display: "flex", gap: "16px", alignItems: "baseline" }}>
+                      <span style={{ fontFamily: "'VT323', monospace", fontSize: "18px", color: "#e67e22" }}>{String(i+1).padStart(2, '0')}</span>
+                      <span style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>{ch.title}</span>
+                    </div>
+                    <span style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#555560" }}>{new Date(ch.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function AboutPage({ content }) {
+      const site = content.site || {};
+      return (
+        <div>
+          <SectionHeader title="About" subtitle="The story behind The Post Idealist" />
+          <div style={{ border: "1px solid #333366", background: "#0f0f23", padding: "32px", maxWidth: "680px" }}>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0", marginBottom: "20px" }}><span style={{ fontFamily: "'Special Elite', monospace", fontSize: "42px", color: "#e67e22", float: "left", lineHeight: "36px", marginRight: "8px", marginTop: "4px" }}>T</span>{"he Post Idealist is a home for tools, writing, and ideas. The tools are built to solve real problems without harvesting your data. The articles are experiments in form. The novel is being written in public because shipping beats perfecting."}</p>
+            <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c0c0b0" }}>Everything here runs on the same principle: your attention is yours. No tracking, no ads, no algorithmic manipulation.</p>
+            <div style={{ borderTop: "1px dashed #333366", marginTop: "28px", paddingTop: "20px" }}>
+              <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>Colophon</h3>
+              <div style={{ fontFamily: "'Courier Prime', monospace", fontSize: "14px", color: "#888880", lineHeight: 1.8 }}>
+                <p>Author: {site.author}</p><p>Built with: HTML, JavaScript, stubbornness</p><p>Hosted on: GitHub Pages</p><p>Established: {site.established}</p><p>Data collected: None</p>
+              </div>
+            </div>
+            {site.twitter && <div style={{ borderTop: "1px dashed #333366", marginTop: "20px", paddingTop: "20px" }}><h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e67e22", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>Find Me</h3><a href={site.twitter} target="_blank" rel="noopener" style={{ fontFamily: "'Courier Prime', monospace", fontSize: "15px", color: "#4a9aea" }}>@UGoalsetter on X/Twitter</a></div>}
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================
+    // APP
+    // ==========================================
+    function App() {
+      const { content, loading } = useContent();
+      const [currentPage, setCurrentPage] = useState("home");
+      const [selectedTool, setSelectedTool] = useState(null);
+      const [selectedArticle, setSelectedArticle] = useState(null);
+      const setPage = useCallback(page => { setCurrentPage(page); if(page!=="tools") setSelectedTool(null); if(page!=="articles") setSelectedArticle(null); window.scrollTo({top:0,behavior:"smooth"}); }, []);
+      if (loading) return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", fontFamily: "'VT323', monospace", fontSize: "24px", color: "#4a4a8a" }}>Loading The Post Idealist...</div>;
+      if (!content) return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#aa3333", textAlign: "center", padding: "20px" }}>Failed to load content.json.</div>;
+      const pg = () => {
+        switch(currentPage) {
+          case "home": return <HomePage content={content} setPage={setPage} setSelectedTool={setSelectedTool} setSelectedArticle={setSelectedArticle} />;
+          case "tools": return <ToolsPage content={content} selectedTool={selectedTool} setSelectedTool={setSelectedTool} />;
+          case "articles": return <ArticlesPage content={content} selectedArticle={selectedArticle} setSelectedArticle={setSelectedArticle} />;
+          case "novel": return <NovelPage content={content} />;
+          case "about": return <AboutPage content={content} />;
+          default: return <HomePage content={content} setPage={setPage} setSelectedTool={setSelectedTool} setSelectedArticle={setSelectedArticle} />;
+        }
+      };
+      return (
+        <div style={{ maxWidth: "1100px", margin: "0 auto", minHeight: "100vh", display: "flex", flexDirection: "column", background: "#1a1a2e", boxShadow: "0 0 60px rgba(0,0,0,0.5)" }}>
+          <Header currentPage={currentPage} setPage={setPage} site={content.site} />
+          <div className="site-layout" style={{ display: "flex", gap: "24px", padding: "24px 20px", flex: 1 }}>
+            <main className="site-main" style={{ flex: 1, minWidth: 0 }}>{pg()}</main>
+            <Sidebar site={content.site} />
+          </div>
+          <Footer site={content.site} />
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
