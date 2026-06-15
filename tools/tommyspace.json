@@ -2,10 +2,30 @@
   "id": "tommyspace",
   "title": "TommySpace",
   "tagline": "Explore the solar system to learn the names of the planets",
-  "description": "An interactive 3D solar system built for curious kids (and adults). Fly through space and learn the names and positions of the planets.",
+  "description": "Blast off on a tour of all eight planets. Each world has its own little activity to help its name stick in a young explorer's memory. Built for curious kids, and the grown-ups who get roped into playing too.",
   "tech": ["HTML", "Three.js", "CSS"],
   "status": "Live",
   "url": "https://aaronunify2.github.io/UnifyVersion1/TommySpace.html",
   "color": "#8e44ad",
-  "date": "2025-10-01"
+  "date": "2025-10-01",
+  "sections": [
+    { "type": "heading", "content": "Eight Worlds, One Trip" },
+    { "type": "text", "content": "TommySpace is a gentle journey through the solar system, from scorched little Mercury all the way out to deep blue Neptune. Your young astronaut visits each planet in turn, and at every stop there's a small thing to do — a colour to choose, a moon to spin, a ring to admire — because a planet you have played with is a planet you remember." },
+    { "type": "text", "content": "The whole thing is designed around one simple idea: names stick better when they're attached to an experience. A child who has spun Saturn's rings and watched the Moon change its phase isn't memorising a list. They're recalling a place they've been." },
+
+    { "type": "heading", "content": "How To Play" },
+    { "type": "features", "content": [
+      "Travel to all eight planets, in order, the way a real spacecraft would.",
+      "Each planet has its own tiny activity — quick, playful, and impossible to get wrong.",
+      "No scores, no timers, no game-over screen. Nobody loses at space.",
+      "Bright colours, big targets, and controls simple enough for small hands."
+    ]},
+
+    { "type": "heading", "content": "Who It's For" },
+    { "type": "text", "content": "TommySpace is for the kid who keeps asking which planet is the biggest, and the parent who has run out of confident answers. It's for car trips, waiting rooms, and that golden half-hour before bed when a child will absorb anything as long as it's interesting." },
+    { "type": "text", "content": "It's also, quietly, for the adults. Most grown-ups can name maybe four planets under pressure. By the end of one trip through TommySpace, you'll have all eight — and you'll finally remember whether Uranus comes before or after Saturn." },
+
+    { "type": "heading", "content": "A Note On Pluto" },
+    { "type": "text", "content": "Pluto is not in the game. We know. We're sorry. Take it up with the International Astronomical Union, who reclassified it as a dwarf planet in 2006 and broke a generation's heart. TommySpace teaches the eight planets as they are currently defined. Pluto remains in ours." }
+  ]
 }
