@@ -1,0 +1,36 @@
+{
+  "id": "process-mapper",
+  "title": "The Process Mapper",
+  "tagline": "Most evil is just incompetence with a bad process map",
+  "description": "A tool for turning the vague, undocumented, lives-in-one-person's-head processes that run the world into clear, shareable maps. Define each step, branch the flows, record who owns what, and export the whole thing. Boring on purpose. Important on purpose.",
+  "tech": ["HTML", "JavaScript", "CSS", "localStorage"],
+  "status": "Live",
+  "url": "https://aaronunify2.github.io/UnifyVersion1/WorkAdministration.html",
+  "color": "#3a7ca5",
+  "date": "2026-04-10",
+  "sections": [
+    { "type": "heading", "content": "A Modest Theory of Evil" },
+    { "type": "text", "content": "A great deal of what we experience as malice is not malice at all. It's incompetence. And a great deal of incompetence is not stupidity — it's a process nobody ever wrote down. The complaint that vanishes. The application that sits for six weeks because the one person who knew the next step was on leave. The decision that gets made twice, or never, because no one could say whose job it was." },
+    { "type": "text", "content": "From the outside, these failures look like indifference. Sometimes they look like cruelty. But pull the thread and you usually find the same thing underneath: a system that was never mapped, run by people doing their best inside a fog. The harm is real. The intent usually isn't." },
+    { "type": "text", "content": "This tool exists because I believe mapping the process is one of the highest-leverage, least glamorous things a person can do. You cannot fix a system you cannot see. The Process Mapper is for making it visible." },
+
+    { "type": "heading", "content": "What It Does" },
+    { "type": "text", "content": "You build a process one step at a time. Each step has a type, an owner, a point of contact, notes, and whatever custom fields the work demands — a risk score, a review date, a definition of what 'resolved' actually means. Then you connect the steps, including the branches: if approved, go here; if upheld, go there. The result is a map of how the work actually flows, instead of how everyone vaguely assumes it does." },
+    { "type": "features", "content": [
+      "Build processes step by step, each with an owner, a contact, and a clear type.",
+      "Branch the flow between steps with conditions — the 'if this, then that' that lives in people's heads.",
+      "Add custom fields for whatever matters: risk scores, review dates, definitions of resolution.",
+      "Organise everything into categories and keep multiple processes in separate sessions.",
+      "Import and export as JSON, or save the whole map as an image to drop into a document.",
+      "Everything persists locally — your maps are yours and survive closing the tab."
+    ]},
+
+    { "type": "heading", "content": "Who It's For" },
+    { "type": "text", "content": "Anyone who has inherited a job with no documentation. Anyone running a team where the real instructions live in one veteran employee's memory and nobody wants to think about what happens when they retire. Anyone in local government, operations, compliance, or any field where 'we've always done it this way' is the only available manual." },
+    { "type": "text", "content": "If you've ever drawn a process on a whiteboard, photographed it, and watched the photo disappear into your camera roll forever — this is the version that doesn't disappear." },
+
+    { "type": "heading", "content": "Why Bother" },
+    { "type": "text", "content": "Because a mapped process can be improved, and an unmapped one can only be endured. Once the steps are visible, you can find the limiting factor — the one bottleneck holding up everything downstream. You can see which steps are integration steps that exist only to connect other steps, and which are doing the real work. You can hand the map to a new hire and have them productive in a day instead of a month." },
+    { "type": "text", "content": "It is not exciting work. It will never trend. But the quiet competence of a well-mapped process is, in its own undramatic way, a small act of decency toward everyone the process touches." }
+  ]
+}
