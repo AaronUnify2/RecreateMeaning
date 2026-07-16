@@ -1,0 +1,28 @@
+{
+  "id": "tommy-phantom",
+  "title": "The Prince and The Lantern",
+  "tagline": "A storybook about going and looking for yourself",
+  "description": "A fourteen-page illustrated fairy tale for reading aloud. A phantom whispers fear into a kingdom; a prince keeps saying \"let me look for myself\" — and finds that every catastrophe was a lie. Tap to turn the pages.",
+  "tech": ["HTML", "Canvas", "JavaScript"],
+  "status": "Live",
+  "url": "https://aaronunify2.github.io/UnifyVersion1/TommyPhantom.html",
+  "color": "#d9a441",
+  "date": "2026-04-14",
+  "sections": [
+    { "type": "heading", "content": "The Story" },
+    { "type": "text", "content": "A fisherman pulls a corked bottle from the sea, and something cold gets out. It whispers into the king's ear, and soon the whole kingdom is blind with fear — neighbours become shadows, the great lantern goes dark, and every road out is said to end in ruin. Only the prince keeps asking the question nobody else will: has anyone actually gone and looked?" },
+    { "type": "text", "content": "So he goes and looks. Armed with nothing but his mother's small lantern, he walks into the goblin forest everyone swore was deadly, crosses the bridge everyone swore had crumbled, and visits the far-off land everyone swore had abandoned them. Page by page, every catastrophe turns out to be a rumour — and the thing spreading the rumours turns out to be very afraid of being truly seen." },
+
+    { "type": "heading", "content": "How To Read It" },
+    { "type": "features", "content": [
+      "Fourteen pages, each a single living illustration with one paragraph beneath it.",
+      "Tap or click anywhere to turn the page.",
+      "Every scene is drawn in animated canvas — flickering flame, drifting fog, rising embers.",
+      "Built for reading aloud: one page, one breath, one moment before bed."
+    ]},
+
+    { "type": "heading", "content": "Why This Story" },
+    { "type": "text", "content": "Children meet fear-mongers early — voices insisting the bridge is out, the forest is deadly, the neighbours are shadows. This story hands them a lantern instead: the quiet habit of checking. The prince never argues with the phantom and never fights it. He just goes and looks, and no phantom can survive being truly seen." },
+    { "type": "text", "content": "The moral, spoken by a small boy on the last page, is the only weapon the story offers and the only one it needs: \"Well then, let's go and look.\"" }
+  ]
+}
