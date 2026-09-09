@@ -1819,6 +1819,131 @@
       );
     }
 
+    function ProblemsBanner({ onClick }) {
+      const canvasRef = React.useRef(null);
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        const EMBER = [201, 79, 50], CALM = [78, 100, 128];
+        const GLOW = '#ffab84', CALM_CSS = 'rgb(78,100,128)';
+
+        // A field of attention: 30 x 6 cells, mostly quiet.
+        const STEP = 19, CELL = 15, COLS = 30, ROWS = 6;
+        const offX = 2, offY = 12;
+
+        // Five problems. They bloom until they are the only thing you can see,
+        // then clear one at a time and hand the capacity back.
+        const CYCLE = 840, BLOOM = 260, RING = 45;
+        const problems = [
+          { cx: 4,  cy: 1, resolveAt: 300 },
+          { cx: 11, cy: 4, resolveAt: 400 },
+          { cx: 17, cy: 2, resolveAt: 500 },
+          { cx: 23, cy: 5, resolveAt: 600 },
+          { cx: 28, cy: 1, resolveAt: 700 }
+        ];
+
+        function mix(a, b, t) {
+          return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * t) + ','
+                        + Math.round(a[1] + (b[1] - a[1]) * t) + ','
+                        + Math.round(a[2] + (b[2] - a[2]) * t) + ')';
+        }
+
+        let anim, frame = 0;
+        function render() {
+          frame++;
+          const f = frame % CYCLE;
+
+          ctx.fillStyle = '#0d0a10';
+          ctx.fillRect(0, 0, W, H);
+
+          const bloom = Math.min(1, f / BLOOM);
+          const live = problems.filter(p => f < p.resolveAt);
+          const pressure = (live.length / problems.length) * bloom;
+          const avail = 1 - pressure;   // the good cells dim as problems take over, and come back as they clear
+          const reach = 2.6 + bloom * 3.2;
+
+          for (let c = 0; c < COLS; c++) {
+            for (let r = 0; r < ROWS; r++) {
+              let inf = 0;
+              for (const p of live) {
+                const d = Math.hypot(c - p.cx, (r - p.cy) * 1.6);
+                inf = Math.max(inf, Math.max(0, 1 - d / reach));
+              }
+              inf *= 0.15 + 0.85 * bloom;
+              const breathe = 0.86 + 0.14 * Math.sin(frame * 0.05 + c * 0.4 + r * 0.7);
+              if (inf > 0.02) {
+                ctx.globalAlpha = (0.35 + 0.65 * inf) * breathe;
+                ctx.fillStyle = mix(CALM, EMBER, Math.min(1, inf * 1.4));
+              } else {
+                ctx.globalAlpha = (0.12 + 0.62 * avail) * breathe;
+                ctx.fillStyle = CALM_CSS;
+              }
+              ctx.fillRect(offX + c * STEP, offY + r * STEP, CELL, CELL);
+            }
+          }
+          ctx.globalAlpha = 1;
+
+          // Each problem clears with a ring, and the field breathes back.
+          for (const p of problems) {
+            const age = f - p.resolveAt;
+            if (age >= 0 && age < RING) {
+              const t = age / RING;
+              ctx.globalAlpha = 1 - t;
+              ctx.strokeStyle = GLOW;
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.arc(offX + p.cx * STEP + CELL / 2, offY + p.cy * STEP + CELL / 2, 6 + t * 130, 0, Math.PI * 2);
+              ctx.stroke();
+              ctx.globalAlpha = 1;
+            }
+          }
+
+          // The capacity you get back each time one clears.
+          const barW = 140, barX = W - barW - 14, barY = H - 14;
+          ctx.strokeStyle = 'rgba(201,79,50,0.45)';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(barX, barY, barW, 8);
+          ctx.globalAlpha = 0.9;
+          ctx.fillStyle = GLOW;
+          ctx.fillRect(barX + 1, barY + 1, (barW - 2) * (1 - pressure), 6);
+          ctx.globalAlpha = 1;
+
+          ctx.font = '14px "VT323", monospace';
+          ctx.textBaseline = 'alphabetic';
+          ctx.textAlign = 'right';
+          ctx.fillStyle = '#8a7a72';
+          ctx.fillText('ATTENTION', barX - 8, barY + 8);
+          ctx.textAlign = 'left';
+          ctx.fillStyle = 'rgba(255,171,132,' + (0.3 + 0.4 * pressure) + ')';
+          ctx.fillText(live.length + ' UNRESOLVED', 14, barY + 8);
+
+          anim = requestAnimationFrame(render);
+        }
+        render();
+        return () => cancelAnimationFrame(anim);
+      }, []);
+
+      return (
+        <div onClick={onClick}
+          style={{ display: "block", border: "2px solid #c94f32", background: "#0d0a10", overflow: "hidden", cursor: "pointer", textDecoration: "none", transition: "border-color 0.2s" }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = "#e8714f"}
+          onMouseLeave={e => e.currentTarget.style.borderColor = "#c94f32"}
+        >
+          <canvas ref={canvasRef} width={570} height={150}
+            style={{ width: "100%", height: "auto", display: "block" }} />
+          <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px", borderTop: "1px solid #2a1512" }}>
+            <div>
+              <div style={{ fontFamily: "'Special Elite', monospace", fontSize: "18px", color: "#e8e8d0" }}>Problems Are the Main Show</div>
+              <div style={{ fontFamily: "'VT323', monospace", fontSize: "13px", color: "#e08b6a", marginTop: "2px" }}>You can have ninety percent of what you want and still be miserable.</div>
+            </div>
+            <div style={{ fontFamily: "'VT323', monospace", fontSize: "14px", color: "#c94f32", background: "#c94f3222", padding: "4px 12px", border: "1px solid #c94f3255", letterSpacing: "1px" }}>READ</div>
+          </div>
+        </div>
+      );
+    }
+
     function HomePage({ content, setPage, setSelectedTool, setSelectedArticle }) {
       const items = [];
       const novel = content.novel;
@@ -1838,6 +1963,7 @@
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           <SectionHeader title="Feed" subtitle="Everything, most recent first" />
+          <ProblemsBanner onClick={() => { setSelectedArticle("problems-are-the-main-show"); setPage("articles"); }} />
           <LanternBanner onClick={() => { setSelectedTool("tommy-phantom"); setPage("tools"); }} />
           <ClipboardBanner onClick={() => { setSelectedTool("clipboard"); setPage("tools"); }} />
           <ProcessMapperBanner onClick={() => { setSelectedTool("process-mapper"); setPage("tools"); }} />

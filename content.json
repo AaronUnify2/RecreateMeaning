@@ -33,7 +33,8 @@
     { "id": "the-bubble", "title": "The Bubble", "subtitle": "Two Nobel laureates disagree about whether markets can go insane", "date": "2026-03-19", "category": "Finance", "file": "articles/the-bubble.json", "hideFeed": true },
     { "id": "the-barbell", "title": "The Barbell", "subtitle": "A roof over your head and owning your very own piece of the globalist agenda", "date": "2026-04-01", "category": "Strategy", "file": "articles/the-barbell.json", "hideFeed": true },
     { "id": "the-snowball", "title": "The Snowball", "subtitle": "How $500 a week builds a self-funding investment engine", "date": "2026-04-02", "category": "Strategy", "file": "articles/the-snowball.json", "hideFeed": true },
-    { "id": "seller-finance", "title": "The Acquisition", "subtitle": "How to buy a business with someone else's confidence", "date": "2026-04-03", "category": "Strategy", "file": "articles/seller-finance.json", "hideFeed": true }
+    { "id": "seller-finance", "title": "The Acquisition", "subtitle": "How to buy a business with someone else's confidence", "date": "2026-04-03", "category": "Strategy", "file": "articles/seller-finance.json", "hideFeed": true },
+    { "id": "problems-are-the-main-show", "title": "Problems Are the Main Show", "subtitle": "The anxiety is information, and the route back to meaning runs straight through the problem", "date": "2026-09-09", "category": "Essay", "file": "articles/problems-are-the-main-show.json", "hideFeed": true }
   ],
   "novel": {
     "title": "BIGFOOT'S SHOE",
