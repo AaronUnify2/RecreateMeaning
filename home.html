@@ -159,6 +159,15 @@
         case "text": return <p style={{ fontSize: "16px", lineHeight: 1.9, color: "#c8c8b8", marginBottom: "20px" }}>{redact(section.content)}</p>;
         case "heading": return <h3 style={{ fontFamily: "'Special Elite', monospace", fontSize: "22px", color: "#e67e22", marginBottom: "12px", marginTop: "32px" }}>{section.content}</h3>;
         case "note": return <p style={{ fontSize: "14px", color: "#666680", fontStyle: "italic", marginBottom: "20px" }}>{redact(section.content)}</p>;
+        case "plug": {
+          const pc = section.color || "#e67e22";
+          return (
+            <div style={{ marginTop: "32px", paddingTop: "20px", borderTop: "1px dashed #333366" }}>
+              <p style={{ fontSize: "15px", color: "#888880", lineHeight: 1.7 }}>{redact(section.content)}</p>
+              {section.url && <a href={section.url} target="_blank" rel="noopener" style={{ display: "inline-block", marginTop: "12px", background: pc, color: "#fff", padding: "8px 24px", fontFamily: "'Courier Prime', monospace", fontSize: "13px", fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none" }}>{(section.label || "Try it") + " \u2192"}</a>}
+            </div>
+          );
+        }
         case "viz": {
           const registry = window.ARTICLE_VIZ_MODULES || {};
           const mod = registry[section.module];

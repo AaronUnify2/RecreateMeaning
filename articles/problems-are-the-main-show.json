@@ -44,6 +44,13 @@
     {
       "type": "text",
       "content": "There's no proof any of this pays off. I believe it has to, which isn't the same thing — and it's worth admitting that the floor of this position is faith rather than argument. What I can say is that the alternative is a guaranteed loop: if you don't transform, your experience becomes repetitious, and you die having sampled less of what was available than you might have. And you're never doing this alone. Whether there's anything worth engaging with when you get there is partly a function of your effort, and partly the inheritance of other people's successes. Some of us are simply unlucky. If your attempts were genuine — informed, honest, occasionally wrong in ways you couldn't have foreseen — then self-respect is the appropriate response, and you're not disqualified from enjoying what the world offers. The world doesn't require everyone to succeed. It requires that those who do tell the rest of us what they found."
+    },
+    {
+      "type": "plug",
+      "content": "Unify is this argument as software. Write the problem down, rate how hard it actually is, see which part of your life it keeps coming from — then turn the ones that matter into something you're working on rather than something you're carrying. It runs in your browser and nothing leaves it.",
+      "url": "https://aaronunify2.github.io/UnifyVersion1/Unify300.html",
+      "label": "Unify Version 2",
+      "color": "#4a90d9"
     }
   ]
 }
