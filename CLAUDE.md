@@ -16,6 +16,7 @@ content-driven site: a renderer, a JSON index, and a folder of content files.
 | `articles/`    | One JSON file per article.                               |
 | `tools/`       | One JSON file per tool write-up.                         |
 | `viz.js`       | Interactive widgets that articles embed by name.         |
+| `drafts/`      | Markdown not on the site. See `drafts/README.md`.        |
 
 No build step, no `package.json`, no npm. React 18.2.0, ReactDOM and
 Babel-standalone 7.23.9 load from cdnjs at pinned versions, and the whole app
@@ -175,6 +176,11 @@ repo holds the write-up, not the app.
 
 `articles/origin-of-ideas.json` exists on disk but is deliberately **not**
 listed in `content.json`. That's intentional. Don't wire it in.
+
+Everything in `drafts/` is the same: unposted prose, kept deliberately. Don't
+convert a draft to `articles/<slug>.json` as tidying — that conversion *is*
+publishing, and it waits for Aaron to say the piece is ready. `drafts/README.md`
+tracks what's in there and what each one still needs.
 
 The same goes for four tool write-ups kept on disk and unlisted, pending a
 decision about where children's and games content belongs: `tools/tommypop.json`,
