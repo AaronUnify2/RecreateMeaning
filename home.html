@@ -2270,14 +2270,60 @@
     }
 
     // ==========================================
+    // ROUTING
+    // ==========================================
+    // Every view has an address: #/articles/lone-clown, #/tools/clipboard,
+    // #/novel, #/about, #/articles, #/ for the feed. A bare #lone-clown is
+    // read as an article id and rewritten to the canonical form on load.
+    const ROUTE_PAGES = ["home", "tools", "articles", "novel", "about"];
+
+    function parseHash() {
+      const raw = (window.location.hash || "").replace(/^#\/?/, "").replace(/\/+$/, "");
+      let parts;
+      try { parts = raw.split("/").filter(Boolean).map(decodeURIComponent); }
+      catch (e) { parts = raw.split("/").filter(Boolean); }
+      if (!parts.length) return { page: "home", tool: null, article: null };
+      const head = parts[0], id = parts[1] || null;
+      if (head === "tools") return { page: "tools", tool: id, article: null };
+      if (head === "articles") return { page: "articles", tool: null, article: id };
+      if (ROUTE_PAGES.indexOf(head) >= 0) return { page: head, tool: null, article: null };
+      return { page: "articles", tool: null, article: head };
+    }
+
+    function buildHash(page, tool, article) {
+      if (page === "tools") return tool ? "#/tools/" + encodeURIComponent(tool) : "#/tools";
+      if (page === "articles") return article ? "#/articles/" + encodeURIComponent(article) : "#/articles";
+      if (page === "home") return "#/";
+      return "#/" + page;
+    }
+
+    // ==========================================
     // APP
     // ==========================================
     function App() {
       const { content, loading } = useContent();
-      const [currentPage, setCurrentPage] = useState("home");
-      const [selectedTool, setSelectedTool] = useState(null);
-      const [selectedArticle, setSelectedArticle] = useState(null);
+      const [currentPage, setCurrentPage] = useState(() => parseHash().page);
+      const [selectedTool, setSelectedTool] = useState(() => parseHash().tool);
+      const [selectedArticle, setSelectedArticle] = useState(() => parseHash().article);
       const setPage = useCallback(page => { setCurrentPage(page); if(page!=="tools") setSelectedTool(null); if(page!=="articles") setSelectedArticle(null); window.scrollTo({top:0,behavior:"smooth"}); }, []);
+
+      // Keep the address bar in step with what's on screen so any view can be
+      // copied and shared. replaceState, not location.hash: no history pile-up,
+      // so Back still leaves the site rather than stepping back through clicks.
+      useEffect(() => {
+        const next = buildHash(currentPage, selectedTool, selectedArticle);
+        if (window.location.hash !== next) window.history.replaceState(null, "", next);
+      }, [currentPage, selectedTool, selectedArticle]);
+
+      // Someone edits the URL, or arrives via back/forward across hash entries.
+      useEffect(() => {
+        const onHash = () => {
+          const r = parseHash();
+          setCurrentPage(r.page); setSelectedTool(r.tool); setSelectedArticle(r.article);
+        };
+        window.addEventListener("hashchange", onHash);
+        return () => window.removeEventListener("hashchange", onHash);
+      }, []);
       if (loading) return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", fontFamily: "'VT323', monospace", fontSize: "24px", color: "#4a4a8a" }}>Loading The Post Idealist...</div>;
       if (!content) return <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#aa3333", textAlign: "center", padding: "20px" }}>Failed to load content.json.</div>;
       const pg = () => {
