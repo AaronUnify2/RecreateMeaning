@@ -66,15 +66,17 @@ Two steps, always.
 ```json
 { "id": "fifth-slice", "title": "The Fifth Slice", "subtitle": "…",
   "date": "2026-03-15", "category": "Economics",
-  "file": "articles/fifth-slice.json", "hideFeed": true }
+  "file": "articles/fifth-slice.json" }
 ```
 
 Notes that bite:
 
 - **Append to the end.** The Articles page renders in array order, not by date.
   (The home feed sorts by date; the Articles page doesn't.)
-- **`hideFeed: true` on every article.** Articles are promoted with a hand-made
-  banner instead of a plain feed row. Follow the convention.
+- **`hideFeed: true` only if the piece also has a banner.** It suppresses the
+  plain feed row so a promoted piece doesn't appear twice. Everything else
+  belongs in the feed, so leave it off. (This reverses the old "hideFeed on
+  every article" rule, which left the feed empty — see Banners.)
 - `readTime` is estimated at roughly 225 words per minute, rounded.
 - Keep `content.json` formatted as it is — one entry per line. Edit it as text;
   don't reformat the whole file by round-tripping it through a JSON dumper.
@@ -113,10 +115,42 @@ The first three have series pages with prev/next navigation between articles in
 that category. Anything else is standalone — "Back to articles" returns to the
 list. That's fine; not every piece needs to be in a series.
 
+## Routing
+
+Views have addresses, handled by `parseHash`/`buildHash` in `home.html`:
+
+```
+#/articles/<id>   #/tools/<id>   #/articles   #/tools   #/novel   #/about   #/
+```
+
+`parseHash` reads the hash on mount and on `hashchange`; an effect in `App`
+mirrors the current view back with `replaceState`, so in-app clicking doesn't
+pile up history entries and Back still leaves the site. A bare `#<id>` is read
+as an article id and rewritten to the canonical form. An unknown id falls
+through to the list view.
+
+This is in `home.html` only — `home1/2/3.html` ignore the hash.
+
+Two things follow from it: any view can be linked directly, and **unlisting a
+piece from the nav doesn't make it unreachable** — `#/novel` still works.
+
 ## Banners
 
-Each promoted piece gets a hand-written animated `<canvas>` component in
-`home.html`, stacked at the top of the feed in `HomePage`. Newest goes first.
+A hand-written animated `<canvas>` component in `home.html`, stacked at the top
+of the feed in `HomePage`.
+
+**Banners are for the two flagships and the three series — five in total.** The
+Lone Clown and Problems Are the Main Show lead, then Econ, Finance, Strategy.
+Individual tools get an ordinary feed row, not a banner.
+
+This is a real constraint, not a default: the page once carried ten banners and
+no feed at all, and promoting everything promoted nothing. Adding a sixth means
+deciding which of the five stops being a banner.
+
+Several banner components are written, working and deliberately **not** stacked:
+`LanternBanner`, `ClipboardBanner`, `ProcessMapperBanner`, `ForestBanner`,
+`TommySpaceBanner`, `BrickBreakerBanner`, `BigfootShoeBanner`. Leave them
+defined — they're the parked set, and re-promoting a piece is a one-line change.
 
 The house pattern, worth matching: 570×150 canvas, a caption bar underneath
 with title, one-line tagline in the accent colour, and a small `READ`/`OPEN`
@@ -141,6 +175,20 @@ repo holds the write-up, not the app.
 
 `articles/origin-of-ideas.json` exists on disk but is deliberately **not**
 listed in `content.json`. That's intentional. Don't wire it in.
+
+The same goes for four tool write-ups kept on disk and unlisted, pending a
+decision about where children's and games content belongs: `tools/tommypop.json`,
+`tools/tommyspace.json`, `tools/brick-breaker.json`, `tools/mystic-forest.json`.
+They read as a different site next to the essays. Note that `brick-breaker.json`
+promises "upcoming articles on economics" that don't exist — that IOU needs
+resolving before it goes back.
+
+`BIGFOOT'S SHOE` is parked the same way: `content.json` still carries the novel
+and its rotating synopsis, and `NovelPage` still renders at `#/novel`, but there's
+no nav tab and no feed row while `chapters` is empty.
+
+> **TO DECIDE (Aaron):** whether the parked tools return under a separate
+> section, move to UnifyVersion1, or stay out.
 
 ## Aaron's writing is Aaron's
 

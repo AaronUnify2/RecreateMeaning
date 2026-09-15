@@ -9,11 +9,7 @@
   },
   "tools": [
     { "id": "unify", "title": "Unify Version 2", "tagline": "The Architecture of You", "date": "2025-12-01", "color": "#4a90d9", "file": "tools/unify.json" },
-    { "id": "tommypop", "title": "TommyPop", "tagline": "A non-addictive game for toddlers", "date": "2025-11-01", "color": "#e67e22", "file": "tools/tommypop.json" },
-    { "id": "brick-breaker", "title": "3D194 Brick Breaker", "tagline": "A brick breaking game with a twist", "date": "2025-11-15", "color": "#e040fb", "file": "tools/brick-breaker.json", "hideFeed": true },
     { "id": "novelPlanner", "title": "Novel Planner", "tagline": "Software for novel planning", "date": "2025-11-01", "color": "#e67e22", "file": "tools/novelPlanner.json" },
-    { "id": "tommyspace", "title": "TommySpace", "tagline": "Explore the solar system to learn the names of the planets", "date": "2025-10-01", "color": "#8e44ad", "file": "tools/tommyspace.json" },
-    { "id": "mystic-forest", "title": "Mystic Forest Walker", "tagline": "A pixel-art RPG adventure in your browser", "date": "2026-02-01", "color": "#2e7d32", "file": "tools/mystic-forest.json", "hideFeed": true },
     { "id": "clipboard", "title": "The Clipboard", "tagline": "A 20x increase in computational power", "date": "2026-04-08", "color": "#8aac1e", "file": "tools/clipboard.json" },
     { "id": "process-mapper", "title": "The Process Mapper", "tagline": "Most evil is just incompetence with a bad process map", "date": "2026-04-10", "color": "#3a7ca5", "file": "tools/process-mapper.json" },
     { "id": "tommy-phantom", "title": "The Prince and The Lantern", "tagline": "A storybook about going and looking for yourself", "date": "2026-04-14", "color": "#d9a441", "file": "tools/tommy-phantom.json" }
