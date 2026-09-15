@@ -451,7 +451,7 @@
     function Header({ currentPage, setPage, site }) {
       const [time, setTime] = useState(new Date());
       useEffect(() => { const t = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(t); }, []);
-      const nav = [{id:"home",label:"Home"},{id:"tools",label:"Tools"},{id:"articles",label:"Articles"},{id:"novel",label:"Novel"},{id:"about",label:"About"}];
+      const nav = [{id:"home",label:"Home"},{id:"tools",label:"Tools"},{id:"articles",label:"Articles"},{id:"about",label:"About"}];
       return (
         <header style={{ background: "linear-gradient(180deg, #0f0f23 0%, #1a1a2e 100%)", borderBottom: "2px solid #333366", position: "sticky", top: 0, zIndex: 100 }}>
           <div className="top-bar" style={{ background: "#0a0a1a", padding: "4px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", fontFamily: "'VT323', monospace", color: "#666680", borderBottom: "1px solid #222244", letterSpacing: "1px" }}>
@@ -1955,36 +1955,28 @@
 
     function HomePage({ content, setPage, setSelectedTool, setSelectedArticle }) {
       const items = [];
-      const novel = content.novel;
-      if (novel) {
-        if (novel.chapters?.length) {
-          const lastCh = novel.chapters[novel.chapters.length-1];
-          items.push({ type: "novel", id: "novel", title: novel.title, subtitle: "New chapter: " + lastCh.title, date: lastCh.date, color: "#e67e22" });
-        } else {
-          const synArr = novel.synopsis;
-          const homeSyn = Array.isArray(synArr) ? synArr[Math.floor(Math.random() * synArr.length)] : (synArr || novel.genre);
-          items.push({ type: "novel", id: "novel", title: novel.title, subtitle: homeSyn, date: "2026-02-15", color: "#e67e22" });
-        }
-      }
+      // BIGFOOT'S SHOE is parked while chapters is empty: no feed row, no nav tab.
+      // NovelPage and BigfootShoeBanner are untouched and the page is still live
+      // at #/novel. Re-add the push here and the nav item in Header to bring back.
       (content.tools||[]).filter(t => !t.hideFeed).forEach(t => items.push({ type: "tool", id: t.id, title: t.title, subtitle: t.tagline, date: t.date, color: t.color||"#4a90d9" }));
       (content.articles||[]).filter(a => !a.hideFeed && !a.comingSoon).forEach(a => items.push({ type: "article", id: a.id, title: a.title, subtitle: a.subtitle, date: a.date, color: "#4a9aea" }));
       items.sort((a,b) => new Date(b.date)-new Date(a.date));
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           <SectionHeader title="Feed" subtitle="Everything, most recent first" />
-          <ProblemsBanner onClick={() => { setSelectedArticle("problems-are-the-main-show"); setPage("articles"); }} />
-          <LanternBanner onClick={() => { setSelectedTool("tommy-phantom"); setPage("tools"); }} />
-          <ClipboardBanner onClick={() => { setSelectedTool("clipboard"); setPage("tools"); }} />
-          <ProcessMapperBanner onClick={() => { setSelectedTool("process-mapper"); setPage("tools"); }} />
-          <ForestBanner onClick={() => { setSelectedTool("mystic-forest"); setPage("tools"); }} />
-          <TommySpaceBanner onClick={() => { setSelectedTool("tommyspace"); setPage("tools"); }} />
+          {/* Banners are for the two flagships and the three series only. When
+              everything is a banner, nothing is promoted. Per-tool banners
+              (Lantern, Clipboard, ProcessMapper, Forest, TommySpace) and
+              BigfootShoeBanner are parked below but still defined — drop one
+              back in here to re-promote it. */}
           <LoneClownBanner onClick={() => { setSelectedArticle("lone-clown"); setPage("articles"); }} />
+          <ProblemsBanner onClick={() => { setSelectedArticle("problems-are-the-main-show"); setPage("articles"); }} />
           <EconAddendumBanner onClick={() => { setSelectedArticle("econ-series"); setPage("articles"); }} />
           <FinanceBanner onClick={() => { setSelectedArticle("finance-series"); setPage("articles"); }} />
           <StrategyBanner onClick={() => { setSelectedArticle("strategy-series"); setPage("articles"); }} />
           {items.map(item => (
             <React.Fragment key={item.type+item.id}>
-            {item.id === "mystic-forest" ? null : item.id === "tommyspace" ? null : item.id === "process-mapper" ? null : item.id === "tommy-phantom" ? null : item.type === "novel" ? <BigfootShoeBanner synopsis={item.subtitle} onClick={() => setPage("novel")} /> : item.id === "clipboard" ? null : (
+            {(
             <div className="feed-item" onClick={() => { if(item.type==="tool"){setSelectedTool(item.id);setPage("tools")} else if(item.type==="article"){setSelectedArticle(item.id);setPage("articles")} else{setPage("novel")} }} style={{ border: "1px solid #333366", padding: "20px", cursor: "pointer", background: "#0f0f23", display: "flex", gap: "16px", alignItems: "flex-start", transition: "border-color 0.2s" }} onMouseEnter={e => e.currentTarget.style.borderColor=item.color} onMouseLeave={e => e.currentTarget.style.borderColor="#333366"}>
               <div className="feed-icon" style={{ width: "48px", height: "48px", background: item.color+"22", border: "2px solid "+item.color, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'VT323', monospace", fontSize: "14px", color: item.color, flexShrink: 0, textTransform: "uppercase" }}>{item.type==="tool"?"APP":item.type==="article"?"TXT":"FIC"}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
