@@ -104,8 +104,8 @@ scene id, and a `scenes` object instead of `sections`. See `lone-clown.json`.
 `SCENE_ART[key]` in `home.html` supplies two things, both drawn from the shared
 sprites in `CK`:
 
-- `scenes[sceneId] = { draw, before }` is an animated pixel-art panel on a
-  190×80 grid at 3×. It sits above the first paragraph that starts with
+- `scenes[sceneId] = { draw, before }` (or a list of them, for a long scene)
+  is an animated pixel-art panel on a 190×80 grid at 3×. It sits above the first paragraph that starts with
   `before`, or at the top if there's no `before`. The clock only runs while the
   panel is at least half on screen, so an action (a knife throw) happens when
   the reader gets to it. Anchoring to text rather than an index means
@@ -117,6 +117,19 @@ sprites in `CK`:
 Reduced-motion users get a still frame and no interludes. The Lone Clown is the
 only piece that uses this. Dead ends are where the horror goes, and the
 scolding text stays as the punchline.
+
+Shared machinery in `CK` worth reusing: `layer` caches anything static
+(backgrounds are drawn once, not per frame), `gradient`/`dither` give
+ordered-dithered skies and light pools instead of flat bands, `fx`/`post` add
+vignette and grain, and `sil` draws any sprite as a flat silhouette for shadows.
+
+House style for this piece: the horror sits in small wrong details rather than
+gore. His shadow is a full clown before he is, the windscreen reflection already
+grins, the stars rearrange, the crucifix freezes mid-swing. Keep flashes slow
+(nothing under about half a second) and his lit face only part-visible.
+
+The ending is two scenes, `finale` and `christmas`, joined by a single choice.
+A scene with exactly one choice drops the "What does Claire do?" header.
 
 Scale matters: a person is about 24px tall, so the van is 70×30, a car 58×19
 and the barn door 32px tall. The van interior is drawn from Claire's seat,

@@ -468,8 +468,14 @@
         "\"I'm not bringing the donkey to your mother's house.\"",
         "\"Then just the knife-throwing personality. You'll be fine.\"",
         "He looked at the barn. He looked at the van. He looked at Claire, standing in the morning light in a rumpled blazer and yesterday's blouse, holding a tin mug of terrible coffee, asking a man she'd met fourteen hours ago at a gas station to come to her family Christmas.",
-        "\"Yeah,\" he said. \"Okay.\"",
-        "• • •",
+        "\"Yeah,\" he said. \"Okay.\""
+      ],
+      "choices": [
+        { "label": "Christmas Day.", "goto": "christmas" }
+      ]
+    },
+    "christmas": {
+      "content": [
         "They drove south on the highway with the windows cracked and the heater on. Milo drove. Claire navigated. He used his indicator at every merge, which she had already known about him but now appreciated in a new way. The van smelled like pine air freshener and coffee and the faintest trace of greasepaint, and the small wooden crucifix on the rearview mirror swung gently with the curves of the road.",
         "They arrived at Claire's mother's house at half past noon. The driveway was full of cars. The front door had a wreath on it. Through the window, Claire could see her family moving around the kitchen in the organised chaos of people who have been cooking since dawn and have opinions about the correct temperature for everything.",
         "Milo stood on the front steps in his jeans and flannel shirt, looking like a man who had been raised right and chosen an unusual career, which was exactly what he was. Claire took a breath and opened the door.",
