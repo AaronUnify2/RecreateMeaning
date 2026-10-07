@@ -6,6 +6,7 @@
   "readTime": "10 min",
   "interactive": true,
   "start": "opening",
+  "sceneArt": "lone-clown",
   "scenes": {
     "opening": {
       "content": [

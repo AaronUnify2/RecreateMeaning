@@ -100,6 +100,16 @@ A `viz` naming a module that doesn't exist renders nothing.
 Interactive fiction is a different shape: set `"interactive": true`, a `start`
 scene id, and a `scenes` object instead of `sections`. See `lone-clown.json`.
 
+**Scene art.** An interactive piece can add `"sceneArt": "<key>"`. Then each
+scene gets an animated pixel-art panel from `SCENE_ART[key][sceneId]` in
+`home.html`: a `draw(k, f)` function on a 190×80 grid at 3×, built from the
+shared sprites in `CK`. Going back from a dead end plays a short VHS-rewind
+overlay (`CK.rewind`) before it returns. A scene with no entry gets no panel.
+Reduced-motion users get a still frame and no rewind. The Lone Clown is the
+only piece that uses this. Dead ends are where the horror goes (the face in the
+window, the eyes in the woods, the donkey), and the scolding text stays as the
+punchline.
+
 ## Inline markup
 
 Two tags work inside any `content` string:
@@ -220,10 +230,14 @@ with a frame-stepping hook, load it in Chromium via Playwright, and screenshot
 key frames. You can verify the drawing properly this way, and read pixel stats
 back to confirm the animation actually does what you claim.
 
-In Claude Code web sessions the network policy blocks cdnjs, npm and
-`github.io`, so the page **cannot** be mounted end-to-end here — React never
-loads. Say so plainly rather than implying the page was tested: the drawing is
-verified, the React mount isn't.
+In Claude Code web sessions the network policy has *usually* blocked cdnjs,
+npm and `github.io`, so React never loads. Check first with
+`curl -sS -o /dev/null -w "%{http_code}" https://cdnjs.cloudflare.com/...`.
+If it answers 200, download the three pinned files with curl, serve the repo
+with `python3 -m http.server`, and use Playwright `page.route` to answer the
+cdnjs requests from the local copies. That mounts the real page (this worked in
+October 2026). If cdnjs is blocked, say so plainly: the drawing is verified, the
+React mount isn't.
 
 ## Workflow
 
