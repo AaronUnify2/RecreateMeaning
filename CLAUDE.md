@@ -128,7 +128,15 @@ gore. His shadow is a full clown before he is, the windscreen reflection already
 grins, the stars rearrange, the crucifix freezes mid-swing. Keep flashes slow
 (nothing under about half a second) and his lit face only part-visible.
 
-The ending is two scenes, `finale` and `christmas`, joined by a single choice.
+The genre shifts on purpose. Page one (`opening`) reads like literary fiction,
+and its panel is drawn like the cover of one: flat colour, paper texture, no
+grain. Its subject is the man who watches and doesn't help. Page two (`door`)
+turns into a romance, with pink light, sparkles and Claire blushing, though his
+shadow on the wall is already a clown. The horror starts with the van. Keep each
+page's art in its own genre.
+
+The opening is two scenes, `opening` and `door`, joined by a single choice, and
+the ending is two, `finale` and `christmas`, joined the same way.
 A scene with exactly one choice drops the "What does Claire do?" header.
 
 Scale matters: a person is about 24px tall, so the van is 70×30, a car 58×19

@@ -15,7 +15,14 @@
         "The car — a 2009 Honda Civic that had been making a rhythmic, metallic ticking since the on-ramp — chose this moment to add a new symptom: the fuel light. She'd been ignoring it for twenty minutes because she was rehearsing the conversation she'd have with Aunt June about why she was still single, and that required her full creative energy.",
         "The gas station appeared on the right like a small miracle. A flat concrete island under fluorescent light, belonging to no town, serving both directions. She pulled up to the pump, turned the key, and the engine stopped. Not wound down. Stopped. She fuelled up and tried to restart it. Nothing. A dry, asthmatic click — the sound of machinery that has made a decision.",
         "In her rearview mirror, a man in a dark sedan waited behind her. Sunglasses. Hands on the wheel. He did not get out to help. He just sat there, judging her through his windscreen with the quiet conviction that her failure was an inconvenience he should not have to witness.",
-        "She had to move the car. She got out, put it in neutral, and pushed. The Civic did not move. The sedan driver watched. She pushed harder out of spite, which moved the car approximately three inches.",
+        "She had to move the car. She got out, put it in neutral, and pushed. The Civic did not move. The sedan driver watched. She pushed harder out of spite, which moved the car approximately three inches."
+      ],
+      "choices": [
+        { "label": "She keeps pushing.", "goto": "door" }
+      ]
+    },
+    "door": {
+      "content": [
         "That's when the door to the gas station opened.",
         "He was tall. Not tall in the way people say \"tall\" when they mean \"taller than me\" — tall in the way that reorganises a room. Broad shoulders, dark hair, a jaw that could have been designed by committee. He was, by any reasonable standard, a handsome man.",
         "He was also wearing a clown outfit.",
@@ -64,7 +71,7 @@
         "Some of the best stories start with a terrible idea.",
         "Claire knows this now. She's just not sure you do."
       ],
-      "goBack": "opening"
+      "goBack": "door"
     },
     "van_ride": {
       "content": [
