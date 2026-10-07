@@ -192,9 +192,11 @@
     // SCENE ART — pixel-art panels for interactive fiction
     // ==========================================
     // An interactive article opts in with "sceneArt": "<key>" at its top level.
-    // SCENE_ART[key][sceneId] is a draw(k, f) function called every frame on a
-    // 190x80 grid at 3x, where f counts 60fps frames since the scene opened
-    // (paused while the panel is off screen). A scene with no entry gets no panel.
+    // SCENE_ART[key].scenes[sceneId] is { draw, before }: draw(k, f) is called
+    // every frame on a 190x80 grid at 3x, where f counts 60fps frames since the
+    // panel came into view, and the panel sits above the first paragraph that
+    // starts with `before` (or at the top). SCENE_ART[key].intros[sceneId] is a
+    // full-screen 190x107 interlude played on the way into that scene.
     function makePixelKit(ctx, S, W, H) {
       return {
         W, H, S, ctx,
@@ -310,17 +312,41 @@
         k.px(x, y, 1, 1, hex); k.px(x + gap, y, 1, 1, hex);
       },
 
-      // White van, side on, facing right. y is the ground line.
+
+      mix(a, b, t) {
+        const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)), A = p(a), B = p(b);
+        return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * Math.max(0, Math.min(1, t)))).join(',') + ')';
+      },
+
+      wheel(q, cx, r) {
+        for (let dy = -r; dy <= r; dy++) { const w = Math.round(Math.sqrt(r * r - dy * dy)); q(cx - w, -r + dy, w * 2, 1, '#141414'); }
+        q(cx - 1, -r - 1, 3, 3, '#777');
+      },
+
+      // White van, side on, facing right (flip faces left). y is the ground
+      // line. 70 wide and 30 tall: a person comes up to just under the roof.
       van(k, x, y, o = {}) {
-        const b = o.body || '#d8d8d0', s = o.shade || '#a8a8a0';
-        k.px(x, y - 15, 22, 12, b);
-        k.px(x + 22, y - 12, 7, 9, b);
-        k.px(x + 22, y - 11, 5, 4, o.glass || '#3a4a5a');
-        k.px(x, y - 5, 29, 2, s);
-        k.px(x + 3, y - 4, 5, 4, '#141414'); k.px(x + 20, y - 4, 5, 4, '#141414');
-        k.px(x + 5, y - 3, 1, 1, '#666'); k.px(x + 22, y - 3, 1, 1, '#666');
-        if (o.door) k.px(x + 21, y - 12, 1, 9, '#1a1a1a');
-        if (o.lights) k.px(x + 28, y - 8, 1, 2, '#fff8c0');
+        const q = (dx, dy, w, h, c) => k.px(o.flip ? x + 70 - dx - w : x + dx, y + dy, w, h, c);
+        const b = o.body || '#d8d8d0', s = o.shade || '#a8a8a0', g = o.glass || '#3a4a5a';
+        q(0, -29, 52, 22, b); q(1, -30, 50, 1, '#e8e8e0');
+        for (let i = 0; i < 18; i++) { const top = Math.round(-29 + Math.max(0, i - 5) * 0.65); q(52 + i, top, 1, -7 - top, b); }
+        q(54, -27, 10, 9, g); q(65, -25, 3, 7, g);
+        q(0, -9, 70, 3, s); q(36, -28, 1, 20, s); q(39, -18, 3, 1, s); q(52, -27, 1, 19, s);
+        q(67, -14, 3, 3, o.lights ? '#fff8c0' : '#e8e0b0'); q(0, -20, 1, 5, '#a02020');
+        if (o.door) { q(53, -27, 12, 19, '#1a1612'); q(65, -27, 2, 19, s); }
+        CK.wheel(q, 12, 5); CK.wheel(q, 57, 5);
+      },
+
+      // A saloon car, side on, facing right. 58 wide, 19 tall.
+      car(k, x, y, c, o = {}) {
+        const q = (dx, dy, w, h, col) => k.px(o.flip ? x + 58 - dx - w : x + dx, y + dy, w, h, col);
+        const rows = [[17, 36], [16, 38], [15, 40], [14, 42], [12, 44], [11, 45]], gl = o.glass || '#2a3440';
+        rows.forEach(([a, b], i) => q(a, -19 + i, b - a, 1, c));
+        rows.slice(1, 5).forEach(([a, b], i) => { q(a + 2, -18 + i, 10, 1, gl); q(a + 15, -18 + i, b - a - 17, 1, gl); });
+        q(1, -13, 56, 8, c); q(0, -11, 58, 5, c); q(2, -13, 54, 1, o.hi || c);
+        q(0, -7, 58, 1, '#00000055');
+        q(56, -11, 2, 2, '#f0e0a0'); q(0, -11, 2, 2, '#a02020');
+        CK.wheel(q, 11, 4); CK.wheel(q, 47, 4);
       },
 
       // The clown, front on. x is the centre, y the feet. Each stage of the
@@ -435,38 +461,102 @@
         k.px(ex, ey, 1, 6, '#9a6a3a'); k.px(ex - 1, ey + 1, 3, 1, '#9a6a3a');
       },
 
-      // Van interior from the passenger seat: frame, dashboard, wheel, phone.
+
+      // Inside the van from the passenger seat, looking forward and left: his
+      // window on the left, the windscreen ahead, the dash across both. Draw the
+      // outside first; this covers everything that isn't glass.
       cab(k, f, o = {}) {
-        const d = o.night;
-        k.px(0, 0, k.W, 4, d ? '#050507' : '#1a1820');
-        k.px(0, 0, 8, 48, d ? '#050507' : '#16141c'); k.px(182, 0, 8, 48, d ? '#050507' : '#16141c');
-        k.px(0, 46, k.W, 34, d ? '#08080a' : '#1c1a20'); k.px(0, 46, k.W, 2, d ? '#101014' : '#2a2830');
-        for (let a = 0; a < 48; a++) { const t = a / 48 * Math.PI * 2; k.px(34 + Math.cos(t) * 14, 60 + Math.sin(t) * 9, 2, 2, d ? '#020203' : '#0c0c10'); }
-        k.px(32, 58, 5, 4, d ? '#020203' : '#0c0c10');
-        const skin = o.handC || '#e0b090';
-        k.px(21, 55, 3, 3, skin); k.px(46, 55, 3, 3, skin);
-        k.px(150, 60, 10, 16, '#0c0c10');
-        k.px(151, 61, 8, 13, o.dead ? '#06060a' : '#1a2234');
-        if (!o.dead) {
-          k.px(152, 63, 5, 2, '#555'); k.px(157, 63, 1, 2, '#555');
-          if (Math.floor(f / (o.fast ? 15 : 35)) % 2) k.px(152, 63, 1, 2, '#e02020');
-        }
-        k.px(147, 70, 4, 3, '#e8c0a0'); k.px(159, 68, 3, 3, '#e8c0a0');
+        const P = k.px, n = o.night, int = n ? '#060608' : '#1c1a20', edge = n ? '#101014' : '#34303a';
+        P(0, 0, 190, 5, int); P(0, 0, 4, 80, int);
+        for (let y = 5; y < 47; y++) P(50 + (y - 5) * 0.2, y, 7, 1, int);
+        P(0, 38, 58, 42, n ? '#09090c' : '#26232c'); P(0, 38, 58, 1, edge);
+        P(56, 46, 134, 14, n ? '#08080a' : '#1e1c22'); P(56, 46, 134, 1, edge);
+        P(56, 60, 134, 20, int);
       },
 
+      // The console with the handbrake, and Claire's lap with her phone.
+      lap(k, f, o = {}) {
+        const P = k.px, n = o.night;
+        P(86, 60, 28, 20, n ? '#0c0c0e' : '#141218');
+        P(95, 55, 2, 6, '#222'); P(94, 53, 4, 3, n ? '#1a1a1a' : '#3a3a3e');
+        P(106, 62, 3, 11, n ? '#141416' : '#2e2e32'); P(106, 61, 3, 2, n ? '#401010' : '#a03030');
+        if (o.brakeGlint) P(107, 63, 1, 8, '#9a9aa0');
+        P(122, 66, 32, 14, '#1e1e26'); P(152, 68, 38, 12, '#1e1e26');
+        P(130, 61, 10, 7, '#3a4a6a'); P(162, 61, 10, 7, '#3a4a6a');
+        P(144, 52, 13, 20, '#0c0c10'); P(145, 53, 11, 17, o.dead ? '#06060a' : (n ? '#141a28' : '#1a2234'));
+        if (!o.dead) { P(147, 55, 6, 2, '#555'); P(153, 55, 1, 2, '#555'); if (Math.floor(f / (o.fast ? 15 : 35)) % 2) P(147, 55, 1, 2, '#e02020'); }
+        P(139, 60, 6, 6, n ? '#3a3028' : '#e8c0a0'); P(156, 60, 6, 6, n ? '#3a3028' : '#e8c0a0');
+      },
+
+      // His head in profile, facing right, in an 18x23 box at (x0, y0).
+      // paint (0-1) whitens it front to back; wig and grin finish the job.
+      profile(k, x0, y0, o = {}) {
+        const P = k.px, j = Math.floor((o.f || 0) / 5);
+        if (o.dark) {
+          P(x0, y0, 16, 20, '#07070a'); P(x0 + 16, y0 + 8, 2, 3, '#07070a'); P(x0 + 7, y0 + 20, 6, 3, '#07070a');
+          if (o.wig) for (let i = 0; i < 14; i++) P(x0 - 3 + k.hash(i * 2.3 + j) * 18, y0 - 4 + k.hash(i * 4.1) * 19, 3, 3, '#0c2410');
+          return;
+        }
+        const skin = '#e0b090', white = '#f2f0ea', hair = '#2a1a10', p = o.paint || 0, pw = Math.round(p * 11);
+        P(x0 + 2, y0, 13, 5, hair); P(x0, y0 + 3, 6, 12, hair);
+        P(x0 + 5, y0 + 3, 11, 15, skin); P(x0 + 15, y0 + 4, 1, 6, skin); P(x0 + 16, y0 + 8, 2, 3, skin); P(x0 + 15, y0 + 13, 1, 2, skin);
+        P(x0 + 7, y0 + 18, 8, 2, skin); P(x0 + 7, y0 + 20, 6, 3, skin);
+        if (pw) {
+          P(x0 + 16 - pw, y0 + 3, pw, 15, white);
+          if (p > 0.7) { P(x0 + 15, y0 + 4, 1, 6, white); P(x0 + 16, y0 + 8, 2, 3, white); P(x0 + 15, y0 + 13, 1, 2, white); P(x0 + 7, y0 + 18, 8, 2, white); }
+        }
+        P(x0 + 6, y0 + 8, 3, 4, pw > 9 ? '#d8d0c8' : '#c89070');
+        P(x0 + 12, y0 + 8, 2, 1, '#111'); P(x0 + 12, y0 + 6, 3, 1, p > 0.6 ? '#151515' : hair);
+        if (p > 0.6) P(x0 + 12, y0 + 10, 1, 1, '#151515');
+        if (o.grin) {
+          const r = '#d01818';
+          P(x0 + 10, y0 + 14, 7, 1, r); P(x0 + 10, y0 + 12, 1, 2, r); P(x0 + 9, y0 + 11, 1, 1, r); P(x0 + 16, y0 + 13, 1, 1, r);
+          P(x0 + 13, y0 + 14, 3, 1, '#4a0808');
+        } else P(x0 + 13, y0 + 14, 3, 1, '#8a4a3a');
+        if (o.wig) {
+          P(x0 - 2, y0 - 3, 17, 7, '#33cc44'); P(x0 - 3, y0 + 2, 9, 15, '#33cc44');
+          for (let i = 0; i < 12; i++) P(x0 - 4 + k.hash(i * 2.3 + j) * 17, y0 - 4 + k.hash(i * 4.1) * 19, 3, 3, i % 3 ? '#33cc44' : '#55ee66');
+        }
+      },
+
+      // The driver: seat, suit, head, an arm out to the wheel (seen edge-on).
+      // dark draws him as a silhouette. front swaps the profile for the face,
+      // turned to look at you. mirror raises the compact.
+      driver(k, f, o = {}) {
+        const P = k.px, d = o.dark, suit = d ? '#0a0a0c' : '#e8e2d4';
+        const arm = (x0, y0, x1, y1) => { const m = Math.ceil(Math.hypot(x1 - x0, y1 - y0)); for (let i = 0; i <= m; i++) P(x0 + (x1 - x0) * i / m - 2, y0 + (y1 - y0) * i / m - 2, 4, 4, suit); };
+        P(4, 26, 12, 54, d ? '#050506' : '#2a2620');
+        P(12, 34, 28, 46, suit);
+        if (!d) [[16, 40, '#cc3333'], [28, 46, '#3a66cc'], [20, 58, '#3a66cc'], [33, 62, '#cc3333'], [24, 72, '#cc3333']].forEach(([x, y, c]) => P(x, y, 2, 2, c));
+        P(12, 34, 28, 2, d ? '#0a0a0c' : '#cc3333');
+        arm(34, 40, 46, 54); arm(46, 54, 60, 48);
+        P(58, 45, 4, 5, d ? '#121212' : '#e0b090');
+        P(61, 36, 3, 24, d ? '#020203' : '#0c0c10'); P(62, 36, 1, 24, d ? '#08080a' : '#2a2a30');
+        P(64, 50, 10, 3, d ? '#020203' : '#0c0c10');
+        if (o.front) CK.face(k, 10, 2, 2, { gaze: 1 });
+        else CK.profile(k, 18, 12, o);
+        if (o.mirror) {
+          arm(30, 46, 40, 30);
+          P(38, 16, 10, 10, '#888'); P(39, 17, 8, 8, '#7a9ab0');
+          P(39, 17, 4, 8, '#e0b090'); P(43, 17, 4, 8, '#f2f0ea'); P(40, 19, 1, 1, '#111'); P(44, 19, 1, 1, '#111');
+          P(38, 25, 5, 5, '#e0b090');
+        }
+      },
+
+      // The barn, big enough that the door clears a tall man. Ground at y 72.
       barn(k, f, o = {}) {
         const m = o.morning, wall = m ? '#7a5a42' : '#3a3634', line = m ? '#5a3e2a' : '#2a2826', roof = m ? '#4a3026' : '#1c1816', brace = m ? '#8a6a4a' : '#4a4440';
-        for (let x = 76; x <= 134; x++) {
-          const top = Math.round(40 - (16 - Math.abs(x - 105) * 16 / 29) + 3 * Math.sin(Math.PI * (x - 76) / 58));
-          if (x >= 79 && x <= 130 && top + 3 < 40) k.px(x, top + 3, 1, 40 - top - 3, wall);
-          k.px(x, top, 1, 3, roof);
+        k.px(60, 36, 91, 36, wall);
+        for (let x = 56; x <= 154; x++) {
+          const top = Math.round(36 - (28 - Math.abs(x - 105) * 28 / 49) + 4 * Math.sin(Math.PI * (x - 56) / 98));
+          if (x >= 60 && x <= 150 && top + 4 < 36) k.px(x, top + 4, 1, 36 - top - 4, wall);
+          if (x >= 60 && x <= 150 && x % 5 === 3) k.px(x, top + 4, 1, 72 - top - 4, line);
+          k.px(x, top, 1, 4, roof);
         }
-        k.px(79, 40, 52, 22, wall);
-        for (let x = 82; x < 130; x += 4) k.px(x, 40, 1, 22, line);
-        k.px(102, 31, 7, 4, m ? '#a8c8e0' : '#e8eef0');
-        k.px(96, 46, 18, 16, m ? '#5a3e2a' : '#1e1a18');
-        for (let i = 0; i < 16; i++) { k.px(96 + i * 17 / 15, 46 + i, 1, 1, brace); k.px(113 - i * 17 / 15, 46 + i, 1, 1, brace); }
-        k.px(96, 46, 18, 1, brace); k.px(96, 61, 18, 1, brace); k.px(104, 46, 1, 16, brace);
+        k.px(98, 17, 14, 9, line); k.px(99, 18, 12, 7, m ? '#a8c8e0' : '#e8eef0');
+        k.px(91, 40, 28, 32, m ? '#5a3e2a' : '#1e1a18');
+        for (let i = 0; i < 32; i++) { k.px(91 + i * 27 / 31, 40 + i, 1, 1, brace); k.px(118 - i * 27 / 31, 40 + i, 1, 1, brace); }
+        k.px(91, 40, 28, 1, brace); k.px(91, 71, 28, 1, brace); k.px(104, 40, 2, 32, brace);
       },
 
       // Inside the barn. Claire stands against the back wall at x 70.
@@ -606,291 +696,371 @@
         const s = Math.max(0, 47 - Math.floor(f * 0.5));
         k.text('0:00:' + String(s).padStart(2, '0'), k.W - 8, 6, 12, '#ffffff', 'right');
       },
+
+      // The fast-forward HUD over an intro: light tape noise, a tracking band,
+      // and a clock running forward from `from` minutes.
+      tape(k, f, from) {
+        const P = k.px;
+        k.a(0.22, () => { for (let i = 0; i < 260; i++) { const g = Math.floor(k.hash(i * 1.3 + f * 0.7) * 255); P(k.hash(i + f * 13.1) * k.W, k.hash(i * 3.7 + f * 7.7) * k.H, 1, 1, 'rgb(' + g + ',' + g + ',' + g + ')'); } });
+        const by = k.H - (f * 2) % (k.H + 30);
+        k.a(0.1, () => P(0, by, k.W, 6, '#ffffff'));
+        const s = from * 60 + Math.floor(f * 0.4);
+        const tc = Math.floor(s / 3600) + ':' + String(Math.floor(s / 60) % 60).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+        k.text('▶▶ FAST FWD', 9, 7, 12, '#000000', 'left'); k.text('▶▶ FAST FWD', 8, 6, 12, '#ffffff', 'left');
+        k.text(tc, k.W - 7, 7, 12, '#000000', 'right'); k.text(tc, k.W - 8, 6, 12, '#ffffff', 'right');
+      },
     };
 
     const SCENE_ART = {
       'lone-clown': {
-        // A gas station at dusk. He comes out of the shop.
-        opening(k, f) {
-          const P = k.px, t = Math.min(f, 700);
-          ['#1c1230', '#281636', '#3e1c3a', '#5e2838', '#8a3c34', '#b85a34', '#d87a38'].forEach((c, i) => P(0, i * 5, 190, 5, c));
-          k.glow(164, 34, 24, '255,150,70', 0.5); P(158, 32, 12, 3, '#f0b060');
-          P(0, 35, 190, 9, '#1a1220');
-          for (let i = 0; i < 9; i++) P(172 - i, 25 + i, 2 * i + 1, 1, i % 2 ? '#6a2c2c' : '#a89070');
-          P(172, 22, 1, 3, '#555'); P(173, 22, 2, 1, '#8a2a2a');
-          P(116, 33, 16, 7, '#2a2026'); P(134, 34, 12, 6, '#2a2026');
-          P(100, 34, 11, 6, '#b8b8b0'); P(108, 35, 3, 2, '#3a4a5a');
-          P(0, 44, 190, 36, '#242228'); P(0, 44, 190, 1, '#2e2c34');
-          P(124, 22, 62, 36, '#33303a'); P(124, 20, 62, 2, '#4a4652');
-          P(130, 24, 24, 5, '#1a1a20'); P(131, 25, 22, 3, '#3a6a4a');
-          for (let i = 0; i < 7; i++) P(132 + i * 3, 26, 1, 1, (Math.floor(f / 25) + i) % 3 ? '#4a7a5a' : '#c8f0a0');
-          P(128, 38, 18, 13, '#7a8060');
-          const open = k.ramp(t, 30, 50);
-          P(152, 36, 11, 22, '#101014');
-          P(153, 37, 9, 21, open > 0 ? '#d8d8a8' : '#1e1e26');
-          P(153, 37, Math.round(9 * (1 - open)), 21, '#1e1e26');
-          P(10, 12, 104, 5, '#d8d6ce'); P(10, 15, 104, 2, '#b03030');
-          P(18, 17, 3, 41, '#9a9890'); P(104, 17, 3, 41, '#9a9890');
-          const on = k.hash(Math.floor(f / 5)) > 0.1 && !((f % 400) > 380 && (f % 6) < 3);
-          if (on) { k.a(0.1, () => P(10, 17, 104, 41, '#e8f4ff')); P(14, 17, 96, 1, '#f0f8ff'); }
-          else P(14, 17, 96, 1, '#5a6068');
-          P(60, 42, 7, 16, '#c8c4b8'); P(61, 44, 5, 4, '#1a2a1a'); P(62, 45, 3, 1, '#6ae06a'); P(67, 46, 1, 8, '#222');
-          P(30, 50, 26, 7, '#6a2626'); P(35, 46, 15, 4, '#5a2020'); P(36, 47, 6, 3, '#2a3440'); P(43, 47, 6, 3, '#2a3440');
-          P(33, 56, 4, 3, '#111'); P(49, 56, 4, 3, '#111');
-          if (Math.floor(f / 30) % 2) { P(55, 52, 1, 1, '#ffaa22'); k.glow(55, 52, 4, '255,170,40', 0.4); }
-          P(0, 50, 22, 7, '#121218'); P(2, 46, 14, 4, '#0e0e14'); P(10, 47, 6, 3, '#20242c');
-          P(11, 47, 3, 3, '#3a3030'); P(11, 48, 3, 1, '#000');
-          if (f % 240 < 6) P(13, 48, 1, 1, '#ffffff');
-          P(3, 56, 4, 3, '#000'); P(15, 56, 4, 3, '#000');
-          CK.claire(k, 26, 58, { gaze: t > 60 ? 1 : 0 });
-          if (t > 40) {
-            const walk = k.ramp(t, 60, 380), moving = t > 60 && t < 380;
-            CK.clown(k, 158 - walk * 82, 58, { step: moving ? Math.sin(t * 0.25) : 0 });
-          }
-        },
-
-        // Back home. Something white goes past the window.
-        end_call(k, f) {
-          const P = k.px, t = f % 720;
-          P(0, 0, 190, 80, '#2a2030');
-          for (let x = 0; x < 190; x += 8) P(x, 0, 1, 50, '#33283a');
-          P(0, 48, 190, 2, '#1a1420');
-          P(26, 10, 13, 13, '#d8d0c0'); P(27, 11, 11, 11, '#f0ead8');
-          const mA = f * 0.02, hA = f * 0.002;
-          for (let i = 0; i < 5; i++) P(32 + Math.sin(mA) * i, 16 - Math.cos(mA) * i, 1, 1, '#222');
-          for (let i = 0; i < 3; i++) P(32 + Math.sin(hA) * i, 16 - Math.cos(hA) * i, 1, 1, '#222');
-          P(78, 8, 36, 30, '#d8d0c0'); P(80, 10, 32, 26, '#070a14');
-          for (let i = 0; i < 6; i++) P(81 + k.hash(i) * 30, 11 + k.hash(i + 3) * 10, 1, 1, '#6870a0');
-          const fa = k.ramp(t, 230, 262) * (1 - k.ramp(t, 320, 360));
-          k.ctx.save(); k.ctx.beginPath(); k.ctx.rect(80 * k.S, 10 * k.S, 32 * k.S, 26 * k.S); k.ctx.clip();
-          if (t >= 110 && t < 220) CK.van(k, 48 + (t - 110) * 0.85, 36, { body: '#c8c8c0', lights: true });
-          if (fa > 0) k.a(fa, () => CK.face(k, 80, 38 - 30 * k.ease(k.ramp(t, 230, 280)), 2, { gaze: 1 }));
-          k.ctx.restore();
-          P(95, 10, 2, 26, '#d8d0c0'); P(80, 22, 32, 2, '#d8d0c0');
-          if (t >= 110 && t < 220) { const lx = 200 - (t - 110) * 2.2; k.a(0.12, () => P(lx, 0, 24, 48, '#fff8d0')); }
-          P(0, 52, 190, 28, '#3a2214'); P(0, 52, 190, 6, '#c8c0b0'); P(0, 57, 190, 1, '#a8a090');
-          P(80, 49, 34, 4, '#d8d8d8');
-          P(86, 41, 22, 9, '#8a5a2a'); P(88, 40, 18, 2, '#9a6a32'); P(84, 45, 3, 4, '#7a4a20'); P(107, 45, 3, 4, '#7a4a20');
-          P(83, 44, 2, 2, '#e8e0d0'); P(109, 44, 2, 2, '#e8e0d0');
-          [60, 130].forEach((cx, i) => { P(cx, 40, 2, 10, '#e8e0c8'); P(cx, 37 - (Math.sin(f * 0.3 + i) > 0 ? 1 : 0), 2, 3, '#ffcc55'); k.glow(cx + 1, 37, 18, '255,180,80', 0.22); });
-          P(30, 53, 14, 2, '#e8e8e8'); P(140, 53, 14, 2, '#e8e8e8');
-          P(22, 30, 18, 22, '#5a2a4a'); P(26, 18, 10, 11, '#e0b8a0'); P(25, 15, 12, 5, '#a8a8b0'); P(28, 12, 6, 4, '#a8a8b0');
-          P(27, 22, 3, 2, '#c8d8e8'); P(32, 22, 3, 2, '#c8d8e8'); P(30, 22, 2, 1, '#888');
-          if (fa > 0.5 && f % 40 < 20) P(28, 22, 1, 1, '#ffffff');
-          P(29, 26, 4, 1, '#8a4a4a');
-          P(144, 32, 16, 20, '#3a4a6a'); P(147, 22, 10, 10, '#e8c0a0'); P(146, 20, 12, 4, '#6a3a1a'); P(146, 22, 2, 9, '#6a3a1a'); P(156, 22, 2, 9, '#6a3a1a');
-          P(149, 27, 2, 1, '#6a4a3a'); P(153, 27, 2, 1, '#6a4a3a'); P(140, 46, 1, 6, '#c8c8c8');
-        },
-
-        // In the van. He paints half his face; the mirror catches the sun.
-        van_ride(k, f) {
-          const P = k.px;
-          ['#2c1838', '#4a2038', '#7a3436', '#b0563a', '#d87a40'].forEach((c, i) => P(0, 4 + i * 5, 190, 5, c));
-          k.glow(150, 30, 26, '255,170,80', 0.6);
-          P(0, 29, 190, 17, '#2a2024');
-          for (let y = 29; y < 46; y++) { const t = (y - 29) / 17, h = 2 + t * 46; P(118 - h, y, h * 2, 1, '#3a3438'); }
-          for (let i = 0; i < 4; i++) { const d = (f * 0.012 + i / 4) % 1, y = 29 + d * d * 17, w = 1 + d * 2; P(118 - w / 2, y, w, 1 + d * 2, '#d8c870'); }
-          const paint = k.ramp(f, 40, 500);
-          P(14, 28, 34, 18, '#e8e2d4'); P(20, 32, 2, 2, '#cc3333'); P(34, 36, 2, 2, '#3a66cc'); P(26, 41, 2, 2, '#cc3333');
-          P(14, 28, 34, 2, '#cc3333');
-          P(20, 12, 16, 17, '#e0b090');
-          P(36 - Math.round(8 * paint), 13, Math.round(8 * paint), 15, '#f2f0ea');
-          P(19, 9, 17, 5, '#2a1a10'); P(19, 12, 5, 9, '#2a1a10');
-          P(25, 18, 3, 4, '#c89070');
-          P(31, 17, 2, 2, '#111');
-          P(36, 19, 1, 3, paint > 0.9 ? '#f2f0ea' : '#e0b090');
-          P(31, 24, 4, 1, '#8a4a3a');
-          P(36, 30, 7, 3, '#e8e2d4'); P(42, 28, 3, 3, '#e0b090');
-          P(43, 20, 8, 8, '#888'); P(44, 21, 6, 6, '#7a9ab0');
-          P(44, 21, 3, 6, '#e0b090'); P(47, 21, 3, 6, '#f2f0ea'); P(45, 23, 1, 1, '#111'); P(48, 23, 1, 1, '#111');
-          const mf = f % 300;
-          if (mf < 24) k.glow(47, 24, 16, '255,230,170', Math.sin(Math.PI * mf / 24));
-          CK.cab(k, f, {});
-          CK.crucifix(k, 110, 4, 9, Math.sin(f * 0.045) * 0.35);
-        },
-
-        // The handbrake: the spin, then his face in the dark.
-        end_handbrake(k, f) {
-          const P = k.px;
-          if (f < 215) {
-            P(0, 0, 190, 14, '#0e1a10'); P(0, 14, 190, 4, '#3a3430'); P(0, 18, 190, 40, '#24242a');
-            P(0, 19, 190, 1, '#a8a8a0'); P(0, 57, 190, 1, '#a8a8a0');
-            for (let x = 0; x < 190; x += 14) P(x, 37, 7, 1, '#c8b850');
-            P(0, 58, 190, 8, '#3a3430'); P(0, 66, 190, 14, '#0e1a10');
-            const pose = s => { const e = 1 - Math.pow(1 - s, 3); return { x: 20 + 120 * e, y: 38 + 22 * e * e, a: Math.PI * 1.05 * e }; };
-            const s = k.ramp(f, 10, 170), cur = pose(s);
-            for (let q = 0; q <= s; q += 0.006) {
-              const p = pose(q), c = Math.cos(p.a), sn = Math.sin(p.a);
-              [-4, 4].forEach(w => P(p.x - 9 * c - w * sn, p.y - 9 * sn + w * c, 1, 1, '#0a0a0c'));
+        scenes: {
+          // A gas station at dusk. He comes out of the shop.
+          opening: { before: "That's when the door", draw(k, f) {
+            const P = k.px, t = Math.min(f, 700);
+            ['#1c1230', '#281636', '#3e1c3a', '#5e2838', '#8a3c34', '#b85a34', '#d87a38', '#e08a40'].forEach((c, i) => P(0, i * 5, 190, 5, c));
+            k.glow(160, 40, 26, '255,150,70', 0.5);
+            P(0, 40, 190, 8, '#1a1220');
+            for (let i = 0; i < 7; i++) P(180 - i, 32 + i, 2 * i + 1, 1, i % 2 ? '#6a2c2c' : '#a89070');
+            P(146, 41, 10, 5, '#b8b8b0'); P(158, 40, 12, 6, '#2a2026');
+            P(0, 48, 190, 32, '#242228'); P(0, 48, 190, 1, '#2e2c34');
+            P(128, 22, 62, 52, '#33303a'); P(128, 20, 62, 2, '#4a4652');
+            P(134, 26, 26, 6, '#1a1a20'); P(135, 27, 24, 4, '#3a6a4a');
+            for (let i = 0; i < 8; i++) P(136 + i * 3, 28, 1, 1, (Math.floor(f / 25) + i) % 3 ? '#4a7a5a' : '#c8f0a0');
+            P(132, 44, 20, 16, '#7a8060');
+            const open = k.ramp(t, 30, 50);
+            P(162, 42, 13, 32, '#101014');
+            P(163, 43, 11, 31, open > 0 ? '#d8d8a8' : '#1e1e26');
+            P(163, 43, Math.round(11 * (1 - open)), 31, '#1e1e26');
+            P(0, 0, 124, 6, '#d8d6ce'); P(0, 4, 124, 2, '#b03030');
+            P(6, 6, 3, 68, '#9a9890'); P(112, 6, 3, 68, '#9a9890');
+            const on = k.hash(Math.floor(f / 5)) > 0.1 && !((f % 400) > 380 && (f % 6) < 3);
+            if (on) { k.a(0.1, () => P(0, 6, 124, 68, '#e8f4ff')); P(4, 6, 116, 1, '#f0f8ff'); }
+            else P(4, 6, 116, 1, '#5a6068');
+            P(98, 48, 9, 26, '#c8c4b8'); P(99, 51, 7, 6, '#1a2a1a'); P(100, 53, 5, 1, '#6ae06a'); P(107, 54, 1, 14, '#222');
+            CK.car(k, -30, 74, '#121218', { glass: '#20242c' });
+            P(9, 57, 3, 4, '#3a3030'); P(9, 58, 3, 1, '#000');
+            if (f % 240 < 6) P(11, 58, 1, 1, '#ffffff');
+            CK.car(k, 38, 74, '#6a2626', { hi: '#8a3a3a' });
+            if (Math.floor(f / 30) % 2) { P(38, 63, 2, 2, '#ffaa22'); k.glow(39, 64, 5, '255,170,40', 0.4); P(94, 63, 2, 2, '#ffaa22'); }
+            CK.claire(k, 34, 74, { gaze: t > 60 ? 1 : 0 });
+            if (t > 40) {
+              const walk = k.ramp(t, 60, 380), moving = t > 60 && t < 380;
+              CK.clown(k, 168 - walk * 50, 74, { step: moving ? Math.sin(t * 0.25) : 0 });
             }
-            for (let i = 0; i < 6; i++) { const p = pose(Math.max(0, s - i * 0.03)); k.glow(p.x - 8 * Math.cos(p.a), p.y - 8 * Math.sin(p.a), 6 + i * 2, '170,170,170', s < 1 ? 0.25 : 0.25 * (1 - k.ramp(f, 170, 210))); }
-            const c = Math.cos(cur.a), sn = Math.sin(cur.a);
-            k.glow(cur.x + 18 * c, cur.y + 18 * sn, 16, '255,250,200', 0.3);
-            for (let j = 0; j < 11; j += 0.5) for (let i = 0; i < 22; i += 0.5) {
-              const fi = Math.floor(i), fj = Math.floor(j);
-              const col = fi === 0 || fi === 21 || fj === 0 || fj === 10 ? '#a8a8a0' : fi >= 15 && fi <= 16 ? '#2a3a4a' : '#d8d8d0';
-              const lx = i - 11, ly = j - 5.5;
-              P(cur.x + lx * c - ly * sn, cur.y + lx * sn + ly * c, 1, 1, col);
+          } },
+
+          // Back home. Something white goes past the window.
+          end_call: { before: "Later, while Aunt June", draw(k, f) {
+            const P = k.px, t = f % 720;
+            P(0, 0, 190, 80, '#2a2030');
+            for (let x = 0; x < 190; x += 8) P(x, 0, 1, 50, '#33283a');
+            P(0, 48, 190, 2, '#1a1420');
+            P(26, 10, 13, 13, '#d8d0c0'); P(27, 11, 11, 11, '#f0ead8');
+            const mA = f * 0.02, hA = f * 0.002;
+            for (let i = 0; i < 5; i++) P(32 + Math.sin(mA) * i, 16 - Math.cos(mA) * i, 1, 1, '#222');
+            for (let i = 0; i < 3; i++) P(32 + Math.sin(hA) * i, 16 - Math.cos(hA) * i, 1, 1, '#222');
+            P(78, 8, 36, 30, '#d8d0c0'); P(80, 10, 32, 26, '#070a14');
+            for (let i = 0; i < 6; i++) P(81 + k.hash(i) * 30, 11 + k.hash(i + 3) * 10, 1, 1, '#6870a0');
+            const fa = k.ramp(t, 230, 262) * (1 - k.ramp(t, 320, 360));
+            k.ctx.save(); k.ctx.beginPath(); k.ctx.rect(80 * k.S, 10 * k.S, 32 * k.S, 26 * k.S); k.ctx.clip();
+            if (t >= 110 && t < 220) { P(48 + (t - 110) * 0.85, 26, 22, 8, '#c8c8c0'); P(64 + (t - 110) * 0.85, 28, 5, 3, '#3a4a5a'); P(69 + (t - 110) * 0.85, 30, 1, 2, '#fff8c0'); }
+            if (fa > 0) k.a(fa, () => CK.face(k, 80, 38 - 30 * k.ease(k.ramp(t, 230, 280)), 2, { gaze: 1 }));
+            k.ctx.restore();
+            P(95, 10, 2, 26, '#d8d0c0'); P(80, 22, 32, 2, '#d8d0c0');
+            if (t >= 110 && t < 220) { const lx = 200 - (t - 110) * 2.2; k.a(0.12, () => P(lx, 0, 24, 48, '#fff8d0')); }
+            P(0, 52, 190, 28, '#3a2214'); P(0, 52, 190, 6, '#c8c0b0'); P(0, 57, 190, 1, '#a8a090');
+            P(80, 49, 34, 4, '#d8d8d8');
+            P(86, 41, 22, 9, '#8a5a2a'); P(88, 40, 18, 2, '#9a6a32'); P(84, 45, 3, 4, '#7a4a20'); P(107, 45, 3, 4, '#7a4a20');
+            P(83, 44, 2, 2, '#e8e0d0'); P(109, 44, 2, 2, '#e8e0d0');
+            [60, 130].forEach((cx, i) => { P(cx, 40, 2, 10, '#e8e0c8'); P(cx, 37 - (Math.sin(f * 0.3 + i) > 0 ? 1 : 0), 2, 3, '#ffcc55'); k.glow(cx + 1, 37, 18, '255,180,80', 0.22); });
+            P(30, 53, 14, 2, '#e8e8e8'); P(140, 53, 14, 2, '#e8e8e8');
+            P(22, 30, 18, 22, '#5a2a4a'); P(26, 18, 10, 11, '#e0b8a0'); P(25, 15, 12, 5, '#a8a8b0'); P(28, 12, 6, 4, '#a8a8b0');
+            P(27, 22, 3, 2, '#c8d8e8'); P(32, 22, 3, 2, '#c8d8e8'); P(30, 22, 2, 1, '#888');
+            if (fa > 0.5 && f % 40 < 20) P(28, 22, 1, 1, '#ffffff');
+            P(29, 26, 4, 1, '#8a4a4a');
+            P(144, 32, 16, 20, '#3a4a6a'); P(147, 22, 10, 10, '#e8c0a0'); P(146, 20, 12, 4, '#6a3a1a'); P(146, 22, 2, 9, '#6a3a1a'); P(156, 22, 2, 9, '#6a3a1a');
+            P(149, 27, 2, 1, '#6a4a3a'); P(153, 27, 2, 1, '#6a4a3a'); P(140, 46, 1, 6, '#c8c8c8');
+          } },
+
+          // In the van. He paints half his face; the mirror catches the sun.
+          van_ride: { before: "\"Hey,\" said the clown", draw(k, f) {
+            const P = k.px;
+            ['#2c1838', '#4a2038', '#7a3436', '#b0563a', '#d87a40'].forEach((c, i) => P(0, 5 + i * 5, 190, 5, c));
+            k.glow(160, 28, 28, '255,170,80', 0.6);
+            P(0, 29, 190, 18, '#2a2024');
+            for (let y = 29; y < 47; y++) { const t = (y - 29) / 18, h = 2 + t * 52; P(130 - h, y, h * 2, 1, '#3a3438'); }
+            for (let i = 0; i < 4; i++) { const d = (f * 0.012 + i / 4) % 1, y = 29 + d * d * 18, w = 1 + d * 2; P(130 - w / 2, y, w, 1 + d * 2, '#d8c870'); }
+            for (let i = 0; i < 4; i++) P(52 - ((f * 1.6 + i * 16) % 64), 24, 2, 14, '#1a1214');
+            CK.cab(k, f, {});
+            CK.driver(k, f, { paint: k.ramp(f, 40, 500), mirror: true, f });
+            const mf = f % 300;
+            if (mf < 24) k.glow(43, 21, 16, '255,230,170', Math.sin(Math.PI * mf / 24));
+            CK.lap(k, f, { brakeGlint: f > 520 && f % 120 < 60 });
+            CK.crucifix(k, 120, 5, 9, Math.sin(f * 0.045) * 0.35);
+          } },
+
+          // The handbrake: the spin, then his face in the dark.
+          end_handbrake: { draw(k, f) {
+            const P = k.px;
+            if (f < 215) {
+              P(0, 0, 190, 14, '#0e1a10'); P(0, 14, 190, 4, '#3a3430'); P(0, 18, 190, 40, '#24242a');
+              P(0, 19, 190, 1, '#a8a8a0'); P(0, 57, 190, 1, '#a8a8a0');
+              for (let x = 0; x < 190; x += 14) P(x, 37, 7, 1, '#c8b850');
+              P(0, 58, 190, 8, '#3a3430'); P(0, 66, 190, 14, '#0e1a10');
+              const pose = s => { const e = 1 - Math.pow(1 - s, 3); return { x: 24 + 116 * e, y: 38 + 22 * e * e, a: Math.PI * 1.05 * e }; };
+              const s = k.ramp(f, 10, 170), cur = pose(s);
+              for (let q = 0; q <= s; q += 0.006) {
+                const p = pose(q), c = Math.cos(p.a), sn = Math.sin(p.a);
+                [-5, 5].forEach(w => P(p.x - 12 * c - w * sn, p.y - 12 * sn + w * c, 1, 1, '#0a0a0c'));
+              }
+              for (let i = 0; i < 6; i++) { const p = pose(Math.max(0, s - i * 0.03)); k.glow(p.x - 12 * Math.cos(p.a), p.y - 12 * Math.sin(p.a), 6 + i * 2, '170,170,170', s < 1 ? 0.25 : 0.25 * (1 - k.ramp(f, 170, 210))); }
+              const c = Math.cos(cur.a), sn = Math.sin(cur.a);
+              k.glow(cur.x + 24 * c, cur.y + 24 * sn, 18, '255,250,200', 0.3);
+              for (let j = 0; j < 12; j += 0.5) for (let i = 0; i < 30; i += 0.5) {
+                const fi = Math.floor(i), fj = Math.floor(j);
+                const col = fi === 0 || fi === 29 || fj === 0 || fj === 11 ? '#a8a8a0' : fi >= 21 && fi <= 22 ? '#2a3a4a' : '#d8d8d0';
+                const lx = i - 15, ly = j - 6;
+                P(cur.x + lx * c - ly * sn, cur.y + lx * sn + ly * c, 1, 1, col);
+              }
+              k.a(k.ramp(f, 185, 215), () => P(0, 0, 190, 80, '#000'));
+              return;
             }
-            k.a(k.ramp(f, 185, 215), () => P(0, 0, 190, 80, '#000'));
-            return;
-          }
-          const t = f - 215;
-          P(0, 0, 190, 80, '#06040a');
-          k.glow(95, 84, 80, '200,40,30', 0.35);
-          k.a(k.ramp(t, 0, 40), () => {
-            const gaze = t < 90 ? -1 : -1 + k.ease((t - 90) / 30);
-            CK.face(k, 63, 6, 4, { half: true, gaze, blink: t % 300 > 250 && t % 300 < 258 });
-            P(118, 56, 3, 10, '#f2f0ea'); P(116, 64, 7, 6, '#e0b090');
-          });
-          CK.crucifix(k, 150, 0, 20, 0.9 * Math.sin(t * 0.12) * Math.exp(-t / 260));
-          if (t > 200) k.a(k.ramp(t, 200, 240), () => { k.a(0.75, () => P(0, 68, 190, 12, '#000')); k.text('"ARE YOU OKAY?"', 95, 69, 9, '#e8e8e0'); });
-        },
-
-        // The forest road. Every passing truck shows you his face.
-        forest_road(k, f) {
-          const P = k.px, ctx = k.ctx, S = k.S;
-          ctx.save();
-          if (k.hash(Math.floor(f / 3)) > 0.75) k.shake(0, 1);
-          P(0, 0, 190, 80, '#030407');
-          ctx.save(); ctx.beginPath(); ctx.rect(8 * S, 4 * S, 174 * S, 42 * S); ctx.clip();
-          for (let y = 26; y < 46; y++) { const t = (y - 26) / 20, h = 3 + t * 60; k.a(0.2 + t * 0.6, () => P(118 - h, y, h * 2, 1, '#5a4630')); }
-          const trees = [];
-          for (let i = 0; i < 12; i++) trees.push({ d: (f * 0.008 + i / 12) % 1, side: i % 2 ? 1 : -1 });
-          trees.sort((a, b) => a.d - b.d).forEach(({ d, side }) => {
-            const e = d * d, x = 118 + side * (10 + e * 110), top = 26 - (4 + e * 60), bot = 26 + (2 + e * 22), w = 1 + e * 14;
-            P(x - w / 2, top, w, bot - top, e < 0.15 ? '#0e0c08' : e < 0.45 ? '#221d12' : '#3a3020');
-          });
-          const bt = f % 200;
-          if (bt < 26) for (let i = 0; i < 22; i++) P(40 + bt * 6 + i, 4 + i * 0.6, 2, 2, '#0a0806');
-          const ft = f % 360, I = ft < 40 ? Math.sin(Math.PI * ft / 40) : 0;
-          if (I > 0) k.a(I * 0.18, () => P(8, 4, 174, 42, '#e8e0c0'));
-          ctx.restore();
-          P(20, 10, 16, 18, '#07070a'); P(12, 28, 32, 18, '#07070a');
-          const j = Math.floor(f / 5);
-          for (let i = 0; i < 14; i++) { const a = Math.PI * (0.85 + i / 13 * 1.3); P(28 + Math.cos(a) * (10 + k.hash(i + j) * 2) - 1, 18 + Math.sin(a) * (10 + k.hash(i * 2 + j) * 2) - 1, 3, 3, '#0c2410'); }
-          if (I > 0) k.a(I, () => {
-            if (Math.floor(f / 360) % 2 === 1) CK.face(k, 12, 4, 2, { gaze: 1 });
-            else {
-              P(17, 5, 22, 10, '#33cc44'); P(16, 10, 6, 16, '#33cc44');
-              for (let i = 0; i < 8; i++) P(16 + k.hash(i + j) * 22, 4 + k.hash(i * 3 + j) * 6, 2, 2, '#55ee66');
-              P(22, 13, 14, 15, '#f2f0ea');
-              P(31, 16, 2, 2, '#111'); P(31, 14, 1, 1, '#111'); P(31, 19, 1, 1, '#111'); P(33, 17, 1, 1, '#111');
-              P(28, 23, 8, 1, '#d01818'); P(35, 21, 1, 2, '#d01818'); P(27, 22, 1, 1, '#d01818'); P(30, 23, 4, 1, '#4a0808');
-            }
-          });
-          CK.cab(k, f, { night: true, fast: true, handC: I > 0.3 ? '#c8a080' : '#1a1a1a' });
-          CK.crucifix(k, 110, 4, 9, Math.sin(f * 0.11) * 0.5);
-          ctx.restore();
-        },
-
-        // Out of the van, into the woods. Then eyes.
-        end_jump(k, f) {
-          const P = k.px;
-          k.ctx.save();
-          if (f >= 400 && f < 408) k.shake(f % 2 ? 1 : -1, 0);
-          P(0, 0, 190, 80, '#060a16');
-          CK.stars(k, f, 40, 70, 5);
-          [-20, 22, 58, 132, 168, 210].forEach((b, i) => {
-            for (let y = 0; y < 80; y++) { const t = y / 80, x = 95 + (b - 95) * (0.25 + 0.75 * t), w = 3 + 14 * t; P(x - w / 2, y, w, 1, '#020304'); }
-            P(95 + (b - 95) * 0.4 + (i % 2 ? 2 : -10), 10 + i * 3, 10, 2, '#020304');
-          });
-          if (f >= 20 && f < 92) { const I = k.ramp(f, 20, 32); k.glow(152, 72, 30, '220,30,20', 0.5 * I); P(148, 72, 2, 1, '#ff3020'); P(156, 72, 2, 1, '#ff3020'); }
-          [[40, 62], [150, 58], [22, 48], [118, 70], [70, 66], [176, 40], [10, 70]].forEach(([x, y], i) => {
-            if (f >= 140 + i * 80 && (f + i * 37) % 200 > 7) CK.eyes(k, x, y, '#d8e040', '216,224,64', 3);
-          });
-          if (f >= 760) {
-            k.a(k.ramp(f, 760, 860), () => { P(112, 52, 34, 30, '#030405'); P(118, 48, 22, 8, '#030405'); });
-            if ((f % 260) > 8) CK.eyes(k, 123, 58, '#ffb030', '255,176,48', 8);
-          }
-          const bt = f % 150;
-          if (bt < 60) k.glow(95, 80 - bt * 0.3, 5 + bt * 0.15, '220,230,240', (1 - bt / 60) * 0.3);
-          k.ctx.restore();
-        },
-
-        // The barn in the clearing. He walks to the door and looks back.
-        barn_arrival(k, f) {
-          const P = k.px, t = Math.min(f, 700);
-          P(0, 0, 190, 80, '#070a14');
-          CK.stars(k, f, 45, 44, 9);
-          k.glow(34, 14, 30, '200,210,230', 0.25);
-          for (let dy = -8; dy <= 8; dy++) { const w = Math.sqrt(64 - dy * dy); P(34 - w, 14 + dy, w * 2, 1, '#e4e8ee'); }
-          P(30, 11, 3, 2, '#c8ccd4'); P(37, 16, 2, 2, '#c8ccd4');
-          P(0, 44, 190, 8, '#050806');
-          CK.treeline(k, 50, 14, '#050806', 3, 7);
-          P(0, 50, 190, 30, '#2e3644'); P(0, 50, 190, 1, '#3e4654');
-          for (let i = 0; i < 60; i++) P(k.hash(i) * 190, 51 + k.hash(i + 70) * 29, 1, 1, Math.sin(f * 0.05 + i * 2.3) > 0.85 ? '#dfe6f0' : '#46505e');
-          CK.barn(k, f, {});
-          k.glow(105, 33, 10, '230,238,240', 0.3);
-          const et = f % 900;
-          if (et > 500 && et < 640) P(103 + Math.round((et - 500) / 140 * 4), 32, 2, 2, '#1a1a1a');
-          CK.van(k, 14, 66, { door: true, glass: '#3a3020' });
-          k.glow(39, 58, 8, '255,200,120', 0.25);
-          P(38, 55, 3, 3, '#e8c0a0'); P(38, 54, 3, 1, '#6a3a1a');
-          const walk = k.ramp(t, 60, 420), x = 52 + walk * 38, moving = t > 60 && t < 420, turned = t >= 440;
-          k.a(0.35, () => P(x - 6, 64, 14, 1, '#0a0e14'));
-          const glint = turned && t > 480;
-          CK.clown(k, x, 64, { paint: true, wig: true, long: true, shoes: true, gloves: true, f, step: moving ? Math.sin(f * 0.2) * 1.5 : 0, back: !turned, reach: t >= 420, grinC: glint ? '#ff2a2a' : null });
-          if (glint && f % 90 < 45) P(x + 2, 43, 1, 1, '#ffffff');
-          for (let i = 0; i < 4; i++) k.a(0.06, () => P(((f * 0.1 + i * 70) % 260) - 60, 56 + i * 5, 70, 4, '#a8b4c8'));
-        },
-
-        // Lost in the trees. Something is always where she isn't looking.
-        end_forest(k, f) {
-          const P = k.px, t = f % 240, gaze = t < 120 ? -1 : 1, half = t % 120;
-          P(0, 0, 190, 80, '#04060a');
-          CK.stars(k, f, 20, 20, 2);
-          P(0, 40, 190, 20, '#0c1410');
-          CK.treeline(k, 52, 30, '#0c1410', 1, 9);
-          if (f >= 240 && half > 40 && half < 110) {
-            const x = gaze < 0 ? 152 : 38;
-            k.a(k.ramp(half, 40, 60), () => {
-              P(x - 2, 22, 5, 30, '#010202'); P(x - 3, 16, 7, 7, '#010202'); P(x - 5, 14, 11, 4, '#010202');
-              P(x - 5, 24, 1, 28, '#010202'); P(x + 5, 24, 1, 28, '#010202');
-              P(x - 2, 18, 1, 1, '#c8c8c8'); P(x + 1, 18, 1, 1, '#c8c8c8'); P(x - 2, 20, 5, 1, '#6a0a0a');
+            const t = f - 215;
+            P(0, 0, 190, 80, '#06040a');
+            k.glow(95, 84, 80, '200,40,30', 0.35);
+            k.a(k.ramp(t, 0, 40), () => {
+              const gaze = t < 90 ? -1 : -1 + k.ease((t - 90) / 30);
+              CK.face(k, 63, 6, 4, { half: true, gaze, blink: t % 300 > 250 && t % 300 < 258 });
+              P(118, 56, 3, 10, '#f2f0ea'); P(116, 64, 7, 6, '#e0b090');
             });
-          }
-          CK.treeline(k, 62, 40, '#070c09', 2, 13);
-          P(0, 60, 190, 20, '#06090a');
-          for (let i = 0; i < 30; i++) P(k.hash(i * 2) * 190, 61 + k.hash(i * 5) * 19, 2, 1, '#14100a');
-          [[30, 70], [168, 66], [60, 76]].forEach(([x, y], i) => { if (f > 300 + i * 150 && (f + i * 50) % 180 > 8) CK.eyes(k, x, y, '#d8e040', '216,224,64', 3); });
-          CK.pine(k, 6, 80, 76, '#010202'); CK.pine(k, 186, 80, 70, '#010202');
-          for (let i = 0; i < 4; i++) k.a(0.07, () => P(((f * 0.12 + i * 60) % 260) - 60, 54 + i * 5, 60, 3, '#8a9aa8'));
-          CK.claire(k, 95, 72, { gaze });
-          const bt = f % 130;
-          if (bt < 50) k.glow(95 + gaze * 3, 52 - bt * 0.2, 3 + bt * 0.1, '220,230,240', (1 - bt / 50) * 0.35);
+            CK.crucifix(k, 150, 0, 20, 0.9 * Math.sin(t * 0.12) * Math.exp(-t / 260));
+            if (t > 200) k.a(k.ramp(t, 200, 240), () => { k.a(0.75, () => P(0, 68, 190, 12, '#000')); k.text('"CLAIRE?"', 95, 69, 9, '#e8e8e0'); });
+          } },
+
+          // The forest road. Every passing truck shows you his face.
+          forest_road: { before: "The last of the sunset", draw(k, f) {
+            const P = k.px, ctx = k.ctx, S = k.S;
+            ctx.save();
+            if (k.hash(Math.floor(f / 3)) > 0.75) k.shake(0, 1);
+            P(0, 0, 190, 80, '#030407');
+            const ft = f % 360, I = ft < 40 ? Math.sin(Math.PI * ft / 40) : 0;
+            ctx.save(); ctx.beginPath(); ctx.rect(56 * S, 5 * S, 134 * S, 42 * S); ctx.clip();
+            for (let y = 26; y < 47; y++) { const t = (y - 26) / 21, h = 3 + t * 56; k.a(0.2 + t * 0.6, () => P(130 - h, y, h * 2, 1, '#5a4630')); }
+            const trees = [];
+            for (let i = 0; i < 12; i++) trees.push({ d: (f * 0.008 + i / 12) % 1, side: i % 2 ? 1 : -1 });
+            trees.sort((a, b) => a.d - b.d).forEach(({ d, side }) => {
+              const e = d * d, x = 130 + side * (10 + e * 90), top = 26 - (4 + e * 60), bot = 26 + (2 + e * 22), w = 1 + e * 14;
+              P(x - w / 2, top, w, bot - top, e < 0.15 ? '#0e0c08' : e < 0.45 ? '#221d12' : '#3a3020');
+            });
+            const bt = f % 200;
+            if (bt < 26) for (let i = 0; i < 22; i++) P(60 + bt * 5 + i, 5 + i * 0.6, 2, 2, '#0a0806');
+            if (I > 0) k.a(I * 0.18, () => P(56, 5, 134, 42, '#e8e0c0'));
+            ctx.restore();
+            for (let i = 0; i < 3; i++) P(52 - ((f * 1.2 + i * 22) % 66), 5, 3, 33, '#0a0c0a');
+            CK.cab(k, f, { night: true });
+            CK.driver(k, f, { dark: true, wig: true, f });
+            if (I > 0) k.a(I, () => CK.driver(k, f, { wig: true, paint: 1, grin: true, front: Math.floor(f / 360) % 2 === 1, f }));
+            CK.lap(k, f, { night: true, fast: true });
+            CK.crucifix(k, 120, 5, 9, Math.sin(f * 0.11) * 0.5);
+            ctx.restore();
+          } },
+
+          // Out of the van, into the woods. Then eyes.
+          end_jump: { before: "Around her, the forest", draw(k, f) {
+            const P = k.px;
+            k.ctx.save();
+            if (f >= 400 && f < 408) k.shake(f % 2 ? 1 : -1, 0);
+            P(0, 0, 190, 80, '#060a16');
+            CK.stars(k, f, 40, 70, 5);
+            [-20, 22, 58, 132, 168, 210].forEach((b, i) => {
+              for (let y = 0; y < 80; y++) { const t = y / 80, x = 95 + (b - 95) * (0.25 + 0.75 * t), w = 3 + 14 * t; P(x - w / 2, y, w, 1, '#020304'); }
+              P(95 + (b - 95) * 0.4 + (i % 2 ? 2 : -10), 10 + i * 3, 10, 2, '#020304');
+            });
+            if (f >= 20 && f < 92) { const I = k.ramp(f, 20, 32); k.glow(152, 72, 30, '220,30,20', 0.5 * I); P(148, 72, 2, 1, '#ff3020'); P(156, 72, 2, 1, '#ff3020'); }
+            [[40, 62], [150, 58], [22, 48], [118, 70], [70, 66], [176, 40], [10, 70]].forEach(([x, y], i) => {
+              if (f >= 140 + i * 80 && (f + i * 37) % 200 > 7) CK.eyes(k, x, y, '#d8e040', '216,224,64', 3);
+            });
+            if (f >= 760) {
+              k.a(k.ramp(f, 760, 860), () => { P(112, 52, 34, 30, '#030405'); P(118, 48, 22, 8, '#030405'); });
+              if ((f % 260) > 8) CK.eyes(k, 123, 58, '#ffb030', '255,176,48', 8);
+            }
+            const bt = f % 150;
+            if (bt < 60) k.glow(95, 80 - bt * 0.3, 5 + bt * 0.15, '220,230,240', (1 - bt / 60) * 0.3);
+            k.ctx.restore();
+          } },
+
+          // The barn in the clearing. He walks to the door and looks back.
+          barn_arrival: { before: "And there, at the centre", draw(k, f) {
+            const P = k.px, t = Math.min(f, 700);
+            P(0, 0, 190, 80, '#070a14');
+            CK.stars(k, f, 45, 40, 9);
+            k.glow(26, 12, 24, '200,210,230', 0.25);
+            for (let dy = -7; dy <= 7; dy++) { const w = Math.sqrt(49 - dy * dy); P(26 - w, 12 + dy, w * 2, 1, '#e4e8ee'); }
+            P(23, 10, 3, 2, '#c8ccd4'); P(28, 14, 2, 2, '#c8ccd4');
+            P(0, 40, 190, 8, '#050806');
+            CK.treeline(k, 48, 16, '#050806', 3, 7);
+            P(0, 46, 190, 34, '#2e3644'); P(0, 46, 190, 1, '#3e4654');
+            for (let i = 0; i < 70; i++) P(k.hash(i) * 190, 47 + k.hash(i + 70) * 33, 1, 1, Math.sin(f * 0.05 + i * 2.3) > 0.85 ? '#dfe6f0' : '#46505e');
+            CK.barn(k, f, {});
+            k.glow(105, 21, 12, '230,238,240', 0.3);
+            const et = f % 900;
+            if (et > 500 && et < 640) P(100 + Math.round((et - 500) / 140 * 8), 20, 2, 3, '#1a1a1a');
+            CK.van(k, -10, 78, { door: true, glass: '#3a3020' });
+            k.glow(48, 58, 10, '255,200,120', 0.25);
+            P(46, 54, 4, 4, '#e8c0a0'); P(46, 53, 4, 2, '#6a3a1a');
+            const walk = k.ramp(t, 60, 420), x = 66 + walk * 20, moving = t > 60 && t < 420, turned = t >= 440;
+            k.a(0.35, () => P(x - 6, 74, 14, 1, '#0a0e14'));
+            const glint = turned && t > 480;
+            CK.clown(k, x, 74, { paint: true, wig: true, long: true, shoes: true, gloves: true, f, step: moving ? Math.sin(f * 0.2) * 1.5 : 0, back: !turned, reach: t >= 420, grinC: glint ? '#ff2a2a' : null });
+            if (glint && f % 90 < 45) P(x + 2, 53, 1, 1, '#ffffff');
+            for (let i = 0; i < 4; i++) k.a(0.06, () => P(((f * 0.1 + i * 70) % 260) - 60, 60 + i * 5, 70, 4, '#a8b4c8'));
+          } },
+
+          // Lost in the trees. Something is always where she isn't looking.
+          end_forest: { before: "Trees. In every direction", draw(k, f) {
+            const P = k.px, t = f % 240, gaze = t < 120 ? -1 : 1, half = t % 120;
+            P(0, 0, 190, 80, '#04060a');
+            CK.stars(k, f, 20, 20, 2);
+            P(0, 40, 190, 20, '#0c1410');
+            CK.treeline(k, 52, 30, '#0c1410', 1, 9);
+            if (f >= 240 && half > 40 && half < 110) {
+              const x = gaze < 0 ? 152 : 38;
+              k.a(k.ramp(half, 40, 60), () => {
+                P(x - 2, 22, 5, 30, '#010202'); P(x - 3, 16, 7, 7, '#010202'); P(x - 5, 14, 11, 4, '#010202');
+                P(x - 5, 24, 1, 28, '#010202'); P(x + 5, 24, 1, 28, '#010202');
+                P(x - 2, 18, 1, 1, '#c8c8c8'); P(x + 1, 18, 1, 1, '#c8c8c8'); P(x - 2, 20, 5, 1, '#6a0a0a');
+              });
+            }
+            CK.treeline(k, 62, 40, '#070c09', 2, 13);
+            P(0, 60, 190, 20, '#06090a');
+            for (let i = 0; i < 30; i++) P(k.hash(i * 2) * 190, 61 + k.hash(i * 5) * 19, 2, 1, '#14100a');
+            [[30, 70], [168, 66], [60, 76]].forEach(([x, y], i) => { if (f > 300 + i * 150 && (f + i * 50) % 180 > 8) CK.eyes(k, x, y, '#d8e040', '216,224,64', 3); });
+            CK.pine(k, 6, 80, 76, '#010202'); CK.pine(k, 186, 80, 70, '#010202');
+            for (let i = 0; i < 4; i++) k.a(0.07, () => P(((f * 0.12 + i * 60) % 260) - 60, 54 + i * 5, 60, 3, '#8a9aa8'));
+            CK.claire(k, 95, 72, { gaze });
+            const bt = f % 130;
+            if (bt < 50) k.glow(95 + gaze * 3, 52 - bt * 0.2, 3 + bt * 0.1, '220,230,240', (1 - bt / 50) * 0.35);
+          } },
+
+          barn_inside: { before: "He threw the knife.", draw(k, f) { CK.throwScene(k, f, 1); } },
+          knife2: { before: "The clown threw the second knife.", draw(k, f) { CK.throwScene(k, f, 2); } },
+          knife3: { before: "The third knife left", draw(k, f) { CK.throwScene(k, f, 3); } },
+          end_knife1: { before: "Behind her, in its stall", draw(k, f) { CK.knifeEnd(k, f, 1); } },
+          end_knife2: { before: "Then it stopped snorting", draw(k, f) { CK.knifeEnd(k, f, 2); } },
+          end_knife3: { before: "So was the pony.", draw(k, f) { CK.knifeEnd(k, f, 3); } },
+
+          // Morning. Bad coffee, and a turkey with somewhere to be.
+          finale: { before: "Morning came the way", draw(k, f) {
+            const P = k.px;
+            ['#7aa0cc', '#94b4d4', '#b8c8d4', '#e0d4b0', '#f0d090'].forEach((c, i) => P(0, i * 10, 190, 10, c));
+            k.glow(30, 42, 40, '255,225,150', 0.7);
+            CK.treeline(k, 50, 16, '#24402a', 4, 8);
+            P(0, 48, 190, 32, '#5a7a3a');
+            for (let i = 0; i < 40; i++) P(k.hash(i * 3) * 190, 49 + k.hash(i * 7) * 31, 2, 1, '#6a8a44');
+            const frost = Math.max(0, 40 - Math.floor(f / 15));
+            for (let i = 0; i < frost; i++) P(k.hash(i + 200) * 190, 49 + k.hash(i + 300) * 31, 1, 1, Math.sin(f * 0.08 + i) > 0.6 ? '#ffffff' : '#c8d8c8');
+            for (let i = 0; i < 3; i++) k.a(0.08, () => { for (let y = 0; y < 80; y++) P(10 + i * 26 + y * 0.6, y, 8, 1, '#fff4c0'); });
+            CK.barn(k, f, { morning: true });
+            CK.van(k, -8, 78, {});
+            CK.man(k, 72, 78); CK.claire(k, 84, 78);
+            [[76, 67], [88, 69]].forEach(([mx, my], m) => {
+              P(mx, my, 2, 2, m ? '#c8c8d0' : '#8a8a90');
+              for (let i = 0; i < 3; i++) { const s = (f * 0.5 + i * 20) % 60; k.a(1 - s / 60, () => P(mx + Math.sin((f + i * 20) * 0.05) * 1.5, my - 2 - s * 0.25, 1, 1, '#ffffff')); }
+            });
+            k.glow(165, 72, 22, '255,235,160', 0.35);
+            CK.pony(k, 166, 74, { flip: true, headDown: 0.5 + 0.5 * Math.sin(f * 0.03) });
+            CK.donkey(k, 148, 78, { flip: true, ear: (f % 260) < 30 ? 1 : 0 });
+            CK.turkey(k, 205 - (f * 0.25) % 240, 80, { flip: true, peck: Math.max(0, Math.sin(f * 0.2)) * 0.4 });
+          } },
         },
 
-        barn_inside(k, f) { CK.throwScene(k, f, 1); },
-        knife2(k, f) { CK.throwScene(k, f, 2); },
-        knife3(k, f) { CK.throwScene(k, f, 3); },
-        end_knife1(k, f) { CK.knifeEnd(k, f, 1); },
-        end_knife2(k, f) { CK.knifeEnd(k, f, 2); },
-        end_knife3(k, f) { CK.knifeEnd(k, f, 3); },
+        // Full-screen interludes on the way into a scene, the forward twin of
+        // the rewind. 190x107, about three seconds each, click to skip.
+        intros: {
+          // She gets in. The van leaves the Civic behind.
+          van_ride(k, f) {
+            const P = k.px, t = Math.min(f, 180);
+            ['#1c1230', '#2c1838', '#4a2038', '#7a3436', '#a8503a', '#d07a40'].forEach((c, i) => P(0, i * 11, 190, 11, c));
+            k.glow(160, 64, 30, '255,160,80', 0.5);
+            P(0, 62, 190, 8, '#1a1220');
+            for (let i = 0; i < 7; i++) P(58 - i, 55 + i, 2 * i + 1, 1, i % 2 ? '#6a2c2c' : '#a89070');
+            P(70, 62, 14, 6, '#2a2026'); P(86, 63, 10, 5, '#2a2026');
+            P(0, 70, 190, 37, '#3a3430');
+            for (let i = 0; i < 90; i++) P(k.hash(i) * 190, 71 + k.hash(i + 9) * 36, 1, 1, i % 2 ? '#4a4440' : '#2a2420');
+            P(0, 20, 34, 4, '#d8d6ce'); P(0, 24, 34, 2, '#b03030'); P(26, 26, 3, 72, '#9a9890');
+            CK.car(k, -4, 100, '#6a2626', { hi: '#8a3a3a' });
+            const vx = 96 + (t > 85 ? Math.pow(t - 85, 2) * 0.025 : 0);
+            if (t > 85) for (let i = 0; i < 5; i++) k.glow(vx - 4 - i * 6, 96, 6 + i * 2, '170,150,130', 0.2 * (1 - i / 5));
+            CK.van(k, vx, 100, { door: t < 76 });
+            if (t < 74) CK.claire(k, 70 + k.ease(t / 70) * 84, 100, { gaze: 1 });
+            if (t >= 76 && t < 100) k.a(1 - k.ramp(t, 86, 100), () => k.text('THUNK', vx + 60, 52, 9, '#e8e8e0'));
+            CK.tape(k, f, 17 * 60 + 2);
+          },
 
-        // Morning. Bad coffee, and a turkey with somewhere to be.
-        finale(k, f) {
-          const P = k.px;
-          ['#7aa0cc', '#94b4d4', '#b8c8d4', '#e0d4b0', '#f0d090'].forEach((c, i) => P(0, i * 10, 190, 10, c));
-          k.glow(30, 42, 40, '255,225,150', 0.7);
-          CK.treeline(k, 52, 16, '#24402a', 4, 8);
-          P(0, 50, 190, 30, '#5a7a3a');
-          for (let i = 0; i < 40; i++) P(k.hash(i * 3) * 190, 51 + k.hash(i * 7) * 29, 2, 1, '#6a8a44');
-          const frost = Math.max(0, 40 - Math.floor(f / 15));
-          for (let i = 0; i < frost; i++) P(k.hash(i + 200) * 190, 51 + k.hash(i + 300) * 29, 1, 1, Math.sin(f * 0.08 + i) > 0.6 ? '#ffffff' : '#c8d8c8');
-          for (let i = 0; i < 3; i++) k.a(0.08, () => { for (let y = 0; y < 80; y++) P(10 + i * 26 + y * 0.6, y, 8, 1, '#fff4c0'); });
-          CK.barn(k, f, { morning: true });
-          CK.van(k, 8, 72, {});
-          CK.man(k, 46, 72); CK.claire(k, 57, 72);
-          [[50, 61], [61, 63]].forEach(([mx, my], m) => {
-            P(mx, my, 2, 2, m ? '#c8c8d0' : '#8a8a90');
-            for (let i = 0; i < 3; i++) { const s = (f * 0.5 + i * 20) % 60; k.a(1 - s / 60, () => P(mx + Math.sin((f + i * 20) * 0.05) * 1.5, my - 2 - s * 0.25, 1, 1, '#ffffff')); }
-          });
-          k.glow(150, 68, 22, '255,235,160', 0.35);
-          CK.donkey(k, 136, 72, { flip: true, ear: (f % 260) < 30 ? 1 : 0 });
-          CK.pony(k, 162, 74, { flip: true, headDown: 0.5 + 0.5 * Math.sin(f * 0.03) });
-          const tx = 205 - (f * 0.25) % 240;
-          CK.turkey(k, tx, 79, { flip: true, peck: Math.max(0, Math.sin(f * 0.2)) * 0.4 });
+          // The sun goes down in three seconds and takes the lights with it.
+          forest_road(k, f) {
+            const P = k.px, p = Math.min(1, f / 170);
+            const dusk = ['#3a1c3a', '#5a2440', '#8a3a3a', '#c0603a', '#e08a44'], night = ['#03040a', '#04050c', '#05060e', '#060810', '#070a14'];
+            dusk.forEach((c, i) => P(0, i * 15, 190, 15, CK.mix(c, night[i], p)));
+            if (p < 1) { k.glow(140, 58 + p * 26, 24, '255,180,90', 0.6 * (1 - p)); for (let dy = -5; dy <= 5; dy++) { const w = Math.sqrt(25 - dy * dy); k.a(1 - p, () => P(140 - w, 58 + p * 26 + dy, w * 2, 1, '#ffcc66')); } }
+            k.a(p, () => CK.stars(k, f, 50, 60, 3));
+            for (let i = 0; i < 18; i++) { const x = ((i * 13 - f * 0.6) % 234 + 234) % 234 - 20; CK.pine(k, x, 75, 14 + k.hash(i) * 10, CK.mix('#1a1422', '#030405', p)); }
+            P(0, 74, 190, 33, CK.mix('#1e1c20', '#08080a', p));
+            for (let i = 0; i < 9; i++) P(((i * 24 - f * 4) % 216 + 216) % 216 - 12, 88, 12, 1, CK.mix('#c8b850', '#4a4420', p));
+            if (f < 110) for (let i = 0; i < 2; i++) { const x = ((i * 120 - f * 4) % 240 + 240) % 240 - 20; P(x, 46, 2, 28, '#2a2a2e'); P(x, 46, 8, 2, '#2a2a2e'); if (p > 0.25) { P(x + 6, 48, 3, 1, '#ffe8a0'); k.glow(x + 7, 49, 10, '255,232,160', 0.4); } }
+            const lit = k.ramp(f, 95, 110);
+            if (lit > 0) { k.glow(160, 90, 40, '255,250,200', 0.35 * lit); k.glow(132, 88, 8, '255,250,200', 0.8 * lit); }
+            CK.van(k, 62, 100 + (Math.floor(f / 4) % 2), { lights: lit > 0 });
+            CK.tape(k, f, 17 * 60 + 38);
+          },
+
+          // Down the dirt road: his headlights come at you through the trees.
+          barn_arrival(k, f) {
+            const P = k.px, t = Math.min(f, 180), d = Math.min(1, t / 170), e = d * d;
+            const cx = 95, cy = 60 + e * 14 + Math.sin(t * 0.5) * (0.5 + e * 2), sep = 3 + e * 90;
+            P(0, 0, 190, 107, '#020305');
+            k.glow(cx, cy + 8, 20 + e * 90, '255,240,190', 0.12 + e * 0.3);
+            [[6, 16], [34, 8], [62, 4], [124, 4], [150, 8], [174, 16]].forEach(([x, w]) => {
+              const lit = Math.max(0, Math.min(1, e * 1.4 - Math.abs(x + w / 2 - cx) / 260));
+              P(x, 0, w, 107, CK.mix('#030405', '#5a4630', lit));
+            });
+            if (t > 110) k.a(k.ramp(t, 110, 150) * 0.7, () => CK.face(k, cx - 8 * (e > 0.7 ? 2 : 1), cy - 14 - 20 * e, e > 0.7 ? 2 : 1, { gaze: 0 }));
+            [-1, 1].forEach(s => {
+              const x = cx + s * sep / 2, r = 1 + e * 9;
+              k.glow(x, cy, r * 3.5, '255,250,210', 0.5 + e * 0.5);
+              for (let dy = -Math.floor(r); dy <= r; dy++) { const w = Math.sqrt(r * r - dy * dy); P(x - w, cy + dy, w * 2, 1, '#fffbe8'); }
+            });
+            k.a(k.ramp(t, 158, 180) * 0.85, () => P(0, 0, 190, 107, '#fff8e0'));
+            CK.tape(k, f, 18 * 60 + 41);
+          },
+
+          // The barn door slides open. Look at the length of that arm.
+          barn_inside(k, f) {
+            const P = k.px, t = Math.min(f, 180), g = k.ease(k.ramp(t, 70, 160)) * 64;
+            P(0, 0, 190, 107, '#2e2c2c');
+            for (let x = 2; x < 190; x += 6) P(x, 0, 1, 96, '#232120');
+            P(0, 96, 190, 11, '#2e3644');
+            for (let i = 0; i < 40; i++) P(k.hash(i) * 190, 97 + k.hash(i + 4) * 10, 1, 1, '#c8d0e0');
+            if (g > 0) {
+              P(140 - g, 14, g, 82, '#c8782c');
+              k.glow(140 - g / 2, 30, 50, '255,190,90', 0.6);
+              P(132, 14, 2, 8, '#222'); P(128, 22, 10, 3, '#3a3a3a');
+              P(126, 70, 14, 26, '#3a2410'); P(130, 60, 10, 12, '#3a2410'); P(131, 54, 2, 7, '#3a2410'); P(135, 55, 2, 6, '#3a2410');
+              P(140 - g, 86, g, 10, '#a07a30');
+              k.a(0.35, () => { for (let y = 96; y < 107; y++) { const sp = (y - 96) * 2; P(140 - g - sp, y, g + sp * 2, 1, '#e0a050'); } });
+            }
+            P(30, 10, 130, 4, '#111');
+            P(44 - g, 14, 96, 82, '#1e1a18');
+            for (let i = 0; i < 82; i++) { P(44 - g + i * 95 / 81, 14 + i, 2, 1, '#4a4440'); P(138 - g - i * 95 / 81, 14 + i, 2, 1, '#4a4440'); }
+            P(44 - g, 14, 96, 2, '#4a4440'); P(44 - g, 94, 96, 2, '#4a4440'); P(90 - g, 14, 2, 82, '#4a4440');
+            if (t > 20) {
+              const hx = t < 70 ? 190 - k.ease(k.ramp(t, 20, 60)) * 52 : 140 - g - 2;
+              P(hx + 6, 52, 200, 6, '#e8e2d4');
+              for (let i = 0; i < 6; i++) P(hx + 12 + i * 11, 53 + (i % 2) * 2, 2, 2, i % 2 ? '#cc3333' : '#3a66cc');
+              P(hx, 48, 8, 12, '#ffffff'); P(hx - 2, 49, 2, 3, '#ffffff'); P(hx - 2, 53, 2, 3, '#ffffff'); P(hx - 2, 57, 2, 2, '#ffffff');
+            }
+            CK.tape(k, f, 18 * 60 + 52);
+          },
         },
       },
     };
@@ -946,11 +1116,13 @@
     function InteractiveArticleRenderer({ data, goBack }) {
       const [scene, setScene] = useState(data.start || "opening");
       const [history, setHistory] = useState([]);
-      const [rewinding, setRewinding] = useState(false);
+      const [overlay, setOverlay] = useState(null);
+      const overlayRef = React.useRef(null);
       const sceneRef = React.useRef(null);
       const sc = data.scenes[scene];
       const artSet = data.sceneArt ? SCENE_ART[data.sceneArt] : null;
-      const art = artSet ? artSet[scene] : null;
+      const art = artSet ? artSet.scenes[scene] : null;
+      const artAt = art ? Math.max(0, art.before ? sc.content.findIndex(p => p.startsWith(art.before)) : 0) : -1;
 
       // Scroll to the top of the new scene, clear of the sticky header.
       const scrollToScene = () => setTimeout(() => {
@@ -960,29 +1132,49 @@
         window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - (hdr ? hdr.offsetHeight : 0) - 16, behavior: "smooth" });
       }, 50);
 
-      const goToScene = useCallback((id) => {
-        setHistory(h => [...h, scene]);
-        setScene(id);
-        scrollToScene();
-      }, [scene]);
+      // Play a full-screen interlude, then run `then`. Clicking skips it.
+      const play = (draw, frames, then) => {
+        if (!draw || prefersReducedMotion()) { then(); return; }
+        overlayRef.current = { draw, frames, then };
+        setOverlay(overlayRef.current);
+      };
+      const finishOverlay = useCallback(() => {
+        const o = overlayRef.current;
+        if (!o) return;
+        overlayRef.current = null;
+        setOverlay(null);
+        o.then();
+      }, []);
 
-      const finishGoBack = useCallback(() => {
-        setRewinding(false);
-        if (sc.goBack) {
-          setScene(sc.goBack);
+      // Forward: the scene's intro, if it has one, fast-forwards into it.
+      const goToScene = useCallback((id) => {
+        if (overlayRef.current) return;
+        play(artSet && artSet.intros[id], 180, () => {
+          setHistory(h => [...h, scene]);
+          setScene(id);
+          scrollToScene();
+        });
+      }, [scene, artSet]);
+
+      // Back: pieces with scene art rewind the tape.
+      const handleGoBack = useCallback(() => {
+        if (!sc.goBack || overlayRef.current) return;
+        const target = sc.goBack;
+        play(artSet && CK.rewind, 96, () => {
+          setScene(target);
           setHistory(h => h.slice(0, -1));
           scrollToScene();
-        }
-      }, [sc]);
-
-      // Pieces with scene art rewind the tape on the way back.
-      const handleGoBack = useCallback(() => {
-        if (rewinding) return;
-        if (artSet && !prefersReducedMotion()) setRewinding(true);
-        else finishGoBack();
-      }, [rewinding, artSet, finishGoBack]);
+        });
+      }, [sc, artSet]);
 
       const isScolding = !!sc.goBack;
+
+      const renderPara = (para, i) => {
+        if (para === "\u2026" || para === "\u2022 \u2022 \u2022") return <div key={i} style={{ textAlign: "center", color: "#555560", fontSize: "20px", margin: "20px 0", letterSpacing: "8px" }}>{para}</div>;
+        if (para === "THE END") return <div key={i} style={{ textAlign: "center", fontFamily: "'Special Elite', monospace", fontSize: "28px", color: "#e67e22", letterSpacing: "6px", margin: "32px 0" }}>{para}</div>;
+        const isDialogue = para.startsWith('"') || para.startsWith('\u201c');
+        return <p key={i} style={{ fontSize: "16px", lineHeight: 1.9, color: isScolding && i >= sc.content.indexOf("\u2026") + 1 ? "#c0a060" : "#c8c8b8", marginBottom: "16px", fontStyle: isDialogue ? "normal" : "italic" }}>{redact(para)}</p>;
+      };
 
       return (
         <div>
@@ -994,16 +1186,16 @@
               <p style={{ fontFamily: "'Courier Prime', monospace", fontSize: "16px", color: "#888880", fontStyle: "italic", marginBottom: "24px" }}>{redact(data.subtitle)}</p>
               <div style={{ width: "40px", height: "2px", background: "#e67e22", marginBottom: "28px" }} />
             </>}
-            {art && (
-              <div style={{ margin: "0 0 28px", border: "1px solid " + (isScolding ? "#552222" : "#222244"), background: "#000" }}>
-                <PixelCanvas key={scene} draw={art} />
-              </div>
-            )}
             {sc.content.map((para, i) => {
-              if (para === "\u2026" || para === "\u2022 \u2022 \u2022") return <div key={i} style={{ textAlign: "center", color: "#555560", fontSize: "20px", margin: "20px 0", letterSpacing: "8px" }}>{para}</div>;
-              if (para === "THE END") return <div key={i} style={{ textAlign: "center", fontFamily: "'Special Elite', monospace", fontSize: "28px", color: "#e67e22", letterSpacing: "6px", margin: "32px 0" }}>{para}</div>;
-              const isDialogue = para.startsWith('"') || para.startsWith('\u201c');
-              return <p key={i} style={{ fontSize: "16px", lineHeight: 1.9, color: isScolding && i >= sc.content.indexOf("\u2026") + 1 ? "#c0a060" : "#c8c8b8", marginBottom: "16px", fontStyle: isDialogue ? "normal" : "italic" }}>{redact(para)}</p>;
+              const el = renderPara(para, i);
+              return i === artAt ? (
+                <React.Fragment key={i}>
+                  <div style={{ margin: "12px 0 28px", border: "1px solid " + (isScolding ? "#552222" : "#222244"), background: "#000" }}>
+                    <PixelCanvas key={scene} draw={art.draw} />
+                  </div>
+                  {el}
+                </React.Fragment>
+              ) : el;
             })}
             {sc.choices && (
               <div style={{ marginTop: "32px", paddingTop: "24px", borderTop: "2px solid #333366", display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -1025,9 +1217,10 @@
               </div>
             )}
           </article>
-          {rewinding && (
-            <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "#000" }}>
-              <PixelCanvas draw={CK.rewind} W={190} H={107} S={2} duration={96} onDone={finishGoBack} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+          {overlay && (
+            <div onClick={finishOverlay} style={{ position: "fixed", inset: 0, zIndex: 1000, background: "#000", cursor: "pointer" }}>
+              <PixelCanvas draw={overlay.draw} W={190} H={107} S={2} duration={overlay.frames} onDone={finishOverlay} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+              <div style={{ position: "absolute", right: "16px", bottom: "12px", fontFamily: "'VT323', monospace", fontSize: "14px", color: "#666680", letterSpacing: "1px" }}>CLICK TO SKIP</div>
             </div>
           )}
         </div>

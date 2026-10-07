@@ -100,15 +100,28 @@ A `viz` naming a module that doesn't exist renders nothing.
 Interactive fiction is a different shape: set `"interactive": true`, a `start`
 scene id, and a `scenes` object instead of `sections`. See `lone-clown.json`.
 
-**Scene art.** An interactive piece can add `"sceneArt": "<key>"`. Then each
-scene gets an animated pixel-art panel from `SCENE_ART[key][sceneId]` in
-`home.html`: a `draw(k, f)` function on a 190×80 grid at 3×, built from the
-shared sprites in `CK`. Going back from a dead end plays a short VHS-rewind
-overlay (`CK.rewind`) before it returns. A scene with no entry gets no panel.
-Reduced-motion users get a still frame and no rewind. The Lone Clown is the
-only piece that uses this. Dead ends are where the horror goes (the face in the
-window, the eyes in the woods, the donkey), and the scolding text stays as the
-punchline.
+**Scene art.** An interactive piece can add `"sceneArt": "<key>"`. Then
+`SCENE_ART[key]` in `home.html` supplies two things, both drawn from the shared
+sprites in `CK`:
+
+- `scenes[sceneId] = { draw, before }` is an animated pixel-art panel on a
+  190×80 grid at 3×. It sits above the first paragraph that starts with
+  `before`, or at the top if there's no `before`. The clock only runs while the
+  panel is at least half on screen, so an action (a knife throw) happens when
+  the reader gets to it. Anchoring to text rather than an index means
+  inserting paragraphs doesn't move the art.
+- `intros[sceneId]` is a full-screen 190×107 "▶▶ FAST FWD" interlude that
+  plays on the way *into* that scene, about three seconds long. A click skips
+  it. Going back from a dead end plays the matching "◀◀ REWIND" (`CK.rewind`).
+
+Reduced-motion users get a still frame and no interludes. The Lone Clown is the
+only piece that uses this. Dead ends are where the horror goes, and the
+scolding text stays as the punchline.
+
+Scale matters: a person is about 24px tall, so the van is 70×30, a car 58×19
+and the barn door 32px tall. The van interior is drawn from Claire's seat,
+with him in profile against his window, the wheel edge-on and her phone in her
+lap.
 
 ## Inline markup
 
