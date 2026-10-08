@@ -130,7 +130,7 @@ grins, the stars rearrange, the crucifix freezes mid-swing. Keep flashes slow
 
 The genre shifts on purpose. Page one (`opening`) reads like literary fiction,
 and its panel is drawn like the cover of one: flat colour, paper texture, no
-grain. Its subject is the man who watches and doesn't help. Page two (`door`)
+grain, but in the same dusk palette as page two so the two pages match. Its subject is the man who watches and doesn't help. Page two (`door`)
 turns into a romance, with pink light, sparkles and Claire blushing, though his
 shadow on the wall is already a clown. The horror starts with the van. Keep each
 page's art in its own genre.
