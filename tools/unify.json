@@ -2,30 +2,156 @@
   "id": "unify",
   "title": "Unify Version 2",
   "tagline": "The Architecture of You",
-  "description": "A structured self-analysis tool that helps you offload cognitive load, quantify your struggles, and build a trajectory toward mastery. No accounts, no servers, no tracking — just you and your potential.",
+  "description": "A structured self-analysis tool for people who, frankly, don't know how to manage their life. No accounts, no servers, no tracking. Just you and your potential, which is also not tracked.",
   "tech": ["HTML", "JavaScript", "CSS"],
   "status": "Live",
   "url": "https://aaronunify2.github.io/UnifyVersion1/Unify300.html",
   "color": "#4a90d9",
   "date": "2025-12-01",
   "sections": [
-    { "type": "heading", "content": "Part 1: The High Cost of Dwelling" },
-    { "type": "text", "content": "Your brain is a poor office manager. When you encounter a problem\u2014a conflict at work, a leaky tap, a stalled project\u2014your mind tends to \u201cdwell.\u201d It loops the problem repeatedly in your working memory, trying to solve it with brute force worry." },
-    { "type": "text", "content": "Unify breaks this loop using a Structured Input Template. By forcing you to fill out specific fields, the interface acts as a cognitive container. You stop \u201cdwelling\u201d on the abstract worry and start \u201cdefining\u201d the concrete parameters." },
-    { "type": "interactive", "module": "cognitive-container" },
-    { "type": "heading", "content": "Part 2: Quantifying the Struggle" },
-    { "type": "text", "content": "In the heat of the moment, every problem feels like a catastrophe. A missed email feels just as stressful as a missed mortgage payment because our emotional brain struggles to differentiate scale." },
-    { "type": "text", "content": "Unify demands an Objective Difficulty Rating (1\u20135 Stars). This forces your logical brain to intervene. \u201cIs this actually a disaster, or just a nuisance?\u201d" },
-    { "type": "interactive", "module": "perspective-slider" },
-    { "type": "heading", "content": "Part 3: The Memory Trap" },
-    { "type": "text", "content": "We often assume we will remember our lessons, but we don\u2019t. The insight you gain during a stressful Tuesday is often gone by a relaxing Saturday." },
-    { "type": "text", "content": "Unify acts as an External Memory Core. It allows you to \u201ccatch\u201d experiences the moment they occur, building a database of your own life." },
-    { "type": "interactive", "module": "stack" },
-    { "type": "heading", "content": "Part 4: The Harada Trajectory" },
-    { "type": "text", "content": "Solving problems returns you to zero. To go above zero\u2014to achieve mastery\u2014you need a trajectory. The Harada Grid breaks a massive 5-year vision into 8 sub-goals, and those sub-goals into daily habits. It turns the \u201cimpossible\u201d into the \u201cinevitable.\u201d" },
-    { "type": "interactive", "module": "harada-grid" },
-    { "type": "heading", "content": "Part 5: Sovereign Data" },
-    { "type": "text", "content": "True self-analysis requires a sanctuary. You cannot be honest about your financial fears or personal failings if you believe a server is logging your keystrokes. Unify is built on Browser Storage Architecture." },
-    { "type": "interactive", "module": "local-lock" }
+    {
+      "type": "callout",
+      "content": "Unify. Because you don't know how to manage your life."
+    },
+    {
+      "type": "text",
+      "content": "People ask us, \"How does Unify know I can't manage my life?\" And the answer is simple. You're reading this."
+    },
+    {
+      "type": "text",
+      "content": "Our competitors say their apps help you manage your life. We don't think you can. That's the difference."
+    },
+    {
+      "type": "heading",
+      "content": "Part 1: The High Cost of Dwelling"
+    },
+    {
+      "type": "text",
+      "content": "Cognitive overload is real, and almost nobody acknowledges it. The people who were running their lives twenty years ago tend to assume the present works the way theirs did. It doesn't. Twenty years ago a problem was a flat tyre. Today a flat tyre comes with an app, a subscription, and a short survey about the flat tyre."
+    },
+    {
+      "type": "text",
+      "content": "Your dad had one password. It was the dog's name. You have a hundred and forty, and the dog now has two-factor authentication."
+    },
+    {
+      "type": "text",
+      "content": "Your brain handles this the only way it knows how. It dwells. It loops the problem through working memory, again and again, trying to solve it with brute-force worry. Your brain is a poor office manager, and it has been given a very large office."
+    },
+    {
+      "type": "text",
+      "content": "Unify breaks the loop with a Structured Input Template. You fill in the fields, and the worry stops being a feeling and starts being a form. You are very good at forms. You've been filling them in your whole life."
+    },
+    {
+      "type": "text",
+      "content": "Some people feel that writing their problems into a computer is cheating. It isn't. It's the same as a notepad or a diary. Nobody accuses a shopping list of cheating at shopping. Your grandmother kept a diary. That wasn't weakness. That was external storage. She just had a worse interface."
+    },
+    {
+      "type": "interactive",
+      "module": "cognitive-container"
+    },
+    {
+      "type": "heading",
+      "content": "Part 2: Quantifying the Struggle"
+    },
+    {
+      "type": "text",
+      "content": "In the heat of the moment, every problem feels like a catastrophe. A missed email feels just as stressful as a missed mortgage payment, because the emotional brain struggles to tell the difference in scale. We've made it easy:"
+    },
+    {
+      "type": "features",
+      "content": [
+        "★  A missed email.",
+        "★★  A missed mortgage payment.",
+        "★★★  The email was about the mortgage payment."
+      ]
+    },
+    {
+      "type": "text",
+      "content": "Unify asks for an Objective Difficulty Rating, one to five stars, which forces your logical brain to step in and ask whether this is a disaster or a nuisance. In early testing, every problem was rated five stars. We have since added a sixth star so the fifth feels more reasonable."
+    },
+    {
+      "type": "text",
+      "content": "We're not asking you to be a Stoic. Marcus Aurelius ran the Roman Empire and he still needed a journal. You can have feelings. The trouble is what a freak-out costs, and when. A freak-out on day one of a plan costs you a day. A freak-out at month eleven costs you eleven months. Managing your emotions isn't about being calm. It's about protecting the trajectory."
+    },
+    {
+      "type": "interactive",
+      "module": "perspective-slider"
+    },
+    {
+      "type": "heading",
+      "content": "Part 3: The Memory Trap"
+    },
+    {
+      "type": "text",
+      "content": "We all assume we'll remember our lessons. We don't. The insight you gain on a stressful Tuesday is usually gone by a relaxing Saturday. We know this because we wrote it down on a Tuesday. On Saturday we read it back and did not recognise the handwriting. It was typed."
+    },
+    {
+      "type": "text",
+      "content": "Memory isn't stored in one place. Some of yours is in your head. The rest is in a drawer, a group chat, and a receipt in the footwell of the car. Some experiences need to be caught at the moment they happen and processed later, when you're able to."
+    },
+    {
+      "type": "text",
+      "content": "Unify is an External Memory Core. It catches experiences as they occur and builds a database of your own life, in one place, with no receipts."
+    },
+    {
+      "type": "interactive",
+      "module": "stack"
+    },
+    {
+      "type": "heading",
+      "content": "Part 4: The Harada Trajectory"
+    },
+    {
+      "type": "text",
+      "content": "Solving problems returns you to zero. That sounds modest. It isn't. Bad things rarely come from one problem. They come from several small ones arriving at once. Bad mood, plus running late, plus tired, equals car crash. Remove any one of them and it's just a Tuesday."
+    },
+    {
+      "type": "text",
+      "content": "Not using Unify is like skipping the low-level enemies on the way to the boss fight. Nobody has ever been killed by the dragon. They were killed by the dragon plus the four skeletons they didn't bother with on the way in. The skeletons don't do much damage individually. That's why you ignore them. That's why they win."
+    },
+    {
+      "type": "text",
+      "content": "To go above zero, you need a trajectory. The Harada Grid breaks a five-year vision into eight sub-goals, and those sub-goals into daily habits. It turns the impossible into the inevitable. Shohei Ohtani used a Harada Grid to become the best baseball player in the world. We used one to clear out the garage. Results are comparable, when adjusted for garage."
+    },
+    {
+      "type": "interactive",
+      "module": "harada-grid"
+    },
+    {
+      "type": "heading",
+      "content": "Part 5: Sovereign Data"
+    },
+    {
+      "type": "text",
+      "content": "True self-analysis requires a sanctuary. You can't be honest about your financial fears or your personal failings if you believe a server is logging your keystrokes. Unify does not use the cloud. It does not use the internet. In a meaningful sense, it barely uses the computer."
+    },
+    {
+      "type": "text",
+      "content": "Everything is kept in your browser's local storage, a place nobody ever clears. Why would you? The only people who clear their browser history are people with something to hide, and Unify users have nothing to hide. It's all in Unify."
+    },
+    {
+      "type": "text",
+      "content": "If you do clear it, Unify will forget everything, and so, briefly, will you. We recommend not doing that."
+    },
+    {
+      "type": "interactive",
+      "module": "local-lock"
+    },
+    {
+      "type": "heading",
+      "content": "Ask Unify"
+    },
+    {
+      "type": "text",
+      "content": "Still have questions? Unify now comes with its own assistant. Go ahead. Ask it anything."
+    },
+    {
+      "type": "interactive",
+      "module": "unify-assistant"
+    },
+    {
+      "type": "text",
+      "content": "Unify is in the business of Tuesdays."
+    }
   ]
 }

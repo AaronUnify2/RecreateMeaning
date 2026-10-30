@@ -1790,12 +1790,76 @@
       );
     }
 
+    // Ask Unify: a chat assistant that never reads the question. It answers,
+    // warmly and in order, the questions people were actually worried about.
+    const ASSISTANT_GREETING = "Hi! Before you type anything: what a great question. Truly. Ask away.";
+    const ASSISTANT_REPLIES = [
+      "Wow. Honestly one of the best questions we've ever had. Yes, you can clear your browser history without losing Unify. It will delete your browser history, though, which we assume is why you're here.",
+      "Incognito mode doesn't hide anything from you. You were there. And may we say, you looked fantastic.",
+      "You're so brave for asking. Thursday. Never a Friday. A Friday ruins their weekend, and yours, because you'll spend it explaining Friday.",
+      "Somewhere with a door you can leave through. Not a restaurant. In a restaurant someone has to decide about dessert, and you deserve better than that moment.",
+      "Anyway! What did you want to ask? We can already tell it's going to be amazing.",
+      "Bring a list. Unify can store the list. Do not read from the list. You're a natural at this, by the way.",
+      "Your secrets are stored locally and will never be seen by anyone. That includes the one about the [R]soup[/R].",
+      "We're not judging. We've seen weirder. We haven't, actually, because we can't see anything. But statistically. And if it is the weirdest, it's the weirdest in a really brave way.",
+      "No, nobody else remembers that. You're the only one who still thinks about it. That's exactly the kind of thing Unify can hold for you.",
+      "Anyway! What did you want to ask? Your questions are, without exaggeration, our favourite part of the day.",
+      "It's a five-star problem. Sorry. You're handling it beautifully.",
+      "Delete the draft. You know the one. You're far too good for that draft.",
+      "Yes, it's normal to rehearse arguments in the shower. No, you didn't win the one this morning. You came very close, though. Closer than anyone.",
+      "We've loved every one of your questions. We haven't read any of them. That's how much we respect your privacy.",
+    ];
+    const ASSISTANT_LONG = "That's a long question. Thank you for trusting us with it. Here's a short answer: Thursday.";
+
+    function UnifyAssistantModule() {
+      const [msgs, setMsgs] = useState([{ from: "bot", text: ASSISTANT_GREETING }]);
+      const [input, setInput] = useState("");
+      const [typing, setTyping] = useState(false);
+      const [n, setN] = useState(0);
+      const [usedLong, setUsedLong] = useState(false);
+      const logRef = React.useRef(null);
+      const timerRef = React.useRef(null);
+      useEffect(() => () => clearTimeout(timerRef.current), []);
+      useEffect(() => { const el = logRef.current; if (el) el.scrollTop = el.scrollHeight; }, [msgs, typing]);
+      const send = () => {
+        const q = input.trim();
+        if (!q || typing) return;
+        setMsgs(m => [...m, { from: "you", text: q }]);
+        setInput("");
+        setTyping(true);
+        let reply;
+        if (q.length > 80 && !usedLong && n >= 3) { reply = ASSISTANT_LONG; setUsedLong(true); }
+        else { reply = ASSISTANT_REPLIES[n % ASSISTANT_REPLIES.length]; setN(n + 1); }
+        timerRef.current = setTimeout(() => { setTyping(false); setMsgs(m => [...m, { from: "bot", text: reply }]); }, 1400 + Math.min(reply.length * 12, 1600));
+      };
+      return (
+        <div style={{ border: "2px dashed #4a90d9", padding: "24px", background: "#0f1028", margin: "28px 0" }}>
+          <div style={{ fontFamily: "'VT323', monospace", fontSize: "16px", color: "#4a90d9", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "12px" }}>{"⚡"} Interactive: Ask Unify</div>
+          <div ref={logRef} style={{ height: "280px", overflowY: "auto", background: "#0a0a18", border: "1px solid #333366", padding: "14px", display: "flex", flexDirection: "column", gap: "10px", marginBottom: "12px" }}>
+            {msgs.map((m, i) => (
+              <div key={i} style={{ alignSelf: m.from === "you" ? "flex-end" : "flex-start", maxWidth: "85%", padding: "8px 12px", background: m.from === "you" ? "#1a2a4a" : "#14142c", border: "1px solid " + (m.from === "you" ? "#4a90d9" : "#333366"), fontFamily: m.from === "you" ? "'Courier Prime', monospace" : "'Lora', serif", fontSize: "14px", lineHeight: 1.6, overflowWrap: "anywhere", color: m.from === "you" ? "#c0c0b0" : "#d0d8f0" }}>
+                {m.from === "bot" && <div style={{ fontFamily: "'VT323', monospace", fontSize: "12px", color: "#4a90d9", letterSpacing: "1px", marginBottom: "2px" }}>UNIFY ASSISTANT</div>}
+                {m.from === "bot" ? redact(m.text) : m.text}
+              </div>
+            ))}
+            {typing && <div style={{ alignSelf: "flex-start", fontFamily: "'VT323', monospace", fontSize: "14px", color: "#666680", fontStyle: "italic" }}>{"Unify is thinking about something else…"}</div>}
+          </div>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} placeholder="Ask Unify anything..." style={{ flex: 1, minWidth: 0 }} />
+            <button onClick={send} disabled={typing} style={{ background: typing ? "#333366" : "#4a90d9", color: "#fff", border: "none", padding: "8px 16px", fontFamily: "'Courier Prime', monospace", fontSize: "13px", cursor: typing ? "default" : "pointer" }}>Ask</button>
+          </div>
+          <p style={{ fontFamily: "'Lora', serif", fontSize: "13px", color: "#666680", fontStyle: "italic", marginTop: "12px" }}>Unify Assistant runs entirely in your browser. It has never received a single question. Customers tell us it's the best listener they've ever had.</p>
+        </div>
+      );
+    }
+
     const INTERACTIVE_MODULES = {
       "cognitive-container": () => <CognitiveContainerModule />,
       "perspective-slider": () => <PerspectiveSliderModule />,
       "stack": () => <StackModule />,
       "harada-grid": () => <HaradaGridModule />,
       "local-lock": (props) => <LocalLockModule url={props.toolUrl} />,
+      "unify-assistant": () => <UnifyAssistantModule />,
     };
 
     // ==========================================
