@@ -2,10 +2,10 @@
   "id": "unify",
   "title": "Unify Version 2",
   "tagline": "The Architecture of You",
-  "description": "A structured self-analysis tool for people who, frankly, don't know how to manage their life. No accounts, no servers, no tracking. Just you and your potential, which is also not tracked.",
-  "tech": ["HTML", "JavaScript", "CSS"],
+  "description": "A life-improvement app for people who, frankly, don't know how to manage their life. Write down your problems, turn them into goals, and turn the goals into steps. Sign in with Google and it's on your phone and your computer.",
+  "tech": ["HTML", "JavaScript", "CSS", "Firebase"],
   "status": "Live",
-  "url": "https://aaronunify2.github.io/UnifyVersion1/Unify300.html",
+  "url": "https://aaronunify2.github.io/Unify/",
   "color": "#4a90d9",
   "date": "2025-12-01",
   "sections": [
@@ -39,7 +39,11 @@
     },
     {
       "type": "text",
-      "content": "Unify breaks the loop with a Structured Input Template. You fill in the fields, and the worry stops being a feeling and starts being a form. You are very good at forms. You've been filling them in your whole life."
+      "content": "Unify breaks the loop by making you write the problem down, one at a time, and file it: which part of your life it lives in, and how it makes you feel. The worry stops being a feeling and starts being a form. You are very good at forms. You've been filling them in your whole life."
+    },
+    {
+      "type": "text",
+      "content": "Unify offers nineteen emotions to choose from, including Disapproving, Disassociated and Physical Pain. Happy is not one of them. You are here for a reason."
     },
     {
       "type": "text",
@@ -67,7 +71,7 @@
     },
     {
       "type": "text",
-      "content": "Unify asks for an Objective Difficulty Rating, one to five stars, which forces your logical brain to step in and ask whether this is a disaster or a nuisance. In early testing, every problem was rated five stars. We have since added a sixth star so the fifth feels more reasonable."
+      "content": "Every problem in Unify gets a difficulty, from one to five, which forces your logical brain to step in and ask whether this is a disaster or a nuisance. Level one is \"Fixable now.\" Level four is \"Fixable with the right resources and cooperation from others.\" Level five is \"I do not know how to fix this problem.\" Our research shows these last two are the same level."
     },
     {
       "type": "text",
@@ -91,7 +95,15 @@
     },
     {
       "type": "text",
-      "content": "Unify is an External Memory Core. It catches experiences as they occur and builds a database of your own life, in one place, with no receipts."
+      "content": "So Unify keeps a journal, and it doesn't wait for you to feel like writing in it. Every time you tick off a step, Unify asks what went well, and what you'd do differently. Tick off \"take the bins out\" and it will ask. Most people say nothing. They are wrong. There is always something."
+    },
+    {
+      "type": "text",
+      "content": "Then there's Probe. Describe what's happening in your own words, and Probe finds the last time you wrote about something like it, and what came of it. It also notices what keeps coming back, which problems have no plan, and which goals have gone quiet. Probe has read everything you've ever written. It is not judging you. It is just very well informed."
+    },
+    {
+      "type": "text",
+      "content": "Delete something and Unify remembers that you deleted it. Not what it was. Just that you deleted it, and when. Like a good friend."
     },
     {
       "type": "interactive",
@@ -99,7 +111,7 @@
     },
     {
       "type": "heading",
-      "content": "Part 4: The Harada Trajectory"
+      "content": "Part 4: From Problems to Steps"
     },
     {
       "type": "text",
@@ -111,7 +123,15 @@
     },
     {
       "type": "text",
-      "content": "To go above zero, you need a trajectory. The Harada Grid breaks a five-year vision into eight sub-goals, and those sub-goals into daily habits. It turns the impossible into the inevitable. Shohei Ohtani used a Harada Grid to become the best baseball player in the world. We used one to clear out the garage. Results are comparable, when adjusted for garage."
+      "content": "In Unify, you gather a few problems into one goal: what you'll do about them, why it matters, and the first steps, one per line. When the goal is done, Unify offers to mark its problems resolved. They go into your history, where you can visit them, the way you'd visit an old enemy who is now very small."
+    },
+    {
+      "type": "text",
+      "content": "For a morning of getting things done, plan a session: pick the steps, put them in order, and work down the list. You can share it with a link. Anyone with the link can tick things off, and add to it. What they add waits for you to keep or discard. If you shared the link with your wife, we do not recommend discarding it."
+    },
+    {
+      "type": "text",
+      "content": "Earlier versions of Unify included the Harada Grid, which breaks a five-year vision into eight sub-goals and sixty-four daily habits. Shohei Ohtani used a Harada Grid to become the best baseball player in the world. We used it zero times. It has been retired, with honours. Here it is anyway. Try it. You won't use it either."
     },
     {
       "type": "interactive",
@@ -123,15 +143,15 @@
     },
     {
       "type": "text",
-      "content": "True self-analysis requires a sanctuary. You can't be honest about your financial fears or your personal failings if you believe a server is logging your keystrokes. Unify does not use the cloud. It does not use the internet. In a meaningful sense, it barely uses the computer."
+      "content": "True self-analysis requires a sanctuary. You can't be honest about your financial fears or your personal failings if you think someone is reading over your shoulder. You sign in to Unify with your Google account, and what you write is kept in your account, for you, on your phone and your computer."
     },
     {
       "type": "text",
-      "content": "Everything is kept in your browser's local storage, a place nobody ever clears. Why would you? The only people who clear their browser history are people with something to hide, and Unify users have nothing to hide. It's all in Unify."
+      "content": "Probe runs a language model, and it runs it on your phone. Nothing you write is sent anywhere to be read. It is the most discreet thing you own, and it has read the most."
     },
     {
       "type": "text",
-      "content": "If you do clear it, Unify will forget everything, and so, briefly, will you. We recommend not doing that."
+      "content": "You can clear your browser history, and Unify won't mind. It isn't in there. We cannot stress enough how much it is not in there."
     },
     {
       "type": "interactive",
@@ -143,7 +163,7 @@
     },
     {
       "type": "text",
-      "content": "Still have questions? Unify now comes with its own assistant. Go ahead. Ask it anything."
+      "content": "Unify already has an AI that reads everything you write. Now it also has one that reads nothing. Between them, perfect balance. Go ahead. Ask it anything."
     },
     {
       "type": "interactive",
