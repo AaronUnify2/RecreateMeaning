@@ -22,6 +22,10 @@
       "content": "Our competitors say their apps help you manage your life. We don't think you can. That's the difference."
     },
     {
+      "type": "text",
+      "content": "Unify is for everyone. More specifically, it's for a married man with children who, several times a year, needs to get ten people to do something inside forty-eight hours. If that isn't you, Unify will still work. You'll just have fewer people to disappoint."
+    },
+    {
       "type": "heading",
       "content": "Part 1: The High Cost of Dwelling"
     },
@@ -31,7 +35,7 @@
     },
     {
       "type": "text",
-      "content": "Your dad had one password. It was the dog's name. You have a hundred and forty, and the dog now has two-factor authentication."
+      "content": "Your dad had one password. It was the dog's name. You have a hundred and forty, and the dog now has two-factor authentication. You have a wife, children, and a group chat of ten people that you started, and which is now your fault."
     },
     {
       "type": "text",
@@ -64,9 +68,9 @@
     {
       "type": "features",
       "content": [
-        "★  A missed email.",
-        "★★  A missed mortgage payment.",
-        "★★★  The email was about the mortgage payment."
+        "\u2605  A missed email.",
+        "\u2605\u2605  A missed mortgage payment.",
+        "\u2605\u2605\u2605  The email was about the mortgage payment."
       ]
     },
     {
@@ -75,7 +79,7 @@
     },
     {
       "type": "text",
-      "content": "We're not asking you to be a Stoic. Marcus Aurelius ran the Roman Empire and he still needed a journal. You can have feelings. The trouble is what a freak-out costs, and when. A freak-out on day one of a plan costs you a day. A freak-out at month eleven costs you eleven months. Managing your emotions isn't about being calm. It's about protecting the trajectory."
+      "content": "We're not asking you to be a Stoic. Marcus Aurelius ran the Roman Empire and he still needed a journal. He did not have a shared to-do list, and his son was Commodus. You can have feelings. The trouble is what a freak-out costs, and when. A freak-out on day one of a plan costs you a day. A freak-out at month eleven costs you eleven months. Managing your emotions isn't about being calm. It's about protecting the trajectory."
     },
     {
       "type": "interactive",
@@ -127,10 +131,6 @@
     },
     {
       "type": "text",
-      "content": "For a morning of getting things done, plan a session: pick the steps, put them in order, and work down the list. You can share it with a link. Anyone with the link can tick things off, and add to it. What they add waits for you to keep or discard. If you shared the link with your wife, we do not recommend discarding it."
-    },
-    {
-      "type": "text",
       "content": "Earlier versions of Unify included the Harada Grid, which breaks a five-year vision into eight sub-goals and sixty-four daily habits. Shohei Ohtani used a Harada Grid to become the best baseball player in the world. We used it zero times. It has been retired, with honours. Here it is anyway. Try it. You won't use it either."
     },
     {
@@ -139,7 +139,35 @@
     },
     {
       "type": "heading",
-      "content": "Part 5: Sovereign Data"
+      "content": "Part 5: Your People"
+    },
+    {
+      "type": "text",
+      "content": "When you were younger, you lone-wolfed it. The only person looking out for your problems was you, and frankly, you were busy. Then you got married, had children, and acquired a degree of influence. Now your problems have other people in them."
+    },
+    {
+      "type": "text",
+      "content": "Say you're going out of town for the day. Your wife has five places she wants to go. You can't think of one. You get home and remember everything you meant to buy. This happens roughly once a month, and you have never once remembered on the way there."
+    },
+    {
+      "type": "text",
+      "content": "So Unify has sessions. Pick the steps you want done today, put them in order, and send her the link. She adds her five places. You sort the list together in the car, which is the closest most couples ever come to a five-year plan. Your problem-solving carries on, uninterrupted, through the craft markets."
+    },
+    {
+      "type": "text",
+      "content": "Now say you have ten people and forty-eight hours. This happens to you more often than to most people, because you are, let's be honest, a person of some influence. Without a plan, ten people become a committee by lunchtime. Somebody has an opinion about the ladder. By mid-afternoon two of them aren't speaking, and nothing has been built."
+    },
+    {
+      "type": "text",
+      "content": "With a shared session, everyone rocks up, opens the link, grabs a task and gets to work. Nobody needs to talk. Everyone plays to their strengths. The person with the opinion about the ladder is given the ladder."
+    },
+    {
+      "type": "text",
+      "content": "Anyone with the link can tick things off and add to it. What they add waits for you to keep or discard. If it was added by your wife, we do not recommend discarding it."
+    },
+    {
+      "type": "heading",
+      "content": "Part 6: Sovereign Data"
     },
     {
       "type": "text",
